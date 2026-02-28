@@ -23,7 +23,7 @@ export default function TosModal({ onAccept }: TosModalProps) {
                 {
                     heading: "Overview",
                     body: [
-                        "This site is a personal archive, created by me, Ngoc (Vivian) Nguyen, to showcase original characters' briefs, lores, both solo and couple commissions for Marcus Hayes & William Cartier.",
+                        "This site is a personal archive, created by me, Vivian Nguyeenx, to showcase original characters' briefs, lores, both solo and couple commissions for Marcus Hayes & William Cartier.",
                         "It is also a space for me to share commissions' briefs with artists I may work with in the future.",
                         "No transactions happen on this website. Commission discussion/payment happens via other social platforms.",
                     ],
@@ -92,7 +92,7 @@ export default function TosModal({ onAccept }: TosModalProps) {
                 {
                     heading: "Tổng quan",
                     body: [
-                        "Đây là website lưu trữ cá nhân do mình — Ngọc (Vivian) Nguyễn — tạo ra nhằm mục đích trưng bày và lưu giữ các brief, lore, cũng như những commission solo và couple dành cho Marcus Hayes & William Cartier.",
+                        "Đây là website lưu trữ cá nhân do mình, Vivian Nguyeenx, tạo ra nhằm mục đích trưng bày và lưu giữ các brief, lore, cũng như những commission solo và couple dành cho Marcus Hayes & William Cartier.",
                         "Website cũng là nơi mình chia sẻ các ý tưởng commission với những artist mà mình có thể hợp tác trong tương lai.",
                         "Không có giao dịch nào diễn ra trực tiếp trên website này. Việc trao đổi và thanh toán commission sẽ được thực hiện thông qua các nền tảng mạng xã hội khác.",
                     ],

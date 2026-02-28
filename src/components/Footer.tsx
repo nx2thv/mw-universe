@@ -6,11 +6,11 @@ export default function Footer() {
   const translations = {
     en: {
       line1: "Created to honor the story, the craft, and the characters.",
-      line2: "Marcus Hayes & William Cartier © Vivian Nguyen.",
+      line2: "Marcus Hayes & William Cartier © Vivian Nguyeenx.",
     },
     vi: {
       line1: "Được tạo dựng để tôn vinh câu chuyện, nghệ thuật, và linh hồn nhân vật.",
-      line2: "Marcus Hayes & William Cartier © Vivian Nguyễn.",
+      line2: "Marcus Hayes & William Cartier © Vivian Nguyeenx.",
     },
   } as const;
 
