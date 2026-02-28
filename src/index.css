@@ -1680,7 +1680,7 @@ section[data-section-index] {
     /* Mobile collage offsets: tweak these values to nudge each image */
     --tattoo1-x: 0%;
     --tattoo1-y: 0%;
-    --tattoo2-x: 10%;
+    --tattoo2-x: 6%;
     --tattoo2-y: -50%;
     --tattoo3-x: 0%;
     --tattoo3-y: 0%;
