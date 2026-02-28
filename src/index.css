@@ -1330,12 +1330,18 @@ section[data-section-index] {
   text-transform: uppercase;
   color: #F2F2F2 !important;
   font-weight: 500;
-  line-height: 1.04;
+  line-height: 1.25;
+  font-size: 1.25rem;
 }
 
 .ideas-page-header {
   border-bottom-color: #e5e8eb;
   top: 10px;
+  padding-bottom: 1rem;
+}
+
+.ideas-page-heading {
+  width: 100%;
 }
 
 .ideas-page-subtitle {
@@ -1354,12 +1360,25 @@ section[data-section-index] {
   margin: 0 auto;
   color: #d8deea;
   opacity: 0.78;
-  font-size: 1.02rem;
+  font-size: 0.75rem;
   line-height: 1.95;
 }
 
 .ideas-loading-label {
   color: #ffffff !important;
+}
+
+@media (max-width: 767px) {
+  .ideas-page-heading {
+    max-width: calc(100% - 4.5rem);
+    margin-inline: auto;
+    padding-inline: 0.75rem;
+    box-sizing: border-box;
+  }
+
+  .ideas-page-title {
+    letter-spacing: 0.24em;
+  }
 }
 
 .idea-card-preview {

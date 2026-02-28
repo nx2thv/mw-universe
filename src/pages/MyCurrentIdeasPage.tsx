@@ -81,7 +81,7 @@ export default function MyCurrentIdeasPage() {
   const t = useT();
 
   const [pairFilter, setPairFilter] = useState<PairType | "all">("all");
-  const [statusFilter, setStatusFilter] = useState<StatusType | "all">("all");
+  const [statusFilter, setStatusFilter] = useState<StatusType>("not-started");
   const [nsfwFilter, setNsfwFilter] = useState<NsfwType>("sfw");
   const [ideas, setIdeas] = useState<CommissionIdea[]>([]);
   const [loading, setLoading] = useState(true);
@@ -90,7 +90,7 @@ export default function MyCurrentIdeasPage() {
     () =>
       ideas.filter((idea) => {
         if (pairFilter !== "all" && idea.pair !== pairFilter) return false;
-        if (statusFilter !== "all" && idea.status !== statusFilter) return false;
+        if (idea.status !== statusFilter) return false;
         if (idea.nsfw !== nsfwFilter) return false;
         return true;
       }),
@@ -139,9 +139,11 @@ export default function MyCurrentIdeasPage() {
       }}
     >
       <header className="ideas-page-header relative w-full bg-transparent border-b text-slate-100 shadow-md px-6 pt-20 md:pt-16 pb-10 flex flex-col items-center text-center gap-4">
-        <div className="text-center">
+        <div className="ideas-page-heading text-center">
           <h1 className="ideas-page-title mt-10 md:mt-0 drop-shadow">
-            Mr. Hayes & Mr. Cartier-Hayes
+            Mr. Hayes &
+            <br />
+            Mr. Cartier-Hayes
           </h1>
 
           <h2 className="ideas-page-subtitle">
@@ -201,8 +203,8 @@ export default function MyCurrentIdeasPage() {
 type FiltersRowProps = {
   pairFilter: PairType | "all";
   setPairFilter: (v: PairType | "all") => void;
-  statusFilter: StatusType | "all";
-  setStatusFilter: (v: StatusType | "all") => void;
+  statusFilter: StatusType;
+  setStatusFilter: (v: StatusType) => void;
   nsfwFilter: NsfwType;
   setNsfwFilter: (v: NsfwType) => void;
 };
@@ -237,9 +239,8 @@ function FiltersRow(props: FiltersRowProps) {
         <FilterDropdown
           label={f.status}
           value={statusFilter}
-          onChange={(value) => setStatusFilter(value as StatusType | "all")}
+          onChange={(value) => setStatusFilter(value as StatusType)}
           options={[
-            { value: "all", label: f.all },
             { value: "not-started", label: f.statusNotStarted },
             { value: "in-progress", label: f.statusBeingWorkedOn },
           ]}
@@ -280,7 +281,7 @@ function FilterDropdown({
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>
-            {`${label} - ${option.label}`}
+            {option.label}
           </option>
         ))}
       </select>
