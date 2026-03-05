@@ -161,6 +161,7 @@ body {
 
 .home-split-home {
   min-height: 100vh;
+  min-height: 100svh;
   background: linear-gradient(150deg, #03070d 0%, #0a141f 46%, #15171b 100%);
   color: #f8fbff;
 }
@@ -168,6 +169,7 @@ body {
 .home-split-stage {
   position: relative;
   min-height: 100vh;
+  min-height: 100svh;
   overflow: hidden;
   isolation: isolate;
 }
@@ -314,13 +316,31 @@ body {
 @media (max-width: 640px) {
   .home-split-copy {
     padding: 0.85rem 1rem;
+    max-width: min(68vw, 320px);
+  }
+
+  .home-split-copy--marcus {
+    top: clamp(4.75rem, 10vh, 6.2rem);
+    left: clamp(0.85rem, 4vw, 1.3rem);
+  }
+
+  .home-split-copy--william {
+    right: clamp(0.85rem, 4vw, 1.3rem);
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 7.25rem);
+  }
+
+  .home-split-center-copy {
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem);
+    width: min(94vw, 720px);
   }
 
   .home-split-title {
+    font-size: clamp(0.86rem, 3.6vw, 1.05rem);
     letter-spacing: 0.2em;
   }
 
   .home-split-prompt {
+    font-size: clamp(0.58rem, 2.6vw, 0.72rem);
     letter-spacing: 0.12em;
   }
 }
@@ -1759,4 +1779,3 @@ section[data-section-index] {
     transform: none;
   }
 }
-
