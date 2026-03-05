@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { supabase } from "../lib/supabaseClients";
-import type { CommissionIdea } from "../data/commissionIdeas";
+import { normalizeCharacter, type CommissionIdea } from "../data/commissionIdeas";
 import { useLanguage } from "../LanguageContext";
 
 type DbIdeaRow = {
     id: string;
     title: string;
-    pair: string;
+    character?: string | null;
+    pair?: string | null;
     status: string;
     preview: string;
     docUrl: string;
@@ -28,7 +29,7 @@ export default function IdeaDetailPage() {
         async function fetchIdea() {
             const { data, error } = await supabase
                 .from("commission_ideas")
-                .select("id,title,pair,status,preview,docUrl,nsfw,assigned_to")
+                .select("*")
                 .eq("id", id)
                 .maybeSingle<DbIdeaRow>();
 
@@ -38,7 +39,7 @@ export default function IdeaDetailPage() {
                 const mapped: CommissionIdea = {
                     id: data.id,
                     title: data.title,
-                    pair: data.pair as CommissionIdea["pair"],
+                    character: normalizeCharacter(data.character, data.pair),
                     status: data.status as CommissionIdea["status"],
                     nsfw: data.nsfw as CommissionIdea["nsfw"],
                     preview: data.preview,

@@ -2,7 +2,8 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   type CommissionIdea,
-  type PairType,
+  normalizeCharacter,
+  type CharacterType,
   type StatusType,
   type NsfwType,
 } from "../data/commissionIdeas";
@@ -21,13 +22,15 @@ const translations = {
     noResults: "No ideas match these filters yet. Try changing them.",
     openBrief: "Open full brief →",
     filters: {
-      type: "Type",
+      character: "Character",
       status: "Status",
       statusNotStarted: "Not started",
       statusBeingWorkedOn: "Being worked on",
       content: "Content",
       all: "All",
-      solo: "Solo",
+      na: "All",
+      william: "William",
+      marcus: "Marcus",
       couple: "Couple",
       sfw: "SFW",
       nsfwLabel: "NSFW",
@@ -48,14 +51,16 @@ const translations = {
       "Chưa có ý tưởng nào khớp với bộ lọc này. Thử chọn lại cái khác nha.",
     openBrief: "Mở file mô tả →",
     filters: {
-      type: "type",
+      character: "Nhân vật",
       status: "status",
       statusNotStarted: "Chưa bắt đầu",
       statusBeingWorkedOn: "Đang được thực hiện",
       content: "Nội dung",
       all: "Tất cả",
-      solo: "solo",
-      couple: "couple",
+      na: "All",
+      william: "William",
+      marcus: "Marcus",
+      couple: "Couple",
       sfw: "SFW",
       nsfwLabel: "NSFW",
     },
@@ -80,7 +85,7 @@ function useT() {
 export default function MyCurrentIdeasPage() {
   const t = useT();
 
-  const [pairFilter, setPairFilter] = useState<PairType | "all">("all");
+  const [characterFilter, setCharacterFilter] = useState<CharacterType | "all">("all");
   const [statusFilter, setStatusFilter] = useState<StatusType>("not-started");
   const [nsfwFilter, setNsfwFilter] = useState<NsfwType>("sfw");
   const [ideas, setIdeas] = useState<CommissionIdea[]>([]);
@@ -89,19 +94,19 @@ export default function MyCurrentIdeasPage() {
   const filteredIdeas = useMemo(
     () =>
       ideas.filter((idea) => {
-        if (pairFilter !== "all" && idea.pair !== pairFilter) return false;
+        if (characterFilter !== "all" && idea.character !== characterFilter) return false;
         if (idea.status !== statusFilter) return false;
         if (idea.nsfw !== nsfwFilter) return false;
         return true;
       }),
-    [ideas, pairFilter, statusFilter, nsfwFilter]
+    [ideas, characterFilter, statusFilter, nsfwFilter]
   );
 
   useEffect(() => {
     async function fetchIdeas() {
       const { data, error } = await supabase
         .from("commission_ideas")
-        .select("id,title,pair,status,preview,docUrl,assigned_to,nsfw");
+        .select("*");
 
       console.log("Supabase result:", { data, error });
 
@@ -113,7 +118,7 @@ export default function MyCurrentIdeasPage() {
         const mapped: CommissionIdea[] = data.map((row: any) => ({
           id: row.id,
           title: row.title,
-          pair: row.pair,
+          character: normalizeCharacter(row.character, row.pair),
           status: row.status,
           preview: row.preview,
           docUrl: row.docUrl,
@@ -162,8 +167,8 @@ export default function MyCurrentIdeasPage() {
       {/* CONTENT AREA */}
       <div className="w-full px-4 py-10 md:px-10 lg:px-16">
         <FiltersRow
-          pairFilter={pairFilter}
-          setPairFilter={setPairFilter}
+          characterFilter={characterFilter}
+          setCharacterFilter={setCharacterFilter}
           statusFilter={statusFilter}
           setStatusFilter={setStatusFilter}
           nsfwFilter={nsfwFilter}
@@ -183,7 +188,7 @@ export default function MyCurrentIdeasPage() {
           )}
 
           {!loading && filteredIdeas.length === 0 && (
-            <p className="text-sm opacity-60 col-span-full">
+            <p className="no-result text-sm opacity-60 col-span-full">
               {t.noResults}
             </p>
           )}
@@ -201,8 +206,8 @@ export default function MyCurrentIdeasPage() {
 /* Filters row */
 
 type FiltersRowProps = {
-  pairFilter: PairType | "all";
-  setPairFilter: (v: PairType | "all") => void;
+  characterFilter: CharacterType | "all";
+  setCharacterFilter: (v: CharacterType | "all") => void;
   statusFilter: StatusType;
   setStatusFilter: (v: StatusType) => void;
   nsfwFilter: NsfwType;
@@ -211,8 +216,8 @@ type FiltersRowProps = {
 
 function FiltersRow(props: FiltersRowProps) {
   const {
-    pairFilter,
-    setPairFilter,
+    characterFilter,
+    setCharacterFilter,
     statusFilter,
     setStatusFilter,
     nsfwFilter,
@@ -226,12 +231,13 @@ function FiltersRow(props: FiltersRowProps) {
     <section className="filters-row border-b border-white/10">
       <div className="filters-dropdown-row">
         <FilterDropdown
-          label={f.type}
-          value={pairFilter}
-          onChange={(value) => setPairFilter(value as PairType | "all")}
+          label={f.character}
+          value={characterFilter}
+          onChange={(value) => setCharacterFilter(value as CharacterType | "all")}
           options={[
-            { value: "all", label: f.all },
-            { value: "solo", label: f.solo },
+            { value: "all", label: f.na },
+            { value: "william", label: f.william },
+            { value: "marcus", label: f.marcus },
             { value: "couple", label: f.couple },
           ]}
         />
@@ -295,7 +301,14 @@ function IdeaCard({ idea }: { idea: CommissionIdea }) {
   const t = useT();
   const f = t.filters;
 
-  const pairLabel = idea.pair === "solo" ? f.solo : f.couple;
+  const characterLabel =
+    idea.character === "william"
+      ? f.william
+      : idea.character === "marcus"
+        ? f.marcus
+        : idea.character === "couple"
+          ? f.couple
+          : f.na;
   const nsfwLabel = idea.nsfw === "nsfw" ? f.nsfwLabel : f.sfw;
 
   return (
@@ -308,7 +321,7 @@ function IdeaCard({ idea }: { idea: CommissionIdea }) {
 
         {/* Type / Content */}
         <p className="idea-meta mt-1">
-          {pairLabel} • {nsfwLabel}
+          {characterLabel} • {nsfwLabel}
         </p>
 
         {/* TITLE */}

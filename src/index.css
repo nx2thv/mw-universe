@@ -1498,6 +1498,10 @@ section[data-section-index] {
   margin-bottom: 0;
 }
 
+.no-result {
+  color: white;
+}
+
 /* Section label (BY CONTINUING…) */
 .tos-card .tos-section-label {
   margin-top: 2rem;
@@ -1755,3 +1759,4 @@ section[data-section-index] {
     transform: none;
   }
 }
+
