@@ -212,7 +212,7 @@ export default function MarcusBriefPage({ backHref }: Props) {
             "Chân mày & mắt:\n Lông mày rậm, không tỉa gọn. Đầu lông mày hay nhăn lại.\n Mí mắt hạ xuống (heavy-lidded), nhíu lại như đang suy nghĩ (hoặc đang ngầm đánh giá bạn).",
             "Màu mắt:\n #5B6b74\nXanh xám lạnh, nhạt màu, không quá sáng.",
             "Mũi & hàm:\n Mũi thẳng, hơi gồ nhẹ trên sống mũi do lúc trước dánh nhau gãy mũi.\n Quai hàm góc cạnh, hơi rộng, nam tính.",
-            "Sẹo:\n một cái ở cuối đuôi lông mày bên phải.\n một cái ở bên phải của môi trên.\n một cái chạy dọc lên từ quai bên trái, hơi mờ.",
+            "Sẹo:\n một cái ở cuối đuôi lông mày bên phải.\n một cái ở bên phải của môi trên.\n một cái chạy dọc lên từ quai hàm bên trái, hơi mờ.",
           ],
         },
         {
@@ -298,7 +298,7 @@ export default function MarcusBriefPage({ backHref }: Props) {
       nose: "Nose",
       lipScar: "Right upper lip scar",
       browScar: "Right brow scar",
-      jawScar: "Left upwards jawline scar",
+      jawScar: "Left jawline scar",
 
       // HAIR / BEARD / ACCESSORIES
       hair1: "Hair ref 1",
@@ -320,9 +320,9 @@ export default function MarcusBriefPage({ backHref }: Props) {
       // FACE
       eyesBrows: "Mắt & chân mày",
       nose: "Mũi",
-      lipScar: "Sẹo môi trên",
-      browScar: "Sẹo gần cuối đuôi chân mày bên phải",
-      jawScar: "Sẹo chạy dọc lên từ quai hàm bên trái",
+      lipScar: "Sẹo bên phải\nmôi trên",
+      browScar: "Sẹo gần cuối\nđuôi chân mày bên phải",
+      jawScar: "Sẹo chạy dọc\nlên từ quai hàm bên trái",
 
       // HAIR / BEARD / ACCESSORIES
       hair1: "Tóc",

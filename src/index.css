@@ -1152,11 +1152,19 @@ section[data-section-index] {
 
 .marcus-scroll-caption {
   margin-top: 0.4rem;
+  display: inline-flex;
+  align-self: center;
+  justify-content: center;
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
   font-size: 0.7rem;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   text-align: center;
-  color: #cbd5f5; 
+  color: #cbd5f5;
+  white-space: pre-line;
+  text-wrap: balance;
 }
 
 .marcus-basic-info-media {
@@ -1191,13 +1199,25 @@ section[data-section-index] {
   .marcus-scroll-item {
     flex: 0 0 40vw;  
     max-width: 40vw;
-    display: block;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .marcus-scroll-card {
-    flex: 0 0 30vw;  
+    flex: none;
+    width: 30vw;
     max-width: 30vw;
     aspect-ratio: 4/5;
+  }
+
+  .marcus-scroll-caption {
+    width: fit-content;
+    max-width: 30vw;
+  }
+
+  .marcus-scroll-strip > :last-child .marcus-scroll-caption {
+    transform: translateX(-1px);
   }
 
   .marcus-scroll-card-inner {
