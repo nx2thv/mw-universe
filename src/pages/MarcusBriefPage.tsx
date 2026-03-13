@@ -2,6 +2,9 @@ import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import marcusBriefPage from "../../assets/marcusBriefPage.jpg";
 import HeroScrollPage from "../components/HeroScrollPage";
+import GalleryLightbox, {
+  type GalleryLightboxImage,
+} from "../components/GalleryLightbox";
 import { useLanguage } from "../LanguageContext";
 
 import marcusBeard from "../../assets/marcusBeard.jpeg";
@@ -46,6 +49,8 @@ export default function MarcusBriefPage({ backHref }: Props) {
   const [visibleSections, setVisibleSections] = useState<Record<number, boolean>>({
     0: true,
   });
+  const [selectedGalleryImage, setSelectedGalleryImage] =
+    useState<GalleryLightboxImage | null>(null);
 
   // STRIP REFS FOR HORIZONTAL SCROLL
   const faceStripRef = useRef<HTMLDivElement | null>(null);
@@ -394,7 +399,8 @@ export default function MarcusBriefPage({ backHref }: Props) {
             <button
               type="button"
               onClick={() => handleChipClick("gallery")}
-              className="marcus-nav-chip bg-transparent border-0 pb-1 text-slate-200 border-b border-transparent hover:border-slate-100 hover:text-slate-100 focus:outline-none underline"            >
+              className="nav-chip marcus-nav-chip bg-transparent border-0 pb-1 text-slate-200 border-b border-transparent hover:border-slate-100 hover:text-slate-100 focus:outline-none underline"
+            >
               F. Gallery
             </button>
           </nav>
@@ -636,13 +642,26 @@ export default function MarcusBriefPage({ backHref }: Props) {
               >
                 {marcusSoloGallery.map((item, idx) => (
                   <figure key={idx} className="gallery-card figure-zoom">
-                    <div className="gallery-figure">
-                      <img
-                        src={item.src}
-                        alt={item.label}
-                        className="gallery-img"
-                      />
-                    </div>
+                    <button
+                      type="button"
+                      className="gallery-card-button"
+                      onClick={() =>
+                        setSelectedGalleryImage({
+                          src: item.src,
+                          alt: `Marcus solo commission ${item.label}`,
+                          caption: item.label,
+                        })
+                      }
+                      aria-label={`Open Marcus solo commission ${item.label}`}
+                    >
+                      <div className="gallery-figure">
+                        <img
+                          src={item.src}
+                          alt={`Marcus solo commission ${item.label}`}
+                          className="gallery-img"
+                        />
+                      </div>
+                    </button>
                     <figcaption className="gallery-caption">
                       <span className="gallery-caption-artist text-slate-300">
                         {item.label}
@@ -668,6 +687,11 @@ export default function MarcusBriefPage({ backHref }: Props) {
           >
             {t.back}
           </Link>
+
+          <GalleryLightbox
+            image={selectedGalleryImage}
+            onClose={() => setSelectedGalleryImage(null)}
+          />
         </div>
       </div>
     </HeroScrollPage>

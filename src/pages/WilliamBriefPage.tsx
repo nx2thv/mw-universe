@@ -2,6 +2,9 @@ import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import williamBriefPage from "../../assets/williamBriefPage.jpeg";
 import HeroScrollPage from "../components/HeroScrollPage";
+import GalleryLightbox, {
+  type GalleryLightboxImage,
+} from "../components/GalleryLightbox";
 import { useLanguage } from "../LanguageContext";
 import williamBrows from "../../assets/williamBrows.jpeg";
 import williamEyes from "../../assets/williamEyesAndMark.jpeg";
@@ -53,6 +56,8 @@ export default function WilliamBriefPage({ label, backHref }: Props) {
   const [visibleSections, setVisibleSections] = useState<Record<number, boolean>>({
     0: true,
   });
+  const [selectedGalleryImage, setSelectedGalleryImage] =
+    useState<GalleryLightboxImage | null>(null);
 
   const accStripRef = useRef<HTMLDivElement | null>(null);
   const scrollAccessories = (direction: "left" | "right") => {
@@ -713,13 +718,26 @@ export default function WilliamBriefPage({ label, backHref }: Props) {
             >
               {williamSoloGallery.map((item, idx) => (
                 <figure key={idx} className="gallery-card figure-zoom">
-                  <div className="gallery-figure">
-                    <img
-                      src={item.src}
-                      alt={`William solo commission by ${item.artist}`}
-                      className="gallery-img"
-                    />
-                  </div>
+                  <button
+                    type="button"
+                    className="gallery-card-button"
+                    onClick={() =>
+                      setSelectedGalleryImage({
+                        src: item.src,
+                        alt: `William solo commission by ${item.artist}`,
+                        caption: item.artist,
+                      })
+                    }
+                    aria-label={`Open William solo commission by ${item.artist}`}
+                  >
+                    <div className="gallery-figure">
+                      <img
+                        src={item.src}
+                        alt={`William solo commission by ${item.artist}`}
+                        className="gallery-img"
+                      />
+                    </div>
+                  </button>
                   <figcaption className="gallery-caption">
                     <span className="gallery-caption-artist william-caption">
                       {item.artist}
@@ -746,6 +764,11 @@ export default function WilliamBriefPage({ label, backHref }: Props) {
         >
           {t.back}
         </Link>
+
+        <GalleryLightbox
+          image={selectedGalleryImage}
+          onClose={() => setSelectedGalleryImage(null)}
+        />
       </div>
     </HeroScrollPage>
   );
