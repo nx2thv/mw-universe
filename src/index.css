@@ -1829,7 +1829,7 @@ section[data-section-index] {
 @media (max-width: 1023px) {
   .tattoo-collage {
     overflow-x: hidden;
-    padding-inline: 0.35rem;
+    padding-inline: 0.15rem;
     /* Mobile collage offsets: tweak these values to nudge each image */
     --tattoo1-x: 0%;
     --tattoo1-y: 0%;

@@ -24,6 +24,7 @@ import marcusBack from "../../assets/marcusBack.jpeg";
 import marcusBody from "../../assets/marcusBody.jpeg";
 import marcusGallery1 from "../../assets/marcusGallery1.jpeg";
 import marcusGallery2 from "../../assets/marcusGallery2.jpeg";
+import marcusGallery3 from "../../assets/marcusGallery3.jpeg";
 import marcusColourPalette from "../../assets/marcusColourPalette.jpeg";
 import marcusWeddingRing from "../../assets/marcusWeddingRing.jpeg";
 import marcusTattoo from "../../assets/marcusTattoo.jpeg";
@@ -292,6 +293,7 @@ export default function MarcusBriefPage({ backHref }: Props) {
     tattoo3: marcusTattoo3,
     gallery1: marcusGallery1,
     gallery2: marcusGallery2,
+    gallery4: marcusGallery3,
     gallery3: marcusID,
   };
 
@@ -351,8 +353,9 @@ export default function MarcusBriefPage({ backHref }: Props) {
 
   const marcusSoloGallery: { src: string; label: string }[] = [
     { src: marcusID, label: "(A): Ha Vee" },
-    { src: marcusGallery1, label: "(A): Cẩm Đíc Nhót" },
+    { src: marcusGallery3, label: "(A): Tì Khi" },
     { src: marcusGallery2, label: "(A): Thy An" },
+    { src: marcusGallery1, label: "(A): Cẩm Đíc Nhót" },
   ];
 
   const handleChipClick = (anchor: string) => {
