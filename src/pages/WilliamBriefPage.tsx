@@ -35,6 +35,7 @@ import williamGallery4 from "../../assets/williamGallery4.jpeg";
 import williamGallery5 from "../../assets/WilliamCartier.jpeg";
 import williamGallery6 from "../../assets/williamGallery6.jpeg"
 import williamGallery7 from "../../assets/williamGallery7.jpeg";
+import williamGallery8 from "../../assets/williamGallery8.jpeg";
 import williamAesthetic from "../../assets/williamAesthetic.jpeg";
 
 type Props = {
@@ -356,12 +357,12 @@ export default function WilliamBriefPage({ label, backHref }: Props) {
       artist: "(A): The Breadsident",
     },
     {
-      src: williamGallery1,
-      artist: "(A): ihn.",
+      src: williamGallery8,
+      artist: "(A): Lê Ly",
     },
     {
-      src: williamGallery2,
-      artist: "(A): Bảo Khánhh",
+      src: williamGallery7,
+      artist: "(A): Tinh Tú",
     },
     {
       src: williamGallery3,
@@ -373,12 +374,16 @@ export default function WilliamBriefPage({ label, backHref }: Props) {
     },
     {
       src: williamGallery6,
-      artist: "(A): Đẹptrai Giaiđoạncuối"
+      artist: "(A): Đẹptrai Giaiđoạncuối",
     },
     {
-      src: williamGallery7,
-      artist: "(A): Tinh Tú"
-    }
+      src: williamGallery2,
+      artist: "(A): Bảo Khánhh",
+    },
+    {
+      src: williamGallery1,
+      artist: "(A): ihn.",
+    },
   ]
 
 
