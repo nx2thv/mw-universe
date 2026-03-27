@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import marcusBriefPage from "../../assets/marcusBriefPage.jpg";
+import FloatingSoundtrackBar from "../components/FloatingSoundtrackBar";
 import HeroScrollPage from "../components/HeroScrollPage";
 import GalleryLightbox, {
   type GalleryLightboxImage,
@@ -44,6 +45,9 @@ type Section = {
   body?: string;
   bullets: SectionBullet[];
 };
+
+const marcusPlaylistEmbedUrl =
+  "https://open.spotify.com/embed/playlist/2XfYN0FRWwECxSKLk333qZ?utm_source=generator&theme=0";
 
 export default function MarcusBriefPage({ backHref }: Props) {
   const { language } = useLanguage();
@@ -495,6 +499,13 @@ export default function MarcusBriefPage({ backHref }: Props) {
                             className="w-full h-auto object-contain block"
                           />
                         </figure>
+
+                        <div className="marcus-basic-info-media__playlist">
+                          <FloatingSoundtrackBar
+                            title="Marcus's soundtrack"
+                            embedUrl={marcusPlaylistEmbedUrl}
+                          />
+                        </div>
                       </div>
                     )}
 

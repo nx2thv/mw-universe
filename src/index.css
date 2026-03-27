@@ -1160,6 +1160,35 @@ section[data-section-index] {
   color: #e2e8f0;
 }
 
+.soundtrack-bar {
+  width: min(100%, 4000px);
+}
+
+.soundtrack-bar__shell {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.soundtrack-bar__embed,
+.soundtrack-bar__placeholder {
+  display: block;
+  width: 100%;
+  height: 352px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+}
+
+.soundtrack-bar__placeholder {
+  display: none;
+}
+
+.william-basic-info-media__playlist {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
 @keyframes gallery-lightbox-fade {
   from {
     opacity: 0;
@@ -1186,6 +1215,7 @@ section[data-section-index] {
   .gallery-lightbox,
   .gallery-lightbox__dialog {
     animation: none;
+    transition: none;
   }
 }
 
@@ -1197,6 +1227,13 @@ section[data-section-index] {
 
   .gallery-figure {
     aspect-ratio: 4/5;
+  }
+}
+
+@media (max-width: 640px) {
+  .soundtrack-bar__embed,
+  .soundtrack-bar__placeholder {
+    height: 152px;
   }
 }
 
@@ -1290,6 +1327,12 @@ section[data-section-index] {
   max-width: 560px;
 }
 
+.marcus-basic-info-media__playlist {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
 .william-basic-info-media {
   display: flex;
   flex-direction: column;
@@ -1332,19 +1375,47 @@ section[data-section-index] {
   .marcus-scroll-card-inner {
     height: 100%;
   }
+
+  .marcus-basic-info-media {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 560px));
+    justify-content: center;
+    align-items: start;
+    gap: 1.5rem;
+  }
+
+    @media (min-width: 1024px) {
+  .marcus-basic-info-media__item:first-child {
+    transform: translateX(-78px);
+  }
 }
 
-@media (min-width: 1200px) {
-  .marcus-basic-info-media,
+  .marcus-basic-info-media__playlist {
+    grid-column: 1 / -1;
+  }
+
   .william-basic-info-media {
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 500px));
     justify-content: center;
-    align-items: flex-start;
+    align-items: start;
+    gap: 2rem;
+  }
+  
+  @media (min-width: 1024px) {
+  .william-basic-info-media__item:first-child {
+    transform: translateX(-78px);
+  }
+}
+
+  .william-basic-info-media__playlist {
+    grid-column: 1 / -1;
   }
 }
 
 .ref-image {
   border-radius: 0 !important;
+  left: 20px;
 }
 
 .scroll-card {

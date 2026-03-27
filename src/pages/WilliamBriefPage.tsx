@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import williamBriefPage from "../../assets/williamBriefPage.jpeg";
+import FloatingSoundtrackBar from "../components/FloatingSoundtrackBar";
 import HeroScrollPage from "../components/HeroScrollPage";
 import GalleryLightbox, {
   type GalleryLightboxImage,
@@ -51,6 +52,9 @@ type Section = {
   body?: string;
   bullets?: SectionBullet[];
 };
+
+const williamPlaylistEmbedUrl =
+  "https://open.spotify.com/embed/playlist/1VOTjluTY49A7FXF1PlyJK?utm_source=generator&theme=0";
 
 export default function WilliamBriefPage({ label, backHref }: Props) {
   const { language } = useLanguage();
@@ -396,48 +400,48 @@ export default function WilliamBriefPage({ label, backHref }: Props) {
 
   return (
     <HeroScrollPage
-      backHref={backHref}
-      backgroundImage={williamBriefPage}
-      kicker={t.kicker}
-      title={t.title}
-      subtitle={t.subtitle}
-      pageClassName="william-brief-page"
-      bodyClassName="william-brief-body scroll-smooth"
-    >
-      {/* INTRO + UNDERLINED NAV */}
-      <section className="border-t border-neutral-200 min-h-[120vh] flex flex-col items-center justify-center px-4">
-        <div className="max-w-2xl mx-auto text-center">
-          {t.intro && (
-            <div className="max-w-4xl mx-auto px-6 md:px-10">
-              <p className="whitespace-pre-line text-xs md:text-sm md:leading-[1.9] leading-[1.8] tracking-[0.18] md:tracking-[0.2em] uppercase text-neutral-800">
-                {t.intro}
-              </p>
-            </div>
-          )}
+        backHref={backHref}
+        backgroundImage={williamBriefPage}
+        kicker={t.kicker}
+        title={t.title}
+        subtitle={t.subtitle}
+        pageClassName="william-brief-page"
+        bodyClassName="william-brief-body scroll-smooth"
+      >
+        {/* INTRO + UNDERLINED NAV */}
+        <section className="border-t border-neutral-200 min-h-[120vh] flex flex-col items-center justify-center px-4">
+          <div className="max-w-2xl mx-auto text-center">
+            {t.intro && (
+              <div className="max-w-4xl mx-auto px-6 md:px-10">
+                <p className="whitespace-pre-line text-xs md:text-sm md:leading-[1.9] leading-[1.8] tracking-[0.18] md:tracking-[0.2em] uppercase text-neutral-800">
+                  {t.intro}
+                </p>
+              </div>
+            )}
 
-          <nav className="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-3 text-[11px] md:text-[11px] uppercase tracking-[0.16em]">
-            {sectionAnchors.map((section) => (
+            <nav className="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-3 text-[11px] md:text-[11px] uppercase tracking-[0.16em]">
+              {sectionAnchors.map((section) => (
+                <button
+                  key={section.anchor}
+                  type="button"
+                  onClick={() => handleChipClick(section.anchor)}
+                  className="nav-chip bg-transparent border-0 pb-1 text-neutral-800 border-b border-transparent hover:border-neutral-900 hover:text-neutral-900 focus:outline-none underline"
+                >
+                  {section.kicker}
+                </button>
+              ))}
+
+              {/* F. Gallery nav chip */}
               <button
-                key={section.anchor}
                 type="button"
-                onClick={() => handleChipClick(section.anchor)}
+                onClick={() => handleChipClick("gallery")}
                 className="nav-chip bg-transparent border-0 pb-1 text-neutral-800 border-b border-transparent hover:border-neutral-900 hover:text-neutral-900 focus:outline-none underline"
               >
-                {section.kicker}
+                F. Gallery
               </button>
-            ))}
-
-            {/* F. Gallery nav chip */}
-            <button
-              type="button"
-              onClick={() => handleChipClick("gallery")}
-              className="nav-chip bg-transparent border-0 pb-1 text-neutral-800 border-b border-transparent hover:border-neutral-900 hover:text-neutral-900 focus:outline-none underline"
-            >
-              F. Gallery
-            </button>
-          </nav>
-        </div>
-      </section>
+            </nav>
+          </div>
+        </section>
 
       <div className="william-brief-content max-w-6xl mx-auto px-6 md:px-10 lg:px-16 py-12 md:py-16">
         {/* sections */}
@@ -521,6 +525,12 @@ export default function WilliamBriefPage({ label, backHref }: Props) {
                             className="w-full h-auto object-contain block"
                           />
                         </figure>
+                        <div className="william-basic-info-media__playlist">
+                          <FloatingSoundtrackBar
+                            title="William's soundtrack"
+                            embedUrl={williamPlaylistEmbedUrl}
+                          />
+                        </div>
                       </div>
                     ) : (isFaceSection || isSilhouetteSection || isTattooSection) && images.length > 1 ? (
                       <div className="face-image-stack">
