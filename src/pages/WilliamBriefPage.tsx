@@ -54,7 +54,7 @@ type Section = {
 };
 
 const williamPlaylistEmbedUrl =
-  "https://open.spotify.com/embed/playlist/1VOTjluTY49A7FXF1PlyJK?utm_source=generator&theme=0";
+  "https://open.spotify.com/embed/playlist/1VOTjluTY49A7FXF1PlyJK?utm_source=generator&theme=0&cache=hisgoldie";
 
 export default function WilliamBriefPage({ label, backHref }: Props) {
   const { language } = useLanguage();
