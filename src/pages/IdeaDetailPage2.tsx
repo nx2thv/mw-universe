@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
+import { openBriefDocument } from "../lib/briefLinks";
 import { supabase } from "../lib/supabaseClients";
 import { normalizeCharacter, type CommissionIdea } from "../data/commissionIdeas";
 import { useLanguage } from "../LanguageContext";
@@ -11,7 +12,7 @@ type DbIdeaRow = {
     pair?: string | null;
     status: string;
     preview: string;
-    docUrl: string;
+    briefPath: string;
     nsfw: string | null;
     assigned_to?: string | null;   
 };
@@ -29,7 +30,7 @@ export default function IdeaDetailPage() {
         async function fetchIdea() {
             const { data, error } = await supabase
                 .from("commission_ideas")
-                .select("*")
+                .select("id, title, character, pair, status, preview, briefPath, nsfw")
                 .eq("id", id)
                 .maybeSingle<DbIdeaRow>();
 
@@ -43,9 +44,7 @@ export default function IdeaDetailPage() {
                     status: data.status as CommissionIdea["status"],
                     nsfw: data.nsfw as CommissionIdea["nsfw"],
                     preview: data.preview,
-                    docUrl: data.docUrl.startsWith("/")
-                        ? data.docUrl
-                        : `/${data.docUrl}`,
+                    briefPath: data.briefPath,
                 };
                 setIdea(mapped);
             }
@@ -81,6 +80,14 @@ export default function IdeaDetailPage() {
     }
 
     const isVi = language === "vi";
+    const handleOpenBrief = async () => {
+        try {
+            await openBriefDocument(idea.briefPath);
+        } catch (error) {
+            console.error("Could not open brief:", error);
+            window.alert("Could not open this brief right now.");
+        }
+    };
 
     return (
         <main className="min-h-screen bg-gradient-to-b from-[#111827] via-[#111827] to-[#e5e7eb] text-slate-100 px-4 py-10 md:px-10 lg:px-16">
@@ -100,14 +107,13 @@ export default function IdeaDetailPage() {
 
             {/* LINK TO PDF IN NEW TAB */}
             <section className="max-w-5xl mx-auto mt-6">
-                <a
-                    href={idea.docUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs uppercase tracking-[0.18em] underline underline-offset-4 hover:text-white"
+                <button
+                    type="button"
+                    onClick={handleOpenBrief}
+                    className="bg-transparent border-0 p-0 cursor-pointer text-inherit font-inherit text-xs uppercase tracking-[0.18em] underline underline-offset-4 hover:text-white"
                 >
                     OPEN FULL BRIEF (PDF) →
-                </a>
+                </button>
             </section>
         </main>
     );

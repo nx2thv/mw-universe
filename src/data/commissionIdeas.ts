@@ -8,7 +8,7 @@ export type CommissionIdea = {
     character?: CharacterType | null;
     status: StatusType;
     preview: string;   // short teaser (shown on card)
-    docUrl: string;    // link to Google Doc / PDF with full brief
+    briefPath: string; // storage path used to generate a signed brief URL
     assignedTo?: string | null;
     nsfw: NsfwType;
 };

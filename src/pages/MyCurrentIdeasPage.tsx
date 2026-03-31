@@ -8,6 +8,7 @@ import {
   type NsfwType,
 } from "../data/commissionIdeas";
 import { useLanguage } from "../LanguageContext";
+import { openBriefDocument } from "../lib/briefLinks";
 import { supabase } from "../lib/supabaseClients";
 import Lottie from "lottie-react";
 import catPlaying from "../../assets/lottie/Cat playing animation.json";
@@ -106,22 +107,20 @@ export default function MyCurrentIdeasPage() {
     async function fetchIdeas() {
       const { data, error } = await supabase
         .from("commission_ideas")
-        .select("*");
-
-      console.log("Supabase result:", { data, error });
+        .select("id, title, character, pair, status, preview, briefPath, assigned_to, nsfw");
 
       if (error) {
         console.error("Supabase fetch error:", error.message);
 
       } else if (data) {
-        // Map DB columns (doc_url) → front-end type (docUrl)
+        // Map DB columns to the public brief card model.
         const mapped: CommissionIdea[] = data.map((row: any) => ({
           id: row.id,
           title: row.title,
           character: normalizeCharacter(row.character, row.pair),
           status: row.status,
           preview: row.preview,
-          docUrl: row.docUrl,
+          briefPath: row.briefPath,
           assignedTo: row.assigned_to ?? null,
           nsfw: (row.nsfw as NsfwType) ?? "sfw",
         }));
@@ -310,6 +309,14 @@ function IdeaCard({ idea }: { idea: CommissionIdea }) {
           ? f.couple
           : f.na;
   const nsfwLabel = idea.nsfw === "nsfw" ? f.nsfwLabel : f.sfw;
+  const handleOpenBrief = async () => {
+    try {
+      await openBriefDocument(idea.briefPath);
+    } catch (error) {
+      console.error("Could not open brief:", error);
+      window.alert("Could not open this brief right now.");
+    }
+  };
 
   return (
     <article className="group card flex idea-card flex-col text-center">
@@ -339,14 +346,13 @@ function IdeaCard({ idea }: { idea: CommissionIdea }) {
 
       <div className="mt-auto flex items-center justify-between text-[11px] uppercase tracking-[0.12em]">
         <StatusPill status={idea.status} assignedTo={idea.assignedTo} />
-        <a
-          href={idea.docUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="underline-offset-4 hover:underline opacity-80 group-hover:opacity-100"
+        <button
+          type="button"
+          onClick={handleOpenBrief}
+          className="bg-transparent border-0 p-0 cursor-pointer text-inherit font-inherit underline-offset-4 hover:underline opacity-80 group-hover:opacity-100"
         >
           {t.openBrief}
-        </a>
+        </button>
       </div>
     </article>
   );
