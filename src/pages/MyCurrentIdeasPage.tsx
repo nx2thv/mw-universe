@@ -11,7 +11,7 @@ import { useLanguage } from "../LanguageContext";
 import { openBriefDocument } from "../lib/briefLinks";
 import { supabase } from "../lib/supabaseClients";
 import Lottie from "lottie-react";
-import catPlaying from "../../assets/lottie/Cat playing animation.json";
+import elephantLoading from "../../assets/lottie/elephant-loading.json";
 
 const translations = {
   en: {
@@ -107,7 +107,7 @@ export default function MyCurrentIdeasPage() {
     async function fetchIdeas() {
       const { data, error } = await supabase
         .from("commission_ideas")
-        .select("id, title, character, pair, status, preview, briefPath, assigned_to, nsfw");
+        .select("id, title, character, status, preview, brief_path, assigned_to, nsfw");
 
       if (error) {
         console.error("Supabase fetch error:", error.message);
@@ -117,10 +117,10 @@ export default function MyCurrentIdeasPage() {
         const mapped: CommissionIdea[] = data.map((row: any) => ({
           id: row.id,
           title: row.title,
-          character: normalizeCharacter(row.character, row.pair),
+          character: normalizeCharacter(row.character),
           status: row.status,
           preview: row.preview,
-          briefPath: row.briefPath,
+          briefPath: row.brief_path,
           assignedTo: row.assigned_to ?? null,
           nsfw: (row.nsfw as NsfwType) ?? "sfw",
         }));
@@ -178,11 +178,8 @@ export default function MyCurrentIdeasPage() {
           {loading && (
             <div className="col-span-full flex flex-col items-center justify-center py-10 opacity-90">
               <div className="w-[181px] md:w-[220px] mx-auto flex justify-center">
-                <Lottie animationData={catPlaying} loop />
+                <Lottie animationData={elephantLoading} loop />
               </div>
-              <p className="ideas-loading-label mt-3 text-xs uppercase tracking-[0.18em] text-center whitespace-nowrap">
-                Loading ideas…
-              </p>
             </div>
           )}
 
@@ -349,7 +346,7 @@ function IdeaCard({ idea }: { idea: CommissionIdea }) {
         <button
           type="button"
           onClick={handleOpenBrief}
-          className="bg-transparent border-0 p-0 cursor-pointer text-inherit font-inherit underline-offset-4 hover:underline opacity-80 group-hover:opacity-100"
+          className="idea-link bg-transparent border-0 p-0 cursor-pointer font-inherit text-slate-300 underline underline-offset-4 transition-colors hover:text-white focus:outline-none opacity-80 group-hover:opacity-100 uppercase"
         >
           {t.openBrief}
         </button>

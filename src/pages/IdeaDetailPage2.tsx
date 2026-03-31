@@ -9,10 +9,9 @@ type DbIdeaRow = {
     id: string;
     title: string;
     character?: string | null;
-    pair?: string | null;
     status: string;
     preview: string;
-    briefPath: string;
+    brief_path: string;
     nsfw: string | null;
     assigned_to?: string | null;   
 };
@@ -30,7 +29,7 @@ export default function IdeaDetailPage() {
         async function fetchIdea() {
             const { data, error } = await supabase
                 .from("commission_ideas")
-                .select("id, title, character, pair, status, preview, briefPath, nsfw")
+                .select("id, title, character, status, preview, brief_path, nsfw")
                 .eq("id", id)
                 .maybeSingle<DbIdeaRow>();
 
@@ -40,11 +39,11 @@ export default function IdeaDetailPage() {
                 const mapped: CommissionIdea = {
                     id: data.id,
                     title: data.title,
-                    character: normalizeCharacter(data.character, data.pair),
+                    character: normalizeCharacter(data.character),
                     status: data.status as CommissionIdea["status"],
                     nsfw: data.nsfw as CommissionIdea["nsfw"],
                     preview: data.preview,
-                    briefPath: data.briefPath,
+                    briefPath: data.brief_path,
                 };
                 setIdea(mapped);
             }
@@ -110,7 +109,7 @@ export default function IdeaDetailPage() {
                 <button
                     type="button"
                     onClick={handleOpenBrief}
-                    className="bg-transparent border-0 p-0 cursor-pointer text-inherit font-inherit text-xs uppercase tracking-[0.18em] underline underline-offset-4 hover:text-white"
+                    className="idea-link bg-transparent border-0 p-0 cursor-pointer font-inherit text-xs uppercase tracking-[0.18em] text-slate-300 underline underline-offset-4 transition-colors hover:text-white focus:outline-none"
                 >
                     OPEN FULL BRIEF (PDF) →
                 </button>

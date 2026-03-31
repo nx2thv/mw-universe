@@ -1,4 +1,4 @@
-import { supabase } from "./supabaseClients";
+import { supabase, supabaseUrl } from "./supabaseClients";
 
 type StorageRef = {
   bucket: string;
@@ -16,6 +16,11 @@ function toAbsoluteUrl(value: string) {
   }
 
   return value;
+}
+
+function toSupabaseUrl(value: string) {
+  if (isAbsoluteUrl(value)) return value;
+  return new URL(value, supabaseUrl).toString();
 }
 
 function parseStorageRef(briefRef: string): StorageRef | null {
@@ -70,26 +75,20 @@ export async function resolveBriefUrl(briefRef: string, expiresIn = 120) {
     throw new Error(error?.message || "Could not create a signed brief URL.");
   }
 
-  return data.signedUrl;
+  return toSupabaseUrl(data.signedUrl);
 }
 
 export async function openBriefDocument(briefRef: string, expiresIn = 120) {
-  const popup = window.open("", "_blank", "noopener,noreferrer");
+  const loadingUrl = new URL("/brief-loading", window.location.origin);
+  loadingUrl.searchParams.set("brief", briefRef);
+  loadingUrl.searchParams.set("expiresIn", String(expiresIn));
 
-  try {
-    const url = await resolveBriefUrl(briefRef, expiresIn);
+  const popup = window.open(loadingUrl.toString(), "_blank");
 
-    if (popup) {
-      popup.location.href = url;
-      return;
-    }
-
-    window.open(url, "_blank", "noopener,noreferrer");
-  } catch (error) {
-    if (popup) {
-      popup.close();
-    }
-
-    throw error;
+  if (popup) {
+    popup.opener = null;
+    return;
   }
+
+  window.location.assign(loadingUrl.toString());
 }

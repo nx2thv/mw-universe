@@ -7,6 +7,7 @@ import GlobalNav from "../components/GlobalNav";
 import MyCurrentIdeasPage from "../pages/MyCurrentIdeasPage";
 import AboutThem from "../pages/AboutThem";
 import Footer from "../components/Footer";
+import BriefLoadingPage from "../pages/BriefLoadingPage";
 
 function ScrollToTop() {
     const { pathname } = useLocation();
@@ -18,25 +19,31 @@ function ScrollToTop() {
     return null;
 }
 
+function AppLayout() {
+    const { pathname } = useLocation();
+    const isBriefLoadingRoute = pathname === "/brief-loading";
+
+    return (
+        <>
+        <ScrollToTop />
+        {!isBriefLoadingRoute && <GlobalNav />}
+        <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/ideas" element={<MyCurrentIdeasPage />} />
+            <Route path="/them" element={<AboutThem />} />
+            <Route path="/brief-loading" element={<BriefLoadingPage />} />
+            <Route path=":id" element={<BriefPage />} />
+        </Routes>
+        {!isBriefLoadingRoute && <Footer />}
+        </>
+    );
+}
+
 export default function AppRouter() {
     return (
         <BrowserRouter>
         <LanguageProvider>
-        <ScrollToTop />
-        <GlobalNav />
-        <Routes>
-            {/* Home page */}
-            <Route path="/" element={<Home />} />
-
-            {/* My current ideas */}
-            <Route path="/ideas" element={<MyCurrentIdeasPage />} />
-
-            <Route path="/them" element={<AboutThem />} />
-            {/* Character long-form page (dynamic) */}
-            <Route path=":id" element={<BriefPage />} />
-
-        </Routes>
-        <Footer />
+        <AppLayout />
         </LanguageProvider>
         </BrowserRouter>
     );
