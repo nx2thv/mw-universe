@@ -60,7 +60,7 @@ function parseStorageRef(briefRef: string): StorageRef | null {
   return null;
 }
 
-export async function resolveBriefUrl(briefRef: string, expiresIn = 120) {
+export async function resolveBriefUrl(briefRef: string, expiresIn = 86400) {
   const storageRef = parseStorageRef(briefRef);
 
   if (!storageRef) {
@@ -78,7 +78,7 @@ export async function resolveBriefUrl(briefRef: string, expiresIn = 120) {
   return toSupabaseUrl(data.signedUrl);
 }
 
-export async function openBriefDocument(briefRef: string, expiresIn = 120) {
+export async function openBriefDocument(briefRef: string, expiresIn = 86400) {
   const loadingUrl = new URL("/brief-loading", window.location.origin);
   loadingUrl.searchParams.set("brief", briefRef);
   loadingUrl.searchParams.set("expiresIn", String(expiresIn));

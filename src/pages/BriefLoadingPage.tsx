@@ -37,7 +37,7 @@ export default function BriefLoadingPage() {
 
   useEffect(() => {
     const briefRef = searchParams.get("brief");
-    const expiresIn = Number(searchParams.get("expiresIn") || "120");
+    const expiresIn = Number(searchParams.get("expiresIn") || "86400");
 
     if (!briefRef) {
       setErrorMessage("Missing brief reference.");
