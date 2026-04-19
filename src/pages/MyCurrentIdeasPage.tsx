@@ -12,6 +12,32 @@ import { openBriefDocument } from "../lib/briefLinks";
 import { supabase } from "../lib/supabaseClients";
 import Lottie from "lottie-react";
 import elephantLoading from "../../assets/lottie/elephant-loading.json";
+import PageCredit from "../components/PageCredit";
+
+type DustSpec = {
+  left: string;
+  top: string;
+  size: string;
+  duration: string;
+  delay: string;
+  driftX: string;
+  driftY: string;
+};
+
+const dustSpecs: DustSpec[] = [
+  { left: "12%", top: "18%", size: "2px", duration: "18s", delay: "-4s", driftX: "18px", driftY: "-26px" },
+  { left: "24%", top: "72%", size: "3px", duration: "24s", delay: "-10s", driftX: "-14px", driftY: "-34px" },
+  { left: "38%", top: "28%", size: "2px", duration: "20s", delay: "-7s", driftX: "12px", driftY: "-22px" },
+  { left: "52%", top: "82%", size: "2px", duration: "28s", delay: "-14s", driftX: "-10px", driftY: "-42px" },
+  { left: "66%", top: "22%", size: "3px", duration: "22s", delay: "-11s", driftX: "20px", driftY: "-18px" },
+  { left: "78%", top: "64%", size: "2px", duration: "26s", delay: "-9s", driftX: "-16px", driftY: "-28px" },
+  { left: "88%", top: "34%", size: "2px", duration: "19s", delay: "-6s", driftX: "10px", driftY: "-20px" },
+  { left: "16%", top: "48%", size: "2px", duration: "23s", delay: "-13s", driftX: "14px", driftY: "-24px" },
+  { left: "44%", top: "58%", size: "3px", duration: "25s", delay: "-8s", driftX: "-12px", driftY: "-30px" },
+  { left: "72%", top: "46%", size: "2px", duration: "21s", delay: "-5s", driftX: "16px", driftY: "-18px" },
+  { left: "58%", top: "10%", size: "2px", duration: "27s", delay: "-15s", driftX: "-8px", driftY: "-24px" },
+  { left: "30%", top: "90%", size: "3px", duration: "29s", delay: "-12s", driftX: "18px", driftY: "-36px" },
+];
 
 const translations = {
   en: {
@@ -135,13 +161,28 @@ export default function MyCurrentIdeasPage() {
   }, []);
 
   return (
-    <main
-      className="min-h-screen text-slate-100"
-      style={{
-        background:
-          "linear-gradient(to bottom, #0B0F14 0%, #0B0F14 40%, #10161F 100%)",
-      }}
-    >
+    <main className="about-portal relative min-h-screen overflow-hidden text-slate-100">
+      <div className="about-portal__vignette pointer-events-none absolute inset-0" aria-hidden="true" />
+      <div className="about-portal__grain pointer-events-none absolute inset-0" aria-hidden="true" />
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        {dustSpecs.map((spec, index) => (
+          <span
+            key={`${spec.left}-${spec.top}-${index}`}
+            className="about-portal__dust"
+            style={{
+              left: spec.left,
+              top: spec.top,
+              width: spec.size,
+              height: spec.size,
+              animationDuration: spec.duration,
+              animationDelay: spec.delay,
+              ["--dust-x" as string]: spec.driftX,
+              ["--dust-y" as string]: spec.driftY,
+            }}
+          />
+        ))}
+      </div>
+      <div className="relative z-10">
       <header className="ideas-page-header relative w-full bg-transparent border-b text-slate-100 shadow-md px-6 pt-20 md:pt-16 pb-10 flex flex-col items-center text-center gap-4">
         <div className="ideas-page-heading text-center">
           <h1 className="ideas-page-title mt-10 md:mt-0 drop-shadow">
@@ -194,6 +235,8 @@ export default function MyCurrentIdeasPage() {
               <IdeaCard key={idea.id} idea={idea} />
             ))}
         </section>
+      </div>
+      <PageCredit tone="on-dark" className="px-6 pb-12" />
       </div>
     </main>
   );

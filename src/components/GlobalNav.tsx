@@ -30,6 +30,7 @@ export default function GlobalNav() {
   const [navOpen, setNavOpen] = useState(false);
   const [mobileLangOpen, setMobileLangOpen] = useState(false);
   const location = useLocation();
+  const isStoryRoute = location.pathname.startsWith("/them/story");
   const t = translations[language] || translations.en;
 
   const closeNav = () => {
@@ -43,21 +44,17 @@ export default function GlobalNav() {
     setMobileLangOpen(false);
   }, [location.pathname]);
 
-  const hideNav = location.pathname === "/them";
-
-  if (hideNav) {
-    return null;
-  }
   
+
   return (
     <>
-      <div className="global-nav-anchor">
+      <div className={`global-nav-anchor ${isStoryRoute ? "global-nav-anchor--story" : ""}`}>
         {!navOpen && (
           <button
             type="button"
             aria-label="Toggle navigation"
             onClick={() => setNavOpen((open) => !open)}
-            className="hamburger-button"
+            className={`hamburger-button ${isStoryRoute ? "hamburger-button--story-masthead" : ""}`}
           >
             <span></span>
             <span></span>
@@ -67,12 +64,15 @@ export default function GlobalNav() {
       </div>
 
       {/* Mobile overlay */}
-      <div className={`mobile-overlay ${navOpen ? "open" : ""}`} onClick={closeNav}>
+      <div
+        className={`mobile-overlay ${navOpen ? "open" : ""} ${isStoryRoute ? "mobile-overlay--story" : ""}`}
+        onClick={closeNav}
+      >
         <div className="mobile-overlay-backdrop"></div>
       </div>
 
       {/* Mobile slide-out drawer */}
-      <aside className={`mobile-drawer ${navOpen ? "open" : ""}`}>
+      <aside className={`mobile-drawer ${navOpen ? "open" : ""} ${isStoryRoute ? "mobile-drawer--story" : ""}`}>
         <nav className="flex h-full flex-col items-center justify-center gap-6 px-10 text-lg">
           <Link to="/" className={`${mobileNavItem} hover:bg-white/10`} onClick={closeNav}>
             {t.home}

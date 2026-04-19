@@ -6,6 +6,7 @@ import { LanguageProvider } from "../LanguageContext";
 import GlobalNav from "../components/GlobalNav";
 import MyCurrentIdeasPage from "../pages/MyCurrentIdeasPage";
 import AboutThem from "../pages/AboutThem";
+import TheirStory from "../pages/TheirStory";
 import Footer from "../components/Footer";
 import BriefLoadingPage from "../pages/BriefLoadingPage";
 
@@ -22,6 +23,13 @@ function ScrollToTop() {
 function AppLayout() {
     const { pathname } = useLocation();
     const isBriefLoadingRoute = pathname === "/brief-loading";
+    const normalizedPathname = pathname.replace(/\/+$/, "") || "/";
+    const isAboutThemRoute = normalizedPathname.startsWith("/them");
+    const isFooterlessRoute =
+        normalizedPathname === "/ideas" ||
+        normalizedPathname === "/marcus" ||
+        normalizedPathname === "/william" ||
+        isAboutThemRoute;
 
     return (
         <>
@@ -31,10 +39,12 @@ function AppLayout() {
             <Route path="/" element={<Home />} />
             <Route path="/ideas" element={<MyCurrentIdeasPage />} />
             <Route path="/them" element={<AboutThem />} />
+            <Route path="/them/story" element={<TheirStory />} />
+            <Route path="/them/au" element={<AboutThem />} />
             <Route path="/brief-loading" element={<BriefLoadingPage />} />
             <Route path=":id" element={<BriefPage />} />
         </Routes>
-        {!isBriefLoadingRoute && <Footer />}
+        {!isBriefLoadingRoute && !isFooterlessRoute && <Footer />}
         </>
     );
 }

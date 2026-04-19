@@ -6,6 +6,7 @@ import HeroScrollPage from "../components/HeroScrollPage";
 import GalleryLightbox, {
   type GalleryLightboxImage,
 } from "../components/GalleryLightbox";
+import PageCredit from "../components/PageCredit";
 import { useLanguage } from "../LanguageContext";
 
 import marcusBeard from "../../assets/marcusBeard.jpeg";
@@ -117,7 +118,7 @@ export default function MarcusBriefPage({ backHref }: Props) {
       kicker: "Delta Force dossier",
       title: "Marcus Hayes",
       subtitle: "Precision in every breath. Discipline in every step.",
-      back: "← Back home",
+      back: "← Return home",
       intro:
         "This page consolidates Marcus' operator profile:\n" +
         "Capturing his features, combat-built physique, defining traits, and artistic references.\n" +
@@ -697,10 +698,11 @@ export default function MarcusBriefPage({ backHref }: Props) {
 
           <Link
             to={backHref}
-            className="block mt-12 text-sm uppercase tracking-[0.16em] text-slate-300 hover:text-white transition"
+            className="backHref block mt-12 text-sm uppercase tracking-[0.16em] text-slate-300 hover:text-white transition"
           >
             {t.back}
           </Link>
+          <PageCredit tone="on-dark" className="mt-10" />
 
           <GalleryLightbox
             image={selectedGalleryImage}

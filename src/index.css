@@ -403,6 +403,10 @@ body {
   z-index: 120;
 }
 
+.global-nav-anchor--story {
+  z-index: 360;
+}
+
 .hamburger-button {
   position: absolute;
   top: calc(env(safe-area-inset-top, 0px) + 12px);
@@ -419,6 +423,14 @@ body {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
   cursor: pointer;
   transition: background 150ms ease, transform 150ms ease, opacity 150ms ease;
+}
+
+.hamburger-button--story-masthead {
+  z-index: 360;
+  top: calc(env(safe-area-inset-top, 0px) + 10px);
+  left: calc(env(safe-area-inset-left, 0px) + 12px);
+  background: rgba(23, 19, 17, 0.52);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.34);
 }
 
 .hamburger-button span {
@@ -442,6 +454,10 @@ body {
   pointer-events: auto;
 }
 
+.mobile-overlay--story {
+  z-index: 340;
+}
+
 .mobile-overlay-backdrop {
   position: absolute;
   inset: 0;
@@ -457,7 +473,7 @@ body {
   width: 25vw;
   min-width: 240px;
   max-width: 360px;
-  background: rgba(5, 10, 15, 0.75);
+  background: rgba(241, 242, 244, 0);
   backdrop-filter: blur(14px);
   color: #ffffff;
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.35);
@@ -470,6 +486,10 @@ body {
 .mobile-drawer.open {
   transform: translateX(0);
   opacity: 1;
+}
+
+.mobile-drawer--story {
+  z-index: 345;
 }
 
 footer {
@@ -486,6 +506,45 @@ footer {
 
 footer p {
   margin: 0.15rem 0;
+}
+
+.page-credit {
+  margin: 3.5rem auto 0;
+  text-align: center;
+  font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  line-height: 1.7;
+  max-width: min(42rem, 92vw);
+}
+
+.page-credit::before {
+  content: "";
+  display: block;
+  width: min(190px, 42vw);
+  height: 1px;
+  margin: 0 auto 0.85rem;
+}
+
+.page-credit--on-dark {
+  color: rgba(201, 207, 213, 0.62);
+}
+
+.page-credit--on-dark::before {
+  background: linear-gradient(90deg, transparent, rgba(201, 207, 213, 0.42), transparent);
+}
+
+.page-credit--on-light {
+  color: rgba(54, 65, 76, 0.62);
+}
+
+.page-credit--on-light::before {
+  background: linear-gradient(90deg, transparent, rgba(54, 65, 76, 0.34), transparent);
+}
+
+.page-credit--bottom {
+  margin-top: 0 !important;
 }
 
 .character-name {
@@ -1276,7 +1335,7 @@ section[data-section-index] {
 }
 
 .marcus-brief-page {
-  background: #020617;
+  background: #0c0f13;
   color: #f9fafb;
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
@@ -1288,6 +1347,14 @@ section[data-section-index] {
 .marcus-brief-body {
   background: transparent;
   color: inherit;
+}
+
+.marcus-brief-page .backHref {
+  color: white;
+}
+
+.william-brief-page .backHref {
+  color: black;
 }
 
 .marcus-scroll-strip {
@@ -1346,7 +1413,7 @@ section[data-section-index] {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   text-align: center;
-  color: #cbd5f5;
+  color: #f7f6f4;
   white-space: pre-line;
   text-wrap: balance;
 }
@@ -1522,7 +1589,7 @@ section[data-section-index] {
 }
 
 .william-brief-page {
-  background: #ffffff;
+  background: #f4f8f9;
   color: #111111;
   font-family: 'Lora', serif;
 }
@@ -1640,8 +1707,7 @@ section[data-section-index] {
 }
 
 .idea-card-preview {
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+  font-family: 'Lora', serif;
   color: #C9CFD5;
   line-height: 1.6;
 }
@@ -1651,20 +1717,21 @@ section[data-section-index] {
 }
 
 .idea-meta {
-  font-family: ui-sans-serif, system-ui;
+  font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   text-transform: uppercase;
   color: #6E7A85;
   font-size: 0.75rem;
 }
 
 .idea-id {
+  font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   color: #6E7A85 !important;
 }
 
 /* STATUS + "Open full brief" — UI font */
 .idea-status,
 .idea-link {
-  font-family: ui-sans-serif, system-ui;  
+  font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 .idea-link {

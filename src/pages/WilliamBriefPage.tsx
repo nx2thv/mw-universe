@@ -6,6 +6,7 @@ import HeroScrollPage from "../components/HeroScrollPage";
 import GalleryLightbox, {
   type GalleryLightboxImage,
 } from "../components/GalleryLightbox";
+import PageCredit from "../components/PageCredit";
 import { useLanguage } from "../LanguageContext";
 import williamBrows from "../../assets/williamBrows.jpeg";
 import williamEyes from "../../assets/williamEyesAndMark.jpeg";
@@ -134,7 +135,7 @@ export default function WilliamBriefPage({ label, backHref }: Props) {
       kicker: "Chanel Portfolio",
       title: label,
       subtitle: "Chanel's darling. Marcus' sweetheart.",
-      back: "← Back home",
+      back: "← Return home",
       intro:
         "This page gathers William's core reference in one editorial-style scroll:\n" +
         "overall vibe, features, colour palette, silhouette, tattoos, and past commissions.\n" +
@@ -775,10 +776,11 @@ export default function WilliamBriefPage({ label, backHref }: Props) {
 
         <Link
           to={backHref}
-          className="block mt-12 text-sm uppercase tracking-[0.16em] text-neutral-700 hover:text-neutral-900 transition"
+          className="backHref block mt-12 text-sm uppercase tracking-[0.16em] text-neutral-700 hover:text-neutral-900 transition"
         >
           {t.back}
         </Link>
+        <PageCredit tone="on-light" className="mt-10" />
 
         <GalleryLightbox
           image={selectedGalleryImage}
