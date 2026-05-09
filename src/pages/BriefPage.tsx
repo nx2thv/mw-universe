@@ -11,11 +11,10 @@ export default function BriefPage() {
   const { id } = useParams<{ id: string }>();
   const label = (id && LABELS[id]) || "Character";
   const isMarcus = id === "marcus";
-  const backHref = "/";
 
   if (isMarcus) {
-    return <MarcusBriefPage backHref={backHref} />;
+    return <MarcusBriefPage />;
   }
 
-  return <WilliamBriefPage label={label} backHref={backHref} />;
+  return <WilliamBriefPage label={label} />;
 }

@@ -24,8 +24,10 @@ function AppLayout() {
     const { pathname } = useLocation();
     const isBriefLoadingRoute = pathname === "/brief-loading";
     const normalizedPathname = pathname.replace(/\/+$/, "") || "/";
+    const isHomeRoute = normalizedPathname === "/";
     const isAboutThemRoute = normalizedPathname.startsWith("/them");
     const isFooterlessRoute =
+        isHomeRoute ||
         normalizedPathname === "/ideas" ||
         normalizedPathname === "/marcus" ||
         normalizedPathname === "/william" ||
@@ -34,7 +36,7 @@ function AppLayout() {
     return (
         <>
         <ScrollToTop />
-        {!isBriefLoadingRoute && <GlobalNav />}
+        {!isBriefLoadingRoute && !isHomeRoute && <GlobalNav />}
         <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/ideas" element={<MyCurrentIdeasPage />} />

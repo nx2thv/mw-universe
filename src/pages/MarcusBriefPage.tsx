@@ -1,5 +1,4 @@
 import { useEffect, useState, useRef } from "react";
-import { Link } from "react-router-dom";
 import marcusBriefPage from "../../assets/marcusBriefPage.jpg";
 import FloatingSoundtrackBar from "../components/FloatingSoundtrackBar";
 import HeroScrollPage from "../components/HeroScrollPage";
@@ -35,10 +34,6 @@ import marcusTattoo2 from "../../assets/marcusTattoo2.jpeg";
 import marcusTattoo3 from "../../assets/marcusTattoo3.jpeg";
 import marcusAesthetic from "../../assets/marcusAesthetic.jpeg";
 
-type Props = {
-  backHref: string;
-};
-
 type SectionBullet = string | { title: string; detail: string[] };
 type Section = {
   id: string;
@@ -50,7 +45,7 @@ type Section = {
 const marcusPlaylistEmbedUrl =
   "https://open.spotify.com/embed/playlist/2XfYN0FRWwECxSKLk333qZ?utm_source=generator&theme=0";
 
-export default function MarcusBriefPage({ backHref }: Props) {
+export default function MarcusBriefPage() {
   const { language } = useLanguage();
   const [visibleSections, setVisibleSections] = useState<Record<number, boolean>>({
     0: true,
@@ -372,7 +367,6 @@ export default function MarcusBriefPage({ backHref }: Props) {
 
   return (
     <HeroScrollPage
-      backHref={backHref}
       backgroundImage={marcusBriefPage}
       kicker={t.kicker}
       title={t.title}
@@ -696,12 +690,6 @@ export default function MarcusBriefPage({ backHref }: Props) {
             </div>
           </section>
 
-          <Link
-            to={backHref}
-            className="backHref block mt-12 text-sm uppercase tracking-[0.16em] text-slate-300 hover:text-white transition"
-          >
-            {t.back}
-          </Link>
           <PageCredit tone="on-dark" className="mt-10" />
 
           <GalleryLightbox

@@ -4,7 +4,7 @@ import Lottie from "lottie-react";
 import scrollArrow from "../../assets/lottie/Arrow Down Pulse.json";
 
 type Props = {
-  backHref: string;
+  backHref?: string;
   backgroundImage: string;
   kicker: string;
   title: string;
@@ -63,12 +63,14 @@ export default function HeroScrollPage({
           <p className="uppercase tracking-[0.16em] text-[#a7b0bf] text-xs md:text-sm">{kicker}</p>
           <h1 className="font-black leading-tight tracking-tight text-4xl md:text-5xl">{title}</h1>
           <p className="font-semibold text-[#c7cfd7] text-lg md:text-2xl">{subtitle}</p>
-          <Link
-            to={backHref}
-            className="absolute right-6 md:right-10 top-1/2 -translate-y-1/2 hidden sm:inline-flex font-semibold text-[#d5dcff] hover:text-white transition text-sm opacity-80"
-          >
-            {backLabel}
-          </Link>
+          {backHref ? (
+            <Link
+              to={backHref}
+              className="absolute right-6 md:right-10 top-1/2 -translate-y-1/2 hidden sm:inline-flex font-semibold text-[#d5dcff] hover:text-white transition text-sm opacity-80"
+            >
+              {backLabel}
+            </Link>
+          ) : null}
 
           {arrowVisible && (
             <Lottie

@@ -1,5 +1,4 @@
 import { useEffect, useState, useRef } from "react";
-import { Link } from "react-router-dom";
 import williamBriefPage from "../../assets/williamBriefPage.jpeg";
 import FloatingSoundtrackBar from "../components/FloatingSoundtrackBar";
 import HeroScrollPage from "../components/HeroScrollPage";
@@ -42,7 +41,6 @@ import williamAesthetic from "../../assets/williamAesthetic.jpeg";
 
 type Props = {
   label: string;
-  backHref: string;
 };
 
 type SectionBullet = string | { title: string; detail: string[] };
@@ -57,7 +55,7 @@ type Section = {
 const williamPlaylistEmbedUrl =
   "https://open.spotify.com/embed/playlist/4nFTksip42Gbu3jOcGnu3Q?utm_source=generator&theme=0";
 
-export default function WilliamBriefPage({ label, backHref }: Props) {
+export default function WilliamBriefPage({ label }: Props) {
   const { language } = useLanguage();
   const [visibleSections, setVisibleSections] = useState<Record<number, boolean>>({
     0: true,
@@ -401,7 +399,6 @@ export default function WilliamBriefPage({ label, backHref }: Props) {
 
   return (
     <HeroScrollPage
-        backHref={backHref}
         backgroundImage={williamBriefPage}
         kicker={t.kicker}
         title={t.title}
@@ -774,12 +771,6 @@ export default function WilliamBriefPage({ label, backHref }: Props) {
           </div>
         </section>
 
-        <Link
-          to={backHref}
-          className="backHref block mt-12 text-sm uppercase tracking-[0.16em] text-neutral-700 hover:text-neutral-900 transition"
-        >
-          {t.back}
-        </Link>
         <PageCredit tone="on-light" className="mt-10" />
 
         <GalleryLightbox
