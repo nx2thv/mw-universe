@@ -1,12 +1,12 @@
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
 import Home from "../pages/Home";
 import BriefPage from "../pages/BriefPage";
 import { LanguageProvider } from "../LanguageContext";
-import GlobalNav from "../components/GlobalNav";
+import UniversalTopBar from "../components/UniversalTopBar";
 import MyCurrentIdeasPage from "../pages/MyCurrentIdeasPage";
-import AboutThem from "../pages/AboutThem";
 import TheirStory from "../pages/TheirStory";
+import AuArchive from "../pages/AuArchive";
 import Footer from "../components/Footer";
 import BriefLoadingPage from "../pages/BriefLoadingPage";
 
@@ -18,6 +18,30 @@ function ScrollToTop() {
     }, [pathname]);
 
     return null;
+}
+
+function RouteTransitionOverlay() {
+    const { pathname } = useLocation();
+    const isFirstPaintRef = useRef(true);
+    const [transitionKey, setTransitionKey] = useState(0);
+
+    useEffect(() => {
+        if (isFirstPaintRef.current) {
+            isFirstPaintRef.current = false;
+            return;
+        }
+        setTransitionKey((prev) => prev + 1);
+    }, [pathname]);
+
+    if (transitionKey === 0) return null;
+
+    return (
+        <div
+            key={transitionKey}
+            className="route-transition-overlay"
+            aria-hidden="true"
+        />
+    );
 }
 
 function AppLayout() {
@@ -36,17 +60,18 @@ function AppLayout() {
     return (
         <>
         <ScrollToTop />
-        {!isBriefLoadingRoute && !isHomeRoute && <GlobalNav />}
+        {!isBriefLoadingRoute && !isHomeRoute && <UniversalTopBar />}
         <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/ideas" element={<MyCurrentIdeasPage />} />
-            <Route path="/them" element={<AboutThem />} />
+            <Route path="/them" element={<Navigate to="/them/story" replace />} />
             <Route path="/them/story" element={<TheirStory />} />
-            <Route path="/them/au" element={<AboutThem />} />
+            <Route path="/them/au" element={<AuArchive />} />
             <Route path="/brief-loading" element={<BriefLoadingPage />} />
             <Route path=":id" element={<BriefPage />} />
         </Routes>
         {!isBriefLoadingRoute && !isFooterlessRoute && <Footer />}
+        <RouteTransitionOverlay />
         </>
     );
 }

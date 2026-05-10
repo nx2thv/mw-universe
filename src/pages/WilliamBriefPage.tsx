@@ -57,9 +57,7 @@ const williamPlaylistEmbedUrl =
 
 export default function WilliamBriefPage({ label }: Props) {
   const { language } = useLanguage();
-  const [visibleSections, setVisibleSections] = useState<Record<number, boolean>>({
-    0: true,
-  });
+  const [visibleSections, setVisibleSections] = useState<Record<number, boolean>>({});
   const [selectedGalleryImage, setSelectedGalleryImage] =
     useState<GalleryLightboxImage | null>(null);
 
@@ -109,7 +107,7 @@ export default function WilliamBriefPage({ label }: Props) {
           }
         });
       },
-      { threshold: 0.35, rootMargin: "-28% 0px -22% 0px" }
+      { threshold: 0.08, rootMargin: "-6% 0px -6% 0px" }
     );
 
     const sectionEls = document.querySelectorAll("[data-section-index]");
@@ -403,6 +401,7 @@ export default function WilliamBriefPage({ label }: Props) {
         kicker={t.kicker}
         title={t.title}
         subtitle={t.subtitle}
+        showHero={false}
         pageClassName="william-brief-page"
         bodyClassName="william-brief-body scroll-smooth"
       >
@@ -441,15 +440,16 @@ export default function WilliamBriefPage({ label }: Props) {
           </div>
         </section>
 
-      <div className="william-brief-content max-w-6xl mx-auto px-6 md:px-10 lg:px-16 py-12 md:py-16">
+      <div className="william-brief-content william-brief-content-shell max-w-6xl mx-auto px-6 md:px-10 lg:px-16 py-12 md:py-16">
+        <div className="william-content-divider h-px w-full opacity-80 rounded-full" />
         {/* sections */}
         <div className="space-y-28 md:space-y-36">
           {sectionAnchors.map((section, sectionIndex) => {
-            const isVisible = visibleSections[sectionIndex] ?? true;
+            const isVisible = visibleSections[sectionIndex] ?? false;
 
             const animationClass = isVisible
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 translate-y-6";
+              ? "opacity-100 translate-y-0 scale-100"
+              : "opacity-0 translate-y-8 scale-[0.96]";
             const imageIds = sectionImageIds[section.id] || [];
             const images = imageIds.map((id) => imageMap[id]).filter(Boolean);
 
@@ -473,15 +473,15 @@ export default function WilliamBriefPage({ label }: Props) {
                 key={section.id}
                 id={section.anchor}
                 data-section-index={sectionIndex}
-                className={`py-16 lg:py-24 transition-all duration-700 ease-out ${animationClass}`}
+                className={`william-section py-16 lg:py-24 transition-all duration-[560ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${animationClass} ${isVisible ? "is-visible" : ""}`}
               >
                 {/* TEXT BLOCK */}
                 <div className="max-w-3xl mx-auto text-center space-y-4 leading-relaxed">
                   {/* kicker */}
                   <div
-                    className={`william-section-kicker text-[11px] md:text-xs uppercase tracking-[0.18em] text-neutral-600 transition-all duration-500 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
+                    className={`william-section-kicker text-[11px] md:text-xs uppercase tracking-[0.18em] text-neutral-600 transition-all duration-[560ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-4 scale-95"
                       }`}
-                    style={{ transitionDelay: isVisible ? "60ms" : "0ms" }}
+                    style={{ transitionDelay: isVisible ? "80ms" : "0ms" }}
                   >
                     {section.kicker}
                   </div>
@@ -489,9 +489,9 @@ export default function WilliamBriefPage({ label }: Props) {
                   {/* optional body paragraph */}
                   {bodyText && (
                     <p
-                      className={`william-body-text mt-4 whitespace-pre-line text-[12px] md:text-sm md:leading-[1.9] leading-[1.8] tracking-[0.16em] uppercase text-neutral-800 transition-all duration-500 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
+                      className={`william-body-text mt-4 whitespace-pre-line text-[12px] md:text-sm md:leading-[1.9] leading-[1.8] tracking-[0.16em] uppercase text-neutral-800 transition-all duration-[560ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-4 scale-95"
                         }`}
-                      style={{ transitionDelay: isVisible ? "180ms" : "0ms" }}
+                      style={{ transitionDelay: isVisible ? "170ms" : "0ms" }}
                     >
                       {bodyText}
                     </p>
@@ -500,10 +500,11 @@ export default function WilliamBriefPage({ label }: Props) {
 
                 {/* IMAGE BLOCK */}
                 <div
-                  className={`mt-10 flex ${isFaceSection || isSilhouetteSection || isTattooSection
+                  className={`mt-10 flex transition-all duration-[560ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-5 scale-95"} ${isFaceSection || isSilhouetteSection || isTattooSection
                     ? "justify-start"
                     : "justify-center"
                     }`}
+                  style={{ transitionDelay: isVisible ? "260ms" : "0ms" }}
                 >
                   {images.length > 0 ? (
                     // A. PALETTE – single image
@@ -559,7 +560,10 @@ export default function WilliamBriefPage({ label }: Props) {
                       isHairSection ? (
                         <div className="hair-grid max-w-4xl mx-auto">
                           {images.map((src, idx) => (
-                            <figure key={idx} className="hair-figure">
+                            <figure
+                              key={idx}
+                              className={`hair-figure william-hair-figure--stagger william-stagger-item william-stagger-item--${idx + 1}`}
+                            >
                               <img
                                 src={src}
                                 alt={`Hair style ${idx + 1}`}
@@ -608,7 +612,7 @@ export default function WilliamBriefPage({ label }: Props) {
                     <button
                       type="button"
                       onClick={() => scrollAccessories("left")}
-                      className="scroll-arrow-btn scroll-arrow-btn--left scroll-arrow-btn--gutter md:!hidden"
+                      className="scroll-arrow-btn scroll-arrow-btn--left scroll-arrow-btn--gutter"
                     >
                       ‹
                     </button>
@@ -619,11 +623,10 @@ export default function WilliamBriefPage({ label }: Props) {
                       className="
                       acc-strip strip-with-gutter no-scrollbar
                       flex gap-6 overflow-x-auto
-                      md:overflow-x-visible
                       pl-6 pr-6
                       "
                     >
-                      <figure className="acc-card">
+                      <figure className="acc-card william-accessory-card--stagger william-stagger-item william-stagger-item--1">
                         <div className="acc-figure">
                           <img
                             src={williamLeftRings}
@@ -636,7 +639,7 @@ export default function WilliamBriefPage({ label }: Props) {
                         </figcaption>
                       </figure>
 
-                      <figure className="acc-card">
+                      <figure className="acc-card william-accessory-card--stagger william-stagger-item william-stagger-item--2">
                         <div className="acc-figure">
                           <img
                             src={williamRightRings}
@@ -644,14 +647,12 @@ export default function WilliamBriefPage({ label }: Props) {
                             className="brief-img"
                           />
                         </div>
-                        <figcaption className="acc-caption text-center mt-2">
-                          <figcaption className="acc-caption william-caption text-center mt-2">
-                            {accessoryCaptions.rightRing}
-                          </figcaption>
+                        <figcaption className="acc-caption william-caption text-center mt-2">
+                          {accessoryCaptions.rightRing}
                         </figcaption>
                       </figure>
 
-                      <figure className="acc-card">
+                      <figure className="acc-card william-accessory-card--stagger william-stagger-item william-stagger-item--3">
                         <div className="acc-figure">
                           <img
                             src={williamLeftEarrings}
@@ -664,7 +665,7 @@ export default function WilliamBriefPage({ label }: Props) {
                         </figcaption>
                       </figure>
 
-                      <figure className="acc-card">
+                      <figure className="acc-card william-accessory-card--stagger william-stagger-item william-stagger-item--4">
                         <div className="acc-figure">
                           <img
                             src={williamRightEarrings}
@@ -677,7 +678,7 @@ export default function WilliamBriefPage({ label }: Props) {
                         </figcaption>
                       </figure>
 
-                      <figure className="acc-card">
+                      <figure className="acc-card william-accessory-card--stagger william-stagger-item william-stagger-item--5">
                         <div className="acc-figure">
                           <img
                             src={williamToothGem}
@@ -696,7 +697,7 @@ export default function WilliamBriefPage({ label }: Props) {
                     <button
                       type="button"
                       onClick={() => scrollAccessories("right")}
-                      className="scroll-arrow-btn scroll-arrow-btn--right scroll-arrow-btn--gutter md:!hidden"
+                      className="scroll-arrow-btn scroll-arrow-btn--right scroll-arrow-btn--gutter"
                     >
                       ›
                     </button>
@@ -709,12 +710,12 @@ export default function WilliamBriefPage({ label }: Props) {
 
         </div>
         {/* WILLIAM SOLO COMMISSIONS GALLERY */}
-        <section id="gallery" className="commission-gallery mt-20">
-          <h3 className="commission-gallery-title">
-            William – Solo Commissions
+        <section id="gallery" className="commission-gallery william-gallery-section mt-20">
+          <h3 className="commission-gallery-title text-slate-100">
+            Gallery
           </h3>
 
-          <div className="mt-10 relative">
+          <div className="mt-8 relative">
             {/* LEFT ARROW */}
             <button
               type="button"
@@ -752,7 +753,7 @@ export default function WilliamBriefPage({ label }: Props) {
                     </div>
                   </button>
                   <figcaption className="gallery-caption">
-                    <span className="gallery-caption-artist william-caption">
+                    <span className="gallery-caption-artist text-slate-300">
                       {item.artist}
                     </span>
                   </figcaption>

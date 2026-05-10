@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import marcusBriefPage from "../../assets/marcusBriefPage.jpg";
+import marcusBriefPage from "../../assets/marcus-pattern.jpeg";
 import FloatingSoundtrackBar from "../components/FloatingSoundtrackBar";
 import HeroScrollPage from "../components/HeroScrollPage";
 import GalleryLightbox, {
@@ -47,9 +47,8 @@ const marcusPlaylistEmbedUrl =
 
 export default function MarcusBriefPage() {
   const { language } = useLanguage();
-  const [visibleSections, setVisibleSections] = useState<Record<number, boolean>>({
-    0: true,
-  });
+  const [visibleSections, setVisibleSections] = useState<Record<number, boolean>>({});
+  const [isBasicInfoMediaVisible, setIsBasicInfoMediaVisible] = useState(false);
   const [selectedGalleryImage, setSelectedGalleryImage] =
     useState<GalleryLightboxImage | null>(null);
 
@@ -57,6 +56,7 @@ export default function MarcusBriefPage() {
   const faceStripRef = useRef<HTMLDivElement | null>(null);
   const hairStripRef = useRef<HTMLDivElement | null>(null);
   const bodyStripRef = useRef<HTMLDivElement | null>(null);
+  const tattooStripRef = useRef<HTMLDivElement | null>(null);
   const galleryStripRef = useRef<HTMLDivElement | null>(null);
 
   const scrollStrip = (
@@ -89,13 +89,31 @@ export default function MarcusBriefPage() {
           }
         });
       },
-      { threshold: 0.35, rootMargin: "-28% 0px -22% 0px" }
+      { threshold: 0.08, rootMargin: "-8% 0px -8% 0px" }
     );
 
     const sectionEls = document.querySelectorAll("[data-section-index]");
     sectionEls.forEach((el) => observer.observe(el));
 
-    return () => observer.disconnect();
+    const mediaObserver = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          setIsBasicInfoMediaVisible(true);
+          mediaObserver.disconnect();
+        }
+      },
+      { threshold: 0.06, rootMargin: "0px 0px -8% 0px" }
+    );
+
+    const basicInfoMedia = document.querySelector("[data-marcus-basic-info-media]");
+    if (basicInfoMedia) {
+      mediaObserver.observe(basicInfoMedia);
+    }
+
+    return () => {
+      observer.disconnect();
+      mediaObserver.disconnect();
+    };
   }, []);
 
   const translations: Record<
@@ -125,11 +143,11 @@ export default function MarcusBriefPage() {
           bullets: [
             "Male.",
             "14/1 (Capricorn)",
-            "Height: 6'3\"/190cm",
-            "Weight: 210 pounds/90-95kg.",
-            "Skintone: #B98267. Deep sun-warmed tan from outdoor labour.",
-            "Occupation: Former NYPD cop (ESU Captain). Now an elite operator in U.S. military.",
-            "Vibe: Stoic, deliberate, masculine in the most unpretentious way.\n" +
+            "Height:\n6'3\"/190cm",
+            "Weight:\n210 pounds/90-95kg.",
+            "Skintone:\n#B98267.\nDeep sun-warmed tan from outdoor labour.",
+            "Occupation:\nFormer NYPD cop (ESU Captain).\nNow an elite operator in U.S. military.",
+            "Vibe:\nStoic, deliberate, masculine in the most unpretentious way.\n" +
             "Built like a threat — acts like a shield.\n" +
             "The kind of man whose presence alone tells you nothing will touch you.",
           ],
@@ -226,7 +244,7 @@ export default function MarcusBriefPage() {
           kicker: "C. Tóc, râu, phụ kiện",
           bullets: [
             "Tóc:\n màu đen.\ncắt gọn hai bên, phần trên đỉnh dài vừa đủ để vuốt gel/vuốt về phía sau.",
-            "Râu:\n Italian beard style (xem ảnh tham khảo bên dưới).",
+            "Râu:\n Italian beard style (xem ảnh tham khảo).",
             "Phụ kiện:\nnhẫn cưới màu vàng bên tay trái.\n hai thẻ dogtag trên cổ (khắc tên 'Marcus Hayes' — font: Helvetica).",
           ],
         },
@@ -332,8 +350,8 @@ export default function MarcusBriefPage() {
       jawScar: "Sẹo chạy dọc\nlên từ quai hàm bên trái",
 
       // HAIR / BEARD / ACCESSORIES
-      hair1: "Tóc",
-      hair2: "Tóc",
+      hair1: "Tóc (chỉn chu)",
+      hair2: "Tóc (lúc rối)",
       beard: "Râu",
       weddingRing: "Nhẫn cưới",
       dogtags: "Dây chuyền",
@@ -371,28 +389,29 @@ export default function MarcusBriefPage() {
       kicker={t.kicker}
       title={t.title}
       subtitle={t.subtitle}
+      showHero={false}
       pageClassName="marcus-brief-page"
       bodyClassName="marcus-brief-body scroll-smooth"
     >
 
       {/* INTRO + UNDERLINED NAV */}
-      <section className="min-h-[120vh] flex flex-col items-center justify-center px-4">
-        <div className="max-w-2xl mx-auto text-center space-y-8">
+      <section className="marcus-intro min-h-[120vh] flex flex-col items-center justify-center px-4">
+        <div className="marcus-intro-panel max-w-2xl mx-auto text-center space-y-8">
           {t.intro && (
             <div className="max-w-4xl mx-auto px-6 md:px-10">
-              <p className="whitespace-pre-line text-xs md:text-sm md:leading-[1.9] leading-[1.8] tracking-[0.18] md:tracking-[0.2em] uppercase text-slate-100">
+              <p className="marcus-intro-copy whitespace-pre-line text-xs md:text-sm md:leading-[1.9] leading-[1.8] tracking-[0.18] md:tracking-[0.2em] uppercase text-slate-100">
                 {t.intro}
               </p>
             </div>
           )}
 
-          <nav className="flex flex-wrap justify-center gap-x-6 gap-y-3 text-[11px] md:text-[11px] uppercase tracking-[0.16em]">
+          <nav className="marcus-intro-nav flex flex-wrap justify-center gap-x-6 gap-y-3 text-[11px] md:text-[11px] uppercase tracking-[0.16em]">
             {sectionAnchors.map((section) => (
               <button
                 key={section.anchor}
                 type="button"
                 onClick={() => handleChipClick(section.anchor)}
-                className="nav-chip marcus-nav-chip bg-transparent border-0 pb-1 text-slate-200 border-b border-transparent hover:border-slate-100 hover:text-slate-100 focus:outline-none underline"              >
+                className="nav-chip marcus-nav-chip marcus-intro-chip bg-transparent border-0 pb-1 text-slate-200 border-b border-transparent hover:border-slate-100 hover:text-slate-100 focus:outline-none underline"              >
                 {section.kicker}
               </button>
             ))}
@@ -401,20 +420,20 @@ export default function MarcusBriefPage() {
             <button
               type="button"
               onClick={() => handleChipClick("gallery")}
-              className="nav-chip marcus-nav-chip bg-transparent border-0 pb-1 text-slate-200 border-b border-transparent hover:border-slate-100 hover:text-slate-100 focus:outline-none underline"
+              className="nav-chip marcus-nav-chip marcus-intro-chip bg-transparent border-0 pb-1 text-slate-200 border-b border-transparent hover:border-slate-100 hover:text-slate-100 focus:outline-none underline"
             >
               F. Gallery
             </button>
           </nav>
         </div>
       </section>
-      <div className="marcus-brief-content max-w-6xl mx-auto px-6 md:px-10 lg:px-16 py-12 md:py-16">
+      <div className="marcus-brief-content marcus-brief-content-shell max-w-6xl mx-auto px-6 md:px-10 lg:px-16 py-12 md:py-16">
         {/* divider under hero */}
-        <div className="h-px w-full bg-slate-500/60 opacity-80 rounded-full" />
+        <div className="marcus-content-divider h-px w-full bg-slate-500/60 opacity-80 rounded-full" />
 
         <div className="space-y-28 md:space-y-36">
           {sectionAnchors.map((section, sectionIndex) => {
-            const isVisible = visibleSections[sectionIndex] ?? true;
+            const isVisible = visibleSections[sectionIndex] ?? false;
 
             const bodyText =
               section.body ??
@@ -451,35 +470,43 @@ export default function MarcusBriefPage() {
                 key={section.id}
                 id={section.anchor}
                 data-section-index={sectionIndex}
-                className={`py-16 lg:py-24 transition-all duration-700 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-                  }`}
+                className={`marcus-chapter py-16 lg:py-24 ${isVisible ? "is-visible" : ""}`}
               >
-                {/* TEXT BLOCK */}
-                <div className="max-w-3xl mx-auto text-center space-y-4 leading-relaxed">
-                  <div
-                    className={`marcus-section-kicker text-[11px] md:text-xs uppercase tracking-[0.18em] text-slate-200/80 transition-all duration-500 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"}`}
-                    style={{ transitionDelay: isVisible ? "60ms" : "0ms" }}
-                  >
-                    {section.kicker}
+                <div
+                  className={`marcus-chapter-shell ${sectionIndex % 2 === 0
+                      ? "marcus-chapter-shell--media-right"
+                      : "marcus-chapter-shell--media-left"
+                    }`}
+                >
+                  {/* TEXT BLOCK */}
+                  <div className="marcus-chapter-text max-w-3xl mx-auto text-center space-y-4 leading-relaxed">
+                    <div
+                      className="marcus-section-kicker marcus-reveal-item marcus-reveal-item--kicker text-[11px] md:text-xs uppercase tracking-[0.18em] text-slate-200/80"
+                    >
+                      {section.kicker}
+                    </div>
+
+                    {bodyText && (
+                      <p
+                        className="marcus-body-text marcus-reveal-item marcus-reveal-item--body mt-4 whitespace-pre-line text-[12px] md:text-sm md:leading-[1.9] leading-[1.8] tracking-[0.16em] uppercase text-slate-100"
+                      >
+                        {bodyText}
+                      </p>
+                    )}
                   </div>
 
-                  {bodyText && (
-                    <p
-                      className={`marcus-body-text mt-4 whitespace-pre-line text-[12px] md:text-sm md:leading-[1.9] leading-[1.8] tracking-[0.16em] uppercase text-slate-100 transition-all duration-500 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"}`}
-                      style={{ transitionDelay: isVisible ? "180ms" : "0ms" }}
+                  {/* IMAGE AREA */}
+                  {images.length > 0 && (
+                    <div
+                      className="marcus-chapter-media marcus-reveal-item marcus-reveal-item--media"
                     >
-                      {bodyText}
-                    </p>
-                  )}
-                </div>
-
-                {/* IMAGE AREA */}
-                {images.length > 0 && (
-                  <>
                     {/* PALETTE – match William's layout */}
                     {isPaletteSection && images.length === 1 && (
-                      <div className="mt-10 marcus-basic-info-media">
-                        <figure className="ref-image marcus-brief-palette marcus-basic-info-media__item bg-neutral-50 border border-neutral-200 overflow-hidden">
+                      <div
+                        data-marcus-basic-info-media
+                        className={`mt-10 marcus-basic-info-media ${isBasicInfoMediaVisible ? "is-media-visible" : ""}`}
+                      >
+                        <figure className="ref-image marcus-basic-info-media__item marcus-basic-info-media__item--palette bg-neutral-50 border border-neutral-200 overflow-hidden">
                           <img
                             src={images[0]}
                             alt="Marcus colour palette"
@@ -487,7 +514,7 @@ export default function MarcusBriefPage() {
                           />
                         </figure>
 
-                        <figure className="ref-image marcus-brief-palette marcus-basic-info-media__item bg-neutral-50 border border-neutral-200 overflow-hidden">
+                        <figure className="ref-image marcus-basic-info-media__item marcus-basic-info-media__item--aesthetic bg-neutral-50 border border-neutral-200 overflow-hidden">
                           <img
                             src={marcusAesthetic}
                             alt="Marcus aesthetic reference"
@@ -495,7 +522,7 @@ export default function MarcusBriefPage() {
                           />
                         </figure>
 
-                        <div className="marcus-basic-info-media__playlist">
+                        <div className="marcus-basic-info-media__playlist marcus-basic-info-media__playlist--stagger">
                           <FloatingSoundtrackBar
                             title="Marcus's soundtrack"
                             embedUrl={marcusPlaylistEmbedUrl}
@@ -522,7 +549,7 @@ export default function MarcusBriefPage() {
 
                           <div
                             ref={currentStripRef}
-                            className="no-scrollbar marcus-scroll-strip strip-with-gutter"
+                            className={`no-scrollbar marcus-scroll-strip strip-with-gutter ${isFaceSection ? "marcus-scroll-strip--face" : ""}`}
                           >
                             {imageIds.map((id: string, idx: number) => {
                               const src = imageMap[id];
@@ -532,7 +559,7 @@ export default function MarcusBriefPage() {
                               return (
                                 <div
                                   key={`${section.id}-${idx}`}
-                                  className="marcus-scroll-item"
+                                  className={`marcus-scroll-item ${isFaceSection ? "marcus-scroll-item--face" : ""}`}
                                 >
                                   <figure className="marcus-scroll-card">
                                     <div className="marcus-scroll-card-inner">
@@ -573,30 +600,59 @@ export default function MarcusBriefPage() {
                       !isHairSection &&
                       !isBodySection &&
                       !isPaletteSection && (
-                        <div className="tattoo-collage mt-10">
-                          {imageIds.map((id: string, idx: number) => {
-                            const src = imageMap[id];
-                            if (!src) return null;
-                            const isPrimaryTattoo = id === "tattoo";
+                        <div className="mt-10 relative">
+                          <button
+                            type="button"
+                            onClick={() => scrollStrip(tattooStripRef.current, "left")}
+                            className="scroll-arrow-btn scroll-arrow-btn--left scroll-arrow-btn--gutter"
+                          >
+                            ‹
+                          </button>
 
-                            return (
-                              <figure
-                                key={`${section.id}-tattoo-${idx}`}
-                                className={`tattoo-item tattoo-item--${id}`}
-                              >
-                                <img
-                                  src={src}
-                                  alt={`${section.kicker} reference ${idx + 1}`}
-                                  className="tattoo-img"
-                                />
-                                {isPrimaryTattoo && (
-                                  <figcaption className="tattoo-credit-overlay lg:hidden">
-                                    (A): MAR QYH
-                                  </figcaption>
-                                )}
+                          <div
+                            ref={tattooStripRef}
+                            className="no-scrollbar marcus-scroll-strip marcus-scroll-strip--tattoo strip-with-gutter"
+                          >
+                            <div className="marcus-scroll-item marcus-scroll-item--tattoo">
+                              <figure className="marcus-scroll-card">
+                                <div className="marcus-scroll-card-inner">
+                                  <img
+                                    src={marcusTattoo}
+                                    alt={`${section.kicker} reference 1`}
+                                    className="w-full h-full object-cover"
+                                  />
+                                </div>
                               </figure>
-                            );
-                          })}
+                              <div className="marcus-scroll-caption tattoo-image-caption">
+                                (A): MAR QYH
+                              </div>
+                            </div>
+
+                            <div className="marcus-scroll-item marcus-scroll-item--tattoo">
+                              <figure className="marcus-scroll-card marcus-tattoo-combo-card">
+                                <div className="marcus-scroll-card-inner marcus-tattoo-combo">
+                                  <img
+                                    src={marcusTattoo3}
+                                    alt={`${section.kicker} combined reference base`}
+                                    className="marcus-tattoo-combo__base"
+                                  />
+                                  <img
+                                    src={marcusTattoo2}
+                                    alt={`${section.kicker} combined reference detail`}
+                                    className="marcus-tattoo-combo__overlay"
+                                  />
+                                </div>
+                              </figure>
+                            </div>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => scrollStrip(tattooStripRef.current, "right")}
+                            className="scroll-arrow-btn scroll-arrow-btn--right scroll-arrow-btn--gutter"
+                          >
+                            ›
+                          </button>
                         </div>
                       )}
 
@@ -623,16 +679,17 @@ export default function MarcusBriefPage() {
                           </div>
                         </div>
                       )}
-                  </>
+                    </div>
                 )}
+                </div>
               </section>
             );
           })}
 
           {/* SIMPLE GALLERY – rows, no scroll */}
-          <section id="gallery" className="commission-gallery mt-20">
+          <section id="gallery" className="commission-gallery marcus-gallery-section mt-20">
             <h3 className="commission-gallery-title text-slate-100">
-              Marcus – Solo Commissions
+              Gallery
             </h3>
             <div className="mt-8 relative">
               {/* LEFT ARROW */}
