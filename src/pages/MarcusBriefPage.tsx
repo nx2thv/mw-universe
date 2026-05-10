@@ -48,6 +48,7 @@ const marcusPlaylistEmbedUrl =
 export default function MarcusBriefPage() {
   const { language } = useLanguage();
   const [visibleSections, setVisibleSections] = useState<Record<number, boolean>>({});
+  const [activeAnchor, setActiveAnchor] = useState("basic-info");
   const [isBasicInfoMediaVisible, setIsBasicInfoMediaVisible] = useState(false);
   const [selectedGalleryImage, setSelectedGalleryImage] =
     useState<GalleryLightboxImage | null>(null);
@@ -78,6 +79,17 @@ export default function MarcusBriefPage() {
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+        if (visible) {
+          const nextAnchor = (visible.target as HTMLElement).id;
+          if (nextAnchor) {
+            setActiveAnchor(nextAnchor);
+          }
+        }
+
         entries.forEach((entry) => {
           const indexAttr = entry.target.getAttribute("data-section-index");
           const index = indexAttr ? Number(indexAttr) : NaN;
@@ -94,6 +106,17 @@ export default function MarcusBriefPage() {
 
     const sectionEls = document.querySelectorAll("[data-section-index]");
     sectionEls.forEach((el) => observer.observe(el));
+
+    const galleryObserver = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          setActiveAnchor("gallery");
+        }
+      },
+      { threshold: 0.28, rootMargin: "-8% 0px -55% 0px" },
+    );
+    const galleryEl = document.getElementById("gallery");
+    if (galleryEl) galleryObserver.observe(galleryEl);
 
     const mediaObserver = new IntersectionObserver(
       ([entry]) => {
@@ -113,29 +136,22 @@ export default function MarcusBriefPage() {
     return () => {
       observer.disconnect();
       mediaObserver.disconnect();
+      galleryObserver.disconnect();
     };
   }, []);
 
   const translations: Record<
     "en" | "vi",
     {
-      kicker: string;
-      title: string;
-      subtitle: string;
-      back: string;
+      quote: string;
+      quoteName: string;
       intro?: string;
       sections: Section[];
     }
   > = {
     en: {
-      kicker: "Delta Force dossier",
-      title: "Marcus Hayes",
-      subtitle: "Precision in every breath. Discipline in every step.",
-      back: "← Return home",
-      intro:
-        "This page consolidates Marcus' operator profile:\n" +
-        "Capturing his features, combat-built physique, defining traits, and artistic references.\n" +
-        "Navigate through the sections or scroll as if reading a mission briefing.",
+      quoteName: "MSG. Marcus Hayes",
+      quote: "\"Discipline is habit. Not heroism.\"",
       sections: [
         {
           id: "basic info",
@@ -148,7 +164,6 @@ export default function MarcusBriefPage() {
             "Skintone:\n#B98267.\nDeep sun-warmed tan from outdoor labour.",
             "Occupation:\nFormer NYPD cop (ESU Captain).\nNow an elite operator in U.S. military.",
             "Vibe:\nStoic, deliberate, masculine in the most unpretentious way.\n" +
-            "Built like a threat — acts like a shield.\n" +
             "The kind of man whose presence alone tells you nothing will touch you.",
           ],
         },
@@ -203,15 +218,8 @@ export default function MarcusBriefPage() {
       ],
     },
     vi: {
-      kicker: "Delta Force Dossier",
-      title: "Marcus Hayes",
-      subtitle: "Precision in every breath. Discipline in every step.",
-      intro:
-        "Trang này tổng hợp hồ sơ tác chiến của Marcus Hayes:\n" +
-        "Bao gồm vibe chung, mô tả chi tiết các đặc điểm nhận dạng trên khuôn mặt và cơ thể, cùng với hình ảnh tham khảo.\n" +
-        "Bạn có thể bấm vào một trong những lựa chọn ở dưới để đến section bạn muốn đọc.\n" +
-        "Hoặc lướt xuống và đọc từng dòng để cảm nhận rõ ràng hơn.",
-      back: "← Về trang chủ",
+      quote: "\"Discipline is habit. Not heroism.\"",
+      quoteName: "MSG. Marcus Hayes",
       sections: [
         {
           id: "basic info",
@@ -278,6 +286,33 @@ export default function MarcusBriefPage() {
     ...section,
     anchor: section.id.replace(/\s+/g, "-").toLowerCase(),
   }));
+  const chapterLabelsByLang: Record<"en" | "vi", Record<string, string>> = {
+    en: {
+      "basic info": "A Snapshot",
+      face: "B Face",
+      "hair and stuffs": "C Hair & Acc",
+      "dilf coded": "D Build",
+      tatts: "E Ink",
+    },
+    vi: {
+      "basic info": "A Tổng quan",
+      face: "B Gương mặt",
+      "hair and stuffs": "C Tóc & phụ kiện",
+      "dilf coded": "D Dáng",
+      tatts: "E Hình xăm",
+    },
+  };
+  const chapterLabels = chapterLabelsByLang[language] || chapterLabelsByLang.en;
+  const chapterItems = [
+    ...sectionAnchors.map((section) => ({
+      anchor: section.anchor,
+      label: chapterLabels[section.id] || section.kicker,
+    })),
+    {
+      anchor: "gallery",
+      label: "F Gallery",
+    },
+  ];
 
   // images per section – rows / strips
   const sectionImageIds: Record<string, string[]> = {
@@ -376,58 +411,50 @@ export default function MarcusBriefPage() {
     { src: marcusGallery1, label: "(A): Cẩm Đíc Nhót" },
   ];
 
-  const handleChipClick = (anchor: string) => {
+  const handleChapterJump = (anchor: string) => {
     const target = document.getElementById(anchor);
     if (target) {
       target.scrollIntoView({ behavior: "smooth", block: "start" });
+      setActiveAnchor(anchor);
     }
   };
 
   return (
     <HeroScrollPage
       backgroundImage={marcusBriefPage}
-      kicker={t.kicker}
-      title={t.title}
-      subtitle={t.subtitle}
+      kicker=""
+      title=""
+      subtitle=""
       showHero={false}
       pageClassName="marcus-brief-page"
       bodyClassName="marcus-brief-body scroll-smooth"
     >
 
-      {/* INTRO + UNDERLINED NAV */}
       <section className="marcus-intro min-h-[120vh] flex flex-col items-center justify-center px-4">
-        <div className="marcus-intro-panel max-w-2xl mx-auto text-center space-y-8">
-          {t.intro && (
-            <div className="max-w-4xl mx-auto px-6 md:px-10">
-              <p className="marcus-intro-copy whitespace-pre-line text-xs md:text-sm md:leading-[1.9] leading-[1.8] tracking-[0.18] md:tracking-[0.2em] uppercase text-slate-100">
-                {t.intro}
-              </p>
-            </div>
-          )}
-
-          <nav className="marcus-intro-nav flex flex-wrap justify-center gap-x-6 gap-y-3 text-[11px] md:text-[11px] uppercase tracking-[0.16em]">
-            {sectionAnchors.map((section) => (
-              <button
-                key={section.anchor}
-                type="button"
-                onClick={() => handleChipClick(section.anchor)}
-                className="nav-chip marcus-nav-chip marcus-intro-chip bg-transparent border-0 pb-1 text-slate-200 border-b border-transparent hover:border-slate-100 hover:text-slate-100 focus:outline-none underline"              >
-                {section.kicker}
-              </button>
-            ))}
-
-            {/* Gallery nav chip */}
-            <button
-              type="button"
-              onClick={() => handleChipClick("gallery")}
-              className="nav-chip marcus-nav-chip marcus-intro-chip bg-transparent border-0 pb-1 text-slate-200 border-b border-transparent hover:border-slate-100 hover:text-slate-100 focus:outline-none underline"
-            >
-              F. Gallery
-            </button>
-          </nav>
+        <div className="marcus-intro-panel max-w-2xl mx-auto text-center">
+          <p className="marcus-intro-name mt-2 uppercase tracking-[0.2em]">
+            {t.quoteName}
+          </p>
+          <p className="marcus-intro-quote whitespace-pre-line">
+            {t.quote}
+          </p>
         </div>
       </section>
       <div className="marcus-brief-content marcus-brief-content-shell max-w-6xl mx-auto px-6 md:px-10 lg:px-16 py-12 md:py-16">
+        <div className="brief-chapter-layout brief-chapter-layout--dark">
+          <aside className="brief-chapter-rail" aria-label="Marcus sections">
+            {chapterItems.map((item) => (
+              <button
+                key={item.anchor}
+                type="button"
+                onClick={() => handleChapterJump(item.anchor)}
+                className={`brief-chapter-rail-item ${activeAnchor === item.anchor ? "is-active" : ""}`}
+              >
+                {item.label}
+              </button>
+            ))}
+          </aside>
+          <div className="brief-chapter-main">
         {/* divider under hero */}
         <div className="marcus-content-divider h-px w-full bg-slate-500/60 opacity-80 rounded-full" />
 
@@ -754,7 +781,21 @@ export default function MarcusBriefPage() {
             onClose={() => setSelectedGalleryImage(null)}
           />
         </div>
+          </div>
+        </div>
       </div>
+      <nav className="brief-chapter-bottom brief-chapter-bottom--dark" aria-label="Marcus quick jump">
+        {chapterItems.map((item) => (
+          <button
+            key={item.anchor}
+            type="button"
+            onClick={() => handleChapterJump(item.anchor)}
+            className={`brief-chapter-bottom-item ${activeAnchor === item.anchor ? "is-active" : ""}`}
+          >
+            {item.label}
+          </button>
+        ))}
+      </nav>
     </HeroScrollPage>
   );
 }

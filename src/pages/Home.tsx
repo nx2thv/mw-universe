@@ -32,6 +32,7 @@ type CommissionIdeaRow = {
 };
 
 const SECTION_ORDER: SectionKey[] = ["welcome", "them", "universe", "briefs"];
+const HOME_SECTION_STORAGE_KEY = "mwHomeLastSection";
 const welcomeLoopImages = [
   { src: loop1, alt: "Portrait loop image one" },
   { src: loop2, alt: "Portrait loop image two" },
@@ -51,6 +52,18 @@ const dustSpecs: DustSpec[] = [
   { left: "86%", top: "36%", size: "2px", duration: "19s", delay: "-6s", driftX: "10px", driftY: "-20px" },
   { left: "16%", top: "48%", size: "2px", duration: "23s", delay: "-13s", driftX: "14px", driftY: "-24px" },
   { left: "44%", top: "58%", size: "3px", duration: "25s", delay: "-8s", driftX: "-12px", driftY: "-30px" },
+  { left: "7%", top: "34%", size: "2px", duration: "21s", delay: "-12s", driftX: "11px", driftY: "-21px" },
+  { left: "13%", top: "66%", size: "2px", duration: "27s", delay: "-15s", driftX: "-9px", driftY: "-32px" },
+  { left: "28%", top: "12%", size: "2px", duration: "19s", delay: "-5s", driftX: "13px", driftY: "-19px" },
+  { left: "33%", top: "84%", size: "3px", duration: "31s", delay: "-18s", driftX: "-11px", driftY: "-40px" },
+  { left: "57%", top: "44%", size: "2px", duration: "22s", delay: "-7s", driftX: "9px", driftY: "-23px" },
+  { left: "62%", top: "71%", size: "2px", duration: "26s", delay: "-16s", driftX: "-15px", driftY: "-29px" },
+  { left: "71%", top: "14%", size: "3px", duration: "24s", delay: "-9s", driftX: "16px", driftY: "-20px" },
+  { left: "79%", top: "50%", size: "2px", duration: "20s", delay: "-11s", driftX: "-8px", driftY: "-18px" },
+  { left: "91%", top: "23%", size: "2px", duration: "23s", delay: "-6s", driftX: "10px", driftY: "-22px" },
+  { left: "94%", top: "72%", size: "2px", duration: "29s", delay: "-20s", driftX: "-13px", driftY: "-36px" },
+  { left: "40%", top: "18%", size: "2px", duration: "18s", delay: "-3s", driftX: "8px", driftY: "-17px" },
+  { left: "53%", top: "8%", size: "2px", duration: "32s", delay: "-22s", driftX: "-7px", driftY: "-26px" },
 ];
 
 function splitHeadingLines(heading: string) {
@@ -74,17 +87,42 @@ function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
 }
 
+function isSectionKey(value: string | null): value is SectionKey {
+  return SECTION_ORDER.includes(value as SectionKey);
+}
+
+function getStoredSection() {
+  if (typeof window === "undefined") return "welcome";
+  if (window.location.hash === "#briefs" || window.location.search.includes("idea=")) {
+    return "briefs";
+  }
+  const storedSection = window.sessionStorage.getItem(HOME_SECTION_STORAGE_KEY);
+  return isSectionKey(storedSection) ? storedSection : "welcome";
+}
+
+function getSharedIdeaId() {
+  if (typeof window === "undefined") return null;
+  return new URLSearchParams(window.location.search).get("idea");
+}
+
 export default function Home() {
   const mainRef = useRef<HTMLElement | null>(null);
   const [showTos, setShowTos] = useState(false);
-  const [activeSection, setActiveSection] = useState<SectionKey>("welcome");
+  const [activeSection, setActiveSection] = useState<SectionKey>(getStoredSection);
   const [isCompactViewport, setIsCompactViewport] = useState(false);
   const [chapterOpen, setChapterOpen] = useState(false);
   const [ideas, setIdeas] = useState<CommissionIdea[]>([]);
   const [ideasLoading, setIdeasLoading] = useState(true);
+  const [sharedIdeaId, setSharedIdeaId] = useState<string | null>(getSharedIdeaId);
+  const [openIdeaMenuId, setOpenIdeaMenuId] = useState<string | null>(null);
+  const [copiedIdeaId, setCopiedIdeaId] = useState<string | null>(null);
   const [characterFilter, setCharacterFilter] = useState<CharacterType | "all">("all");
   const [statusFilter, setStatusFilter] = useState<StatusType>("not-started");
   const [nsfwFilter, setNsfwFilter] = useState<NsfwType>("sfw");
+  const visibleDustSpecs = useMemo(
+    () => (isCompactViewport ? dustSpecs.slice(0, 12) : dustSpecs),
+    [isCompactViewport],
+  );
 
   useEffect(() => {
     const accepted = localStorage.getItem("tosAccepted");
@@ -163,13 +201,13 @@ export default function Home() {
         },
         them: {
           heading: "Visages",
-          body: "For their presence",
+          body: "of their presence",
           marcusCta: "Enter Marcus Brief",
           williamCta: "Enter William Brief",
         },
         universe: {
           heading: "Echoes",
-          prompt: "For their love",
+          prompt: "of their love",
           story: "New York",
           au: "Across Lifetimes",
           storyCta: "Main Universe",
@@ -177,10 +215,14 @@ export default function Home() {
         },
         briefs: {
           heading: "Ideas",
-          body: "For their creation",
+          body: "of their creation",
           noResults: "No ideas match these filters yet.",
           openBrief: "Open full brief ->",
           loading: "Loading briefs...",
+          sharedView: "Showing linked idea",
+          clearSharedView: "Show all ideas",
+          copyLink: "Copy card link",
+          copied: "Copied",
           filters: {
             character: "Character",
             status: "Status",
@@ -212,13 +254,13 @@ export default function Home() {
         },
         them: {
           heading: "Chân Dung",
-          body: "Cho những bóng hình",
+          body: "của những bóng hình",
           marcusCta: "Vào Brief của Marcus",
           williamCta: "Vào Brief của William",
         },
         universe: {
           heading: "Dư Âm",
-          prompt: "Cho những mối duyên",
+          prompt: "của những mối duyên",
           story: "New York",
           au: "Xuyên thời gian",
           storyCta: "Thế giới chính",
@@ -226,10 +268,14 @@ export default function Home() {
         },
         briefs: {
           heading: "Ý Tưởng",
-          body: "Cho những điều sắp được tạo nên",
+          body: "của những điều sắp được tạo nên",
           noResults: "Chưa có brief nào khớp với bộ lọc này.",
           openBrief: "Mở file mô tả ->",
           loading: "Đang tải briefs...",
+          sharedView: "Đang xem ý tưởng được gửi",
+          clearSharedView: "Xem tất cả ý tưởng",
+          copyLink: "Sao chép link card",
+          copied: "Đã sao chép",
           filters: {
             character: "Nhân vật",
             status: "Trạng thái",
@@ -259,6 +305,10 @@ export default function Home() {
       }),
     [ideas, characterFilter, nsfwFilter, statusFilter],
   );
+  const visibleIdeas = useMemo(() => {
+    if (!sharedIdeaId) return filteredIdeas;
+    return ideas.filter((idea) => idea.id === sharedIdeaId);
+  }, [filteredIdeas, ideas, sharedIdeaId]);
 
   const getCharacterLabel = (character?: CharacterType | null) => {
     if (character === "william") return t.sections.briefs.filters.william;
@@ -282,6 +332,34 @@ export default function Home() {
       console.error("Could not open brief:", error);
       window.alert("Could not open this brief right now.");
     }
+  };
+
+  const getIdeaShareUrl = (ideaId: string) => {
+    const url = new URL(window.location.origin);
+    url.searchParams.set("idea", ideaId);
+    url.hash = "briefs";
+    return url.toString();
+  };
+
+  const copyIdeaShareUrl = async (ideaId: string) => {
+    const shareUrl = getIdeaShareUrl(ideaId);
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopiedIdeaId(ideaId);
+      setOpenIdeaMenuId(null);
+      window.setTimeout(() => setCopiedIdeaId((current) => (current === ideaId ? null : current)), 1800);
+    } catch (error) {
+      console.error("Could not copy idea link:", error);
+      window.prompt("Copy this idea link:", shareUrl);
+    }
+  };
+
+  const clearSharedIdea = () => {
+    const url = new URL(window.location.href);
+    url.searchParams.delete("idea");
+    url.hash = "";
+    window.history.replaceState(null, "", `${url.pathname}${url.search}`);
+    setSharedIdeaId(null);
   };
 
   const sectionLinks = [
@@ -322,6 +400,10 @@ export default function Home() {
     const direction = event.key === "ArrowDown" || event.key === "ArrowRight" ? 1 : -1;
     stepSection(direction as 1 | -1);
   };
+
+  useEffect(() => {
+    window.sessionStorage.setItem(HOME_SECTION_STORAGE_KEY, activeSection);
+  }, [activeSection]);
 
   useEffect(() => {
     if (!isCompactViewport) return;
@@ -438,7 +520,7 @@ export default function Home() {
           <div className="home-journey-grain" aria-hidden="true" />
           <div className="home-journey-vignette" aria-hidden="true" />
           <div className="home-journey-dust-layer" aria-hidden="true">
-            {dustSpecs.map((spec, index) => (
+            {visibleDustSpecs.map((spec, index) => (
               <span
                 key={`${spec.left}-${spec.top}-${index}`}
                 className="home-journey-dust"
@@ -564,6 +646,15 @@ export default function Home() {
               <p className="home-journey-copy">{t.sections.briefs.body}</p>
 
               <div className="home-journey-ideas-board">
+                {sharedIdeaId ? (
+                  <div className="home-journey-ideas-shared-bar">
+                    <span>{t.sections.briefs.sharedView}</span>
+                    <button type="button" onClick={clearSharedIdea}>
+                      {t.sections.briefs.clearSharedView}
+                    </button>
+                  </div>
+                ) : null}
+
                 <div className="home-journey-ideas-filters" role="group" aria-label="Ideas filters">
                   <label className="home-journey-ideas-filter">
                     <span>{t.sections.briefs.filters.character}</span>
@@ -606,15 +697,33 @@ export default function Home() {
                     <p className="home-journey-ideas-state">{t.sections.briefs.loading}</p>
                   ) : null}
 
-                  {!ideasLoading && !filteredIdeas.length ? (
+                  {!ideasLoading && !visibleIdeas.length ? (
                     <p className="home-journey-ideas-state">{t.sections.briefs.noResults}</p>
                   ) : null}
 
                   {!ideasLoading
-                    ? filteredIdeas.map((idea) => {
+                    ? visibleIdeas.map((idea) => {
                       const statusLabel = getStatusLabel(idea);
                       return (
                         <article key={idea.id} className="home-journey-idea-card">
+                          <div className="home-journey-idea-actions">
+                            <button
+                              type="button"
+                              className="home-journey-idea-action-trigger"
+                              aria-label={`Open actions for ${idea.title}`}
+                              aria-expanded={openIdeaMenuId === idea.id}
+                              onClick={() => setOpenIdeaMenuId((current) => (current === idea.id ? null : idea.id))}
+                            >
+                              ⋮
+                            </button>
+                            {openIdeaMenuId === idea.id ? (
+                              <div className="home-journey-idea-action-menu">
+                                <button type="button" onClick={() => copyIdeaShareUrl(idea.id)}>
+                                  {t.sections.briefs.copyLink}
+                                </button>
+                              </div>
+                            ) : null}
+                          </div>
                           <p className="home-journey-idea-id">{idea.id}</p>
                           <p className="home-journey-idea-meta">
                             {getCharacterLabel(idea.character)} • {idea.nsfw === "nsfw" ? t.sections.briefs.filters.nsfw : t.sections.briefs.filters.sfw}
@@ -635,6 +744,9 @@ export default function Home() {
                               {t.sections.briefs.openBrief}
                             </button>
                           </div>
+                          {copiedIdeaId === idea.id ? (
+                            <p className="home-journey-idea-copy-state">{t.sections.briefs.copied}</p>
+                          ) : null}
                         </article>
                       );
                     })

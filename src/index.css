@@ -1028,20 +1028,59 @@ body {
 
 .home-journey-ideas-filter select {
   width: 100%;
-  border: 1px solid rgba(222, 208, 190, 0.24);
-  background: rgba(14, 11, 10, 0.62);
-  color: rgba(244, 234, 220, 0.95);
-  padding: 0.46rem 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  background: rgba(10, 10, 10, 0.72);
+  backdrop-filter: blur(8px);
+  color: rgba(236, 241, 248, 0.9);
+  padding: 0.45rem 0.55rem;
   font-family: "IBM Plex Mono", monospace;
-  font-size: 0.66rem;
+  font-size: 0.62rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  cursor: pointer;
+}
+
+.home-journey-ideas-filter select:hover,
+.home-journey-ideas-filter select:focus-visible {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.12);
+  outline: none;
+}
+
+.home-journey-ideas-filter select option {
+  background: rgba(10, 10, 10, 0.9);
+  color: rgba(236, 241, 248, 0.9);
 }
 
 .home-journey-ideas-grid {
   display: flex;
   flex-direction: column;
   gap: 0.86rem;
+}
+
+.home-journey-ideas-shared-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.85rem;
+  border: 1px solid rgba(222, 208, 190, 0.22);
+  background: rgba(10, 8, 8, 0.46);
+  padding: 0.7rem 0.85rem;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: rgba(222, 208, 190, 0.82);
+}
+
+.home-journey-ideas-shared-bar button {
+  border: 0;
+  background: transparent;
+  color: rgba(214, 198, 176, 0.92);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
 }
 
 .home-journey-ideas-state {
@@ -1078,6 +1117,81 @@ body {
   inset: 0;
   background: linear-gradient(180deg, rgba(255, 245, 226, 0.06), transparent 30%);
   pointer-events: none;
+}
+
+.home-journey-idea-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.home-journey-idea-actions {
+  position: absolute;
+  top: 0.62rem;
+  right: 0.68rem;
+  z-index: 2;
+}
+
+.home-journey-idea-action-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.45rem;
+  height: 1.8rem;
+  border: 0;
+  background: transparent;
+  color: rgba(238, 223, 198, 0.82);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+}
+
+.home-journey-idea-action-trigger:hover,
+.home-journey-idea-action-trigger:focus-visible {
+  color: #fffaf2;
+  outline: none;
+}
+
+.home-journey-idea-action-menu {
+  position: absolute;
+  top: calc(100% + 0.32rem);
+  right: 0;
+  min-width: 10.8rem;
+  border: 1px solid rgba(222, 208, 190, 0.24);
+  background: rgba(10, 10, 10, 0.9);
+  backdrop-filter: blur(8px);
+  padding: 0.3rem;
+}
+
+.home-journey-idea-action-menu button {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: rgba(236, 227, 214, 0.9);
+  padding: 0.48rem 0.55rem;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  text-align: left;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.home-journey-idea-action-menu button:hover,
+.home-journey-idea-action-menu button:focus-visible {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fffaf2;
+  outline: none;
+}
+
+.home-journey-idea-copy-state {
+  margin: 0;
+  color: rgba(170, 215, 167, 0.9);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.56rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
 .home-journey-ideas-grid .home-journey-idea-card:nth-child(odd) {
@@ -1778,19 +1892,6 @@ footer p {
 
 .character-card {
   margin-top: 1rem;
-}
-
-.william-quote {
-  font-family: 'Allura', cursive;
-  font-size: 1.5rem;
-  color: #1c1c1c;
-  font-weight: 700;
-}
-
-.marcus-quote {
-  font-family: 'Oswald', 'sans-serif';
-  color: #1c1c1c;
-  font-size: 1.3rem;
 }
 
 .card-glow {
@@ -2554,13 +2655,9 @@ section[data-section-index] {
     radial-gradient(68% 52% at 86% 82%, rgba(85, 97, 109, 0.22), transparent 74%),
     linear-gradient(180deg, #101418 0%, #11161b 48%, #101418 100%);
   color: rgba(216, 221, 227, 0.92);
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Rokkitt', serif;
   position: relative;
   isolation: isolate;
-}
-
-.marcus-brief-page h1 {
-  font-family: 'Oswald', 'Inter', sans-serif;
 }
 
 .marcus-brief-body {
@@ -2587,14 +2684,6 @@ section[data-section-index] {
   pointer-events: none;
   z-index: 8;
   background: linear-gradient(180deg, rgba(10, 12, 15, 0.72), transparent 82%);
-}
-
-.marcus-brief-page .backHref {
-  color: rgba(216, 221, 227, 0.92);
-}
-
-.william-brief-page .backHref {
-  color: #e8dfd4;
 }
 
 .marcus-intro {
@@ -2626,24 +2715,226 @@ section[data-section-index] {
   text-wrap: balance;
 }
 
-.marcus-intro-nav {
-  margin-top: 0.4rem;
+.marcus-intro-quote {
+  margin: 0;
+  font-family: "Rokkitt", serif;
+  font-size: 1.5em;
+  line-height: 2;
+  letter-spacing: 0.03em;
+  color: rgba(192, 192, 192, 0.78);
 }
 
-.marcus-intro-chip {
-  color: rgba(110, 124, 139, 0.9) !important;
-  border-bottom-color: rgba(110, 124, 139, 0.16) !important;
+.marcus-intro-name {
+  margin: 0;
+  font-family: "Rokkitt", monospace;
+  font-size: clamp(1.25rem, 2.5vw, 1.9rem);
+  letter-spacing: 0.16em;
+  color: rgba(189, 201, 214, 0.78);
 }
 
-.marcus-intro-chip:hover,
-.marcus-intro-chip:focus-visible {
-  color: rgba(216, 221, 227, 0.92) !important;
-  border-bottom-color: rgba(184, 138, 122, 0.46) !important;
+.william-intro-quote {
+  margin: 0;
+  font-family: "Alegreya", serif;
+  font-size: 1.5em;
+  line-height: 2;
+  letter-spacing: 0.03em;
+  color: rgba(198, 196, 193, 0.94);
+}
+
+.william-intro-name {
+  margin: 0;
+  font-family: "Alegreya", serif;
+  font-size: clamp(1.25rem, 2.5vw, 1.9rem);
+  letter-spacing: 0.16em;
+  color: rgba(206, 186, 162, 0.82);
+}
+
+.marcus-intro-hint,
+.william-intro-hint {
+  opacity: 0.8;
 }
 
 .marcus-brief-content-shell {
   width: min(1200px, 100%);
   overflow-x: clip;
+}
+
+.brief-chapter-layout {
+  position: relative;
+}
+
+.brief-chapter-main {
+  min-width: 0;
+  padding-right: clamp(5.25rem, 8.5vw, 7.2rem);
+}
+
+.brief-chapter-rail {
+  position: fixed;
+  right: clamp(0.85rem, 2.7vw, 2.2rem);
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.3rem;
+  z-index: 190;
+  padding-right: 0.55rem;
+}
+
+.brief-chapter-rail::after {
+  content: "";
+  position: absolute;
+  top: 0.15rem;
+  bottom: 0.15rem;
+  right: 0;
+  width: 1px;
+  opacity: 0.38;
+}
+
+.brief-chapter-rail-item {
+  border: 0;
+  background: transparent;
+  text-align: right;
+  padding: 0.26rem 0;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.56rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 180ms ease, opacity 180ms ease, transform 220ms ease;
+  opacity: 0.58;
+  white-space: nowrap;
+}
+
+.brief-chapter-rail-item.is-active {
+  opacity: 1;
+  transform: translateX(-3px);
+}
+
+.brief-chapter-layout--dark .brief-chapter-rail-item {
+  color: rgba(208, 196, 180, 0.88);
+}
+
+.brief-chapter-layout--dark .brief-chapter-rail-item.is-active {
+  color: rgba(244, 236, 225, 0.96);
+}
+
+.brief-chapter-layout--dark .brief-chapter-rail::after {
+  background: rgba(200, 188, 170, 0.44);
+}
+
+.brief-chapter-layout--light .brief-chapter-rail-item {
+  color: rgba(214, 188, 156, 0.86);
+}
+
+.brief-chapter-layout--light .brief-chapter-rail-item.is-active {
+  color: rgba(231, 216, 202, 0.98);
+}
+
+.brief-chapter-layout--light .brief-chapter-rail::after {
+  background: rgba(184, 138, 122, 0.42);
+}
+
+.brief-chapter-bottom {
+  position: fixed;
+  left: calc(env(safe-area-inset-left, 0px) + 0.7rem);
+  right: calc(env(safe-area-inset-right, 0px) + 0.7rem);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 0.8rem);
+  z-index: 220;
+  display: none;
+  gap: 0.18rem;
+  align-items: center;
+  justify-content: stretch;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  white-space: normal;
+  padding: 0.48rem 0.42rem;
+  backdrop-filter: blur(8px);
+  border-radius: 999px;
+}
+
+.brief-chapter-bottom--dark {
+  background:
+    linear-gradient(180deg, rgba(20, 24, 29, 0.74), rgba(15, 18, 22, 0.68)),
+    rgba(14, 16, 19, 0.66);
+  border: 1px solid rgba(110, 124, 139, 0.34);
+  box-shadow:
+    0 14px 28px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(178, 192, 206, 0.11);
+}
+
+.brief-chapter-bottom--light {
+  background:
+    linear-gradient(180deg, rgba(52, 39, 35, 0.74), rgba(36, 27, 24, 0.7)),
+    rgba(34, 25, 22, 0.66);
+  border: 1px solid rgba(184, 138, 122, 0.34);
+  box-shadow:
+    0 14px 28px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(228, 200, 173, 0.1);
+}
+
+.brief-chapter-bottom-item {
+  border: 0;
+  background: transparent;
+  display: inline-flex;
+  flex: 1 1 0;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  padding: 0.32rem 0.18rem;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0.06em;
+  line-height: 1.15;
+  text-transform: uppercase;
+  text-align: center;
+  white-space: normal;
+  text-wrap: balance;
+  cursor: pointer;
+}
+
+@media (max-width: 640px) {
+  .brief-chapter-bottom-item {
+    font-size: 0.46rem;
+    letter-spacing: 0.05em;
+  }
+}
+
+.brief-chapter-bottom--dark .brief-chapter-bottom-item {
+  color: rgba(190, 206, 220, 0.86);
+}
+
+.brief-chapter-bottom--light .brief-chapter-bottom-item {
+  color: rgba(214, 188, 156, 0.92);
+}
+
+.brief-chapter-bottom-item.is-active {
+  text-decoration: underline;
+  text-underline-offset: 0.28rem;
+}
+
+.brief-chapter-bottom--dark .brief-chapter-bottom-item.is-active {
+  color: rgba(231, 238, 245, 0.98);
+  text-decoration-color: rgba(153, 172, 192, 0.92);
+}
+
+.brief-chapter-bottom--light .brief-chapter-bottom-item.is-active {
+  color: rgba(238, 223, 206, 0.98);
+  text-decoration-color: rgba(200, 164, 129, 0.94);
+}
+
+@media (max-width: 1360px) {
+  .brief-chapter-rail {
+    display: none;
+  }
+
+  .brief-chapter-main {
+    padding-right: 0;
+  }
+
+  .brief-chapter-bottom {
+    display: flex;
+  }
 }
 
 .marcus-content-divider {
@@ -3198,7 +3489,7 @@ section[data-section-index] {
     radial-gradient(64% 52% at 14% 84%, rgba(184, 138, 122, 0.16), transparent 72%),
     linear-gradient(180deg, #161110 0%, #1b1412 48%, #161110 100%);
   color: #E7D8CA;
-  font-family: 'Lora', serif;
+  font-family: 'Alegreya', serif;
   position: relative;
   isolation: isolate;
 }
@@ -3220,20 +3511,20 @@ section[data-section-index] {
 }
 
 .william-brief-page .william-section-kicker {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'IBM Mono Plex', monospace;
   font-weight: 500;
   letter-spacing: 0.18em;
   color: #C8A97E !important;
 }
 
 .william-brief-page .william-body-text {
-  font-family: 'Lora', serif;
+  font-family: 'Alegreya', serif;
 }
 
 .william-brief-page .william-caption,
 .william-brief-page .acc-caption,
 .william-brief-page .gallery-caption-artist {
-  font-family: 'Lora', serif;
+  font-family: 'IBM Mono Plex', monospace;
   text-transform: uppercase;
   letter-spacing: 0.16em;
 }
@@ -3302,6 +3593,20 @@ section[data-section-index] {
   border-top: 1px solid rgba(184, 138, 122, 0.28);
 }
 
+@media (max-width: 1023px) {
+  .brief-chapter-rail {
+    display: none;
+  }
+
+  .brief-chapter-main {
+    padding-right: 0;
+  }
+
+  .brief-chapter-bottom {
+    display: flex;
+  }
+}
+
 .william-brief-page .commission-gallery-title {
   color: #E7D8CA !important;
   letter-spacing: 0.2em;
@@ -3316,6 +3621,11 @@ section[data-section-index] {
 
 .william-brief-page .gallery-caption-artist {
   color: rgba(200, 169, 126, 0.88) !important;
+}
+
+.william-brief-page .acc-caption {
+  color: rgba(214, 188, 156, 0.9) !important;
+
 }
 
 .ideas-intro {

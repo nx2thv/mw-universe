@@ -39,10 +39,6 @@ import williamGallery7 from "../../assets/williamGallery7.jpeg";
 import williamGallery8 from "../../assets/williamGallery8.jpeg";
 import williamAesthetic from "../../assets/williamAesthetic.jpeg";
 
-type Props = {
-  label: string;
-};
-
 type SectionBullet = string | { title: string; detail: string[] };
 
 type Section = {
@@ -55,9 +51,10 @@ type Section = {
 const williamPlaylistEmbedUrl =
   "https://open.spotify.com/embed/playlist/4nFTksip42Gbu3jOcGnu3Q?utm_source=generator&theme=0";
 
-export default function WilliamBriefPage({ label }: Props) {
+export default function WilliamBriefPage() {
   const { language } = useLanguage();
   const [visibleSections, setVisibleSections] = useState<Record<number, boolean>>({});
+  const [activeAnchor, setActiveAnchor] = useState("basic-info");
   const [selectedGalleryImage, setSelectedGalleryImage] =
     useState<GalleryLightboxImage | null>(null);
 
@@ -96,6 +93,17 @@ export default function WilliamBriefPage({ label }: Props) {
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+        if (visible) {
+          const nextAnchor = (visible.target as HTMLElement).id;
+          if (nextAnchor) {
+            setActiveAnchor(nextAnchor);
+          }
+        }
+
         entries.forEach((entry) => {
           const indexAttr = entry.target.getAttribute("data-section-index");
           const index = indexAttr ? Number(indexAttr) : NaN;
@@ -113,29 +121,35 @@ export default function WilliamBriefPage({ label }: Props) {
     const sectionEls = document.querySelectorAll("[data-section-index]");
     sectionEls.forEach((el) => observer.observe(el));
 
-    return () => observer.disconnect();
+    const galleryObserver = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          setActiveAnchor("gallery");
+        }
+      },
+      { threshold: 0.28, rootMargin: "-8% 0px -55% 0px" },
+    );
+    const galleryEl = document.getElementById("gallery");
+    if (galleryEl) galleryObserver.observe(galleryEl);
+
+    return () => {
+      observer.disconnect();
+      galleryObserver.disconnect();
+    };
   }, []);
 
   const translations: Record<
     "en" | "vi",
     {
-      kicker: string;
-      title: string;
-      subtitle: string;
-      back: string;
+      quote: string;
+      quoteName: string;
       intro?: string;
       sections: Section[];
     }
   > = {
     en: {
-      kicker: "Chanel Portfolio",
-      title: label,
-      subtitle: "Chanel's darling. Marcus' sweetheart.",
-      back: "← Return home",
-      intro:
-        "This page gathers William's core reference in one editorial-style scroll:\n" +
-        "overall vibe, features, colour palette, silhouette, tattoos, and past commissions.\n" +
-        "Skim the quick navigation below or wander down the page like a lookbook.",
+      quote: "\"High fashion. Higher standards.\"",
+      quoteName: "Mr. William Cartier-Hayes",
       sections: [
         {
           id: "basic info",
@@ -220,11 +234,8 @@ export default function WilliamBriefPage({ label }: Props) {
       ],
     },
     vi: {
-      kicker: "Chanel Portfolio",
-      title: label,
-      subtitle: "Chanel's darling. Marcus' sweetheart.",
-      intro: "Trang này cung cấp toàn bộ những gì cần thiết để vẽ William Cartier:\nBao gồm vibe chung, mô tả chi tiết các đặc điểm nhận dạng trên khuôn mặt và cơ thể, cùng với hình ảnh tham khảo.\n Bạn có thể bấm vào một trong những lựa chọn ở dưới để đến section bạn muốn đọc.\nHoặc lướt xuống và đọc từng dòng để cảm nhận rõ ràng hơn.",
-      back: "← Về trang chủ",
+      quote: "\"High fashion. Higher standards.\"",
+      quoteName: "Mr. William Cartier-Hayes",
       sections: [
         {
           id: "basic info",
@@ -295,6 +306,33 @@ export default function WilliamBriefPage({ label }: Props) {
     ...section,
     anchor: section.id.replace(/\s+/g, "-").toLowerCase(),
   }));
+  const chapterLabelsByLang: Record<"en" | "vi", Record<string, string>> = {
+    en: {
+      "basic info": "A Snapshot",
+      face: "B Face",
+      "hair and stuffs": "C Hair & Acc",
+      silhouette: "D Build",
+      tatts: "E Ink",
+    },
+    vi: {
+      "basic info": "A Tổng quan",
+      face: "B Gương mặt",
+      "hair and stuffs": "C Tóc & phụ kiện",
+      silhouette: "D Dáng",
+      tatts: "E Hình xăm",
+    },
+  };
+  const chapterLabels = chapterLabelsByLang[language] || chapterLabelsByLang.en;
+  const chapterItems = [
+    ...sectionAnchors.map((section) => ({
+      anchor: section.anchor,
+      label: chapterLabels[section.id] || section.kicker,
+    })),
+    {
+      anchor: "gallery",
+      label: "F Gallery",
+    },
+  ];
 
   const sectionImageIds: Record<string, string[]> = {
     "basic info": ["palette"],
@@ -388,397 +426,402 @@ export default function WilliamBriefPage({ label }: Props) {
   ]
 
 
-  const handleChipClick = (anchor: string) => {
+  const handleChapterJump = (anchor: string) => {
     const target = document.getElementById(anchor);
     if (target) {
       target.scrollIntoView({ behavior: "smooth", block: "start" });
+      setActiveAnchor(anchor);
     }
   };
 
   return (
     <HeroScrollPage
-        backgroundImage={williamBriefPage}
-        kicker={t.kicker}
-        title={t.title}
-        subtitle={t.subtitle}
-        showHero={false}
-        pageClassName="william-brief-page"
-        bodyClassName="william-brief-body scroll-smooth"
-      >
-        {/* INTRO + UNDERLINED NAV */}
-        <section className="border-t border-neutral-200 min-h-[120vh] flex flex-col items-center justify-center px-4">
-          <div className="max-w-2xl mx-auto text-center">
-            {t.intro && (
-              <div className="max-w-4xl mx-auto px-6 md:px-10">
-                <p className="whitespace-pre-line text-xs md:text-sm md:leading-[1.9] leading-[1.8] tracking-[0.18] md:tracking-[0.2em] uppercase text-neutral-800">
-                  {t.intro}
-                </p>
-              </div>
-            )}
-
-            <nav className="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-3 text-[11px] md:text-[11px] uppercase tracking-[0.16em]">
-              {sectionAnchors.map((section) => (
-                <button
-                  key={section.anchor}
-                  type="button"
-                  onClick={() => handleChipClick(section.anchor)}
-                  className="nav-chip bg-transparent border-0 pb-1 text-neutral-800 border-b border-transparent hover:border-neutral-900 hover:text-neutral-900 focus:outline-none underline"
-                >
-                  {section.kicker}
-                </button>
-              ))}
-
-              {/* F. Gallery nav chip */}
-              <button
-                type="button"
-                onClick={() => handleChipClick("gallery")}
-                className="nav-chip bg-transparent border-0 pb-1 text-neutral-800 border-b border-transparent hover:border-neutral-900 hover:text-neutral-900 focus:outline-none underline"
-              >
-                F. Gallery
-              </button>
-            </nav>
-          </div>
-        </section>
+      backgroundImage={williamBriefPage}
+      kicker=""
+      title=""
+      subtitle=""
+      showHero={false}
+      pageClassName="william-brief-page"
+      bodyClassName="william-brief-body scroll-smooth"
+    >
+      <section className="border-t border-neutral-200 min-h-[120vh] flex flex-col items-center justify-center px-4">
+        <div className="max-w-2xl mx-auto text-center">
+          <p className="william-intro-name mt-2 uppercase tracking-[0.2em]">
+            {t.quoteName}
+          </p>
+          <p className="william-intro-quote whitespace-pre-line">
+            {t.quote}
+          </p>
+        </div>
+      </section>
 
       <div className="william-brief-content william-brief-content-shell max-w-6xl mx-auto px-6 md:px-10 lg:px-16 py-12 md:py-16">
-        <div className="william-content-divider h-px w-full opacity-80 rounded-full" />
-        {/* sections */}
-        <div className="space-y-28 md:space-y-36">
-          {sectionAnchors.map((section, sectionIndex) => {
-            const isVisible = visibleSections[sectionIndex] ?? false;
-
-            const animationClass = isVisible
-              ? "opacity-100 translate-y-0 scale-100"
-              : "opacity-0 translate-y-8 scale-[0.96]";
-            const imageIds = sectionImageIds[section.id] || [];
-            const images = imageIds.map((id) => imageMap[id]).filter(Boolean);
-
-            const isFaceSection = section.id === "face";
-            const isPaletteSection = section.id === "basic info";
-            const isHairSection = section.id === "hair and stuffs";
-            const isSilhouetteSection = section.id === "silhouette";
-            const isTattooSection = section.id === "tatts";
-
-            const bodyText =
-              section.body ??
-              section.bullets
-                ?.map((item) =>
-                  typeof item === "string"
-                    ? `• ${item}`
-                    : `${item.title}\n${item.detail.map((d) => `• ${d}`).join("\n")}`
-                )
-                .join("\n\n");
-            return (
-              <section
-                key={section.id}
-                id={section.anchor}
-                data-section-index={sectionIndex}
-                className={`william-section py-16 lg:py-24 transition-all duration-[560ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${animationClass} ${isVisible ? "is-visible" : ""}`}
+        <div className="brief-chapter-layout brief-chapter-layout--light">
+          <aside className="brief-chapter-rail" aria-label="William sections">
+            {chapterItems.map((item) => (
+              <button
+                key={item.anchor}
+                type="button"
+                onClick={() => handleChapterJump(item.anchor)}
+                className={`brief-chapter-rail-item ${activeAnchor === item.anchor ? "is-active" : ""}`}
               >
-                {/* TEXT BLOCK */}
-                <div className="max-w-3xl mx-auto text-center space-y-4 leading-relaxed">
-                  {/* kicker */}
-                  <div
-                    className={`william-section-kicker text-[11px] md:text-xs uppercase tracking-[0.18em] text-neutral-600 transition-all duration-[560ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-4 scale-95"
-                      }`}
-                    style={{ transitionDelay: isVisible ? "80ms" : "0ms" }}
+                {item.label}
+              </button>
+            ))}
+          </aside>
+          <div className="brief-chapter-main">
+            <div className="william-content-divider h-px w-full opacity-80 rounded-full" />
+            {/* sections */}
+            <div className="space-y-28 md:space-y-36">
+              {sectionAnchors.map((section, sectionIndex) => {
+                const isVisible = visibleSections[sectionIndex] ?? false;
+
+                const animationClass = isVisible
+                  ? "opacity-100 translate-y-0 scale-100"
+                  : "opacity-0 translate-y-8 scale-[0.96]";
+                const imageIds = sectionImageIds[section.id] || [];
+                const images = imageIds.map((id) => imageMap[id]).filter(Boolean);
+
+                const isFaceSection = section.id === "face";
+                const isPaletteSection = section.id === "basic info";
+                const isHairSection = section.id === "hair and stuffs";
+                const isSilhouetteSection = section.id === "silhouette";
+                const isTattooSection = section.id === "tatts";
+
+                const bodyText =
+                  section.body ??
+                  section.bullets
+                    ?.map((item) =>
+                      typeof item === "string"
+                        ? `• ${item}`
+                        : `${item.title}\n${item.detail.map((d) => `• ${d}`).join("\n")}`
+                    )
+                    .join("\n\n");
+                return (
+                  <section
+                    key={section.id}
+                    id={section.anchor}
+                    data-section-index={sectionIndex}
+                    className={`william-section py-16 lg:py-24 transition-all duration-[560ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${animationClass} ${isVisible ? "is-visible" : ""}`}
                   >
-                    {section.kicker}
-                  </div>
+                    {/* TEXT BLOCK */}
+                    <div className="max-w-3xl mx-auto text-center space-y-4 leading-relaxed">
+                      {/* kicker */}
+                      <div
+                        className={`william-section-kicker text-[11px] md:text-xs uppercase tracking-[0.18em] text-neutral-600 transition-all duration-[560ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-4 scale-95"
+                          }`}
+                        style={{ transitionDelay: isVisible ? "80ms" : "0ms" }}
+                      >
+                        {section.kicker}
+                      </div>
 
-                  {/* optional body paragraph */}
-                  {bodyText && (
-                    <p
-                      className={`william-body-text mt-4 whitespace-pre-line text-[12px] md:text-sm md:leading-[1.9] leading-[1.8] tracking-[0.16em] uppercase text-neutral-800 transition-all duration-[560ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-4 scale-95"
+                      {/* optional body paragraph */}
+                      {bodyText && (
+                        <p
+                          className={`william-body-text mt-4 whitespace-pre-line text-[12px] md:text-sm md:leading-[1.9] leading-[1.8] tracking-[0.16em] uppercase text-neutral-800 transition-all duration-[560ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-4 scale-95"
+                            }`}
+                          style={{ transitionDelay: isVisible ? "170ms" : "0ms" }}
+                        >
+                          {bodyText}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* IMAGE BLOCK */}
+                    <div
+                      className={`mt-10 flex transition-all duration-[560ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-5 scale-95"} ${isFaceSection || isSilhouetteSection || isTattooSection
+                        ? "justify-start"
+                        : "justify-center"
                         }`}
-                      style={{ transitionDelay: isVisible ? "170ms" : "0ms" }}
+                      style={{ transitionDelay: isVisible ? "260ms" : "0ms" }}
                     >
-                      {bodyText}
-                    </p>
-                  )}
-                </div>
-
-                {/* IMAGE BLOCK */}
-                <div
-                  className={`mt-10 flex transition-all duration-[560ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-5 scale-95"} ${isFaceSection || isSilhouetteSection || isTattooSection
-                    ? "justify-start"
-                    : "justify-center"
-                    }`}
-                  style={{ transitionDelay: isVisible ? "260ms" : "0ms" }}
-                >
-                  {images.length > 0 ? (
-                    // A. PALETTE – single image
-                    isPaletteSection && images.length === 1 ? (
-                      <div className="william-basic-info-media w-full">
-                        <figure className="ref-image william-basic-info-media__item bg-neutral-50 border border-neutral-200 overflow-hidden">
-                          <img
-                            src={images[0]}
-                            alt="William colour palette"
-                            className="w-full h-auto object-contain block"
-                          />
-                        </figure>
-                        <figure className="ref-image william-basic-info-media__item bg-neutral-50 border border-neutral-200 overflow-hidden">
-                          <img
-                            src={williamAesthetic}
-                            alt="William aesthetic reference"
-                            className="w-full h-auto object-contain block"
-                          />
-                        </figure>
-                        <div className="william-basic-info-media__playlist">
-                          <FloatingSoundtrackBar
-                            title="William's soundtrack"
-                            embedUrl={williamPlaylistEmbedUrl}
-                          />
-                        </div>
-                      </div>
-                    ) : (isFaceSection || isSilhouetteSection || isTattooSection) && images.length > 1 ? (
-                      <div className="face-image-stack">
-                        {images.map((src, idx) => {
-                          const id = imageIds[idx];
-                          const isSil3 = isSilhouetteSection && id === "sil3";
-
-                          return (
-                            <figure
-                              key={id}
-                              className={`williamBriefImage brief-${id} overflow-hidden`}
-                            >
+                      {images.length > 0 ? (
+                        // A. PALETTE – single image
+                        isPaletteSection && images.length === 1 ? (
+                          <div className="william-basic-info-media w-full">
+                            <figure className="ref-image william-basic-info-media__item bg-neutral-50 border border-neutral-200 overflow-hidden">
                               <img
-                                src={src}
-                                alt={`${section.kicker} reference ${idx + 1}`}
-                                className="brief-img"
-                              />
-                              {isSil3 && (
-                                <figcaption className="mt-2 lg:hidden text-[10px] md:text-xs uppercase tracking-[0.18em] text-neutral-500 text-center">
-                                  (A): TRẦN THỊ MINH ANH
-                                </figcaption>
-                              )}
-                            </figure>
-                          );
-                        })}
-                      </div>
-                    ) : // D. HAIR – grid
-                      isHairSection ? (
-                        <div className="hair-grid max-w-4xl mx-auto">
-                          {images.map((src, idx) => (
-                            <figure
-                              key={idx}
-                              className={`hair-figure william-hair-figure--stagger william-stagger-item william-stagger-item--${idx + 1}`}
-                            >
-                              <img
-                                src={src}
-                                alt={`Hair style ${idx + 1}`}
-                                className="brief-img"
+                                src={images[0]}
+                                alt="William colour palette"
+                                className="w-full h-auto object-contain block"
                               />
                             </figure>
-                          ))}
-                        </div>
-                      ) : // E. GENERIC – single image
-                        images.length === 1 ? (
-                          <figure className="ref-image w-full max-w-[420px] aspect-[3/4] bg-neutral-50 border border-neutral-200 overflow-hidden">
-                            <img
-                              src={images[0]}
-                              alt={`${section.kicker} reference`}
-                              className="h-full w-full object-cover"
-                            />
-                          </figure>
-                        ) : (
-                          // F. GENERIC – simple grid
-                          <div className="grid grid-cols-2 gap-3">
-                            {images.map((src, idx) => (
-                              <figure
-                                key={idx}
-                                className={`williamBriefImage brief-${imageIds[idx]} overflow-hidden`}
-                              >
+                            <figure className="ref-image william-basic-info-media__item bg-neutral-50 border border-neutral-200 overflow-hidden">
+                              <img
+                                src={williamAesthetic}
+                                alt="William aesthetic reference"
+                                className="w-full h-auto object-contain block"
+                              />
+                            </figure>
+                            <div className="william-basic-info-media__playlist">
+                              <FloatingSoundtrackBar
+                                title="William's soundtrack"
+                                embedUrl={williamPlaylistEmbedUrl}
+                              />
+                            </div>
+                          </div>
+                        ) : (isFaceSection || isSilhouetteSection || isTattooSection) && images.length > 1 ? (
+                          <div className="face-image-stack">
+                            {images.map((src, idx) => {
+                              const id = imageIds[idx];
+                              const isSil3 = isSilhouetteSection && id === "sil3";
+
+                              return (
+                                <figure
+                                  key={id}
+                                  className={`williamBriefImage brief-${id} overflow-hidden`}
+                                >
+                                  <img
+                                    src={src}
+                                    alt={`${section.kicker} reference ${idx + 1}`}
+                                    className="brief-img"
+                                  />
+                                  {isSil3 && (
+                                    <figcaption className="mt-2 lg:hidden text-[10px] md:text-xs uppercase tracking-[0.18em] text-neutral-500 text-center">
+                                      (A): TRẦN THỊ MINH ANH
+                                    </figcaption>
+                                  )}
+                                </figure>
+                              );
+                            })}
+                          </div>
+                        ) : // D. HAIR – grid
+                          isHairSection ? (
+                            <div className="hair-grid max-w-4xl mx-auto">
+                              {images.map((src, idx) => (
+                                <figure
+                                  key={idx}
+                                  className={`hair-figure william-hair-figure--stagger william-stagger-item william-stagger-item--${idx + 1}`}
+                                >
+                                  <img
+                                    src={src}
+                                    alt={`Hair style ${idx + 1}`}
+                                    className="brief-img"
+                                  />
+                                </figure>
+                              ))}
+                            </div>
+                          ) : // E. GENERIC – single image
+                            images.length === 1 ? (
+                              <figure className="ref-image w-full max-w-[420px] aspect-[3/4] bg-neutral-50 border border-neutral-200 overflow-hidden">
                                 <img
-                                  src={src}
-                                  alt={`${section.kicker} reference ${idx + 1}`}
-                                  className="brief-img"
+                                  src={images[0]}
+                                  alt={`${section.kicker} reference`}
+                                  className="h-full w-full object-cover"
                                 />
                               </figure>
-                            ))}
-                          </div>
-                        )
-                  ) : (
-                    // G. NO IMAGES
-                    <div className="aspect-[3/4] bg-neutral-50 border border-dashed border-neutral-200 flex items-center justify-center text-[11px] uppercase tracking-[0.16em] text-neutral-400">
-                      Visual reference coming soon
+                            ) : (
+                              // F. GENERIC – simple grid
+                              <div className="grid grid-cols-2 gap-3">
+                                {images.map((src, idx) => (
+                                  <figure
+                                    key={idx}
+                                    className={`williamBriefImage brief-${imageIds[idx]} overflow-hidden`}
+                                  >
+                                    <img
+                                      src={src}
+                                      alt={`${section.kicker} reference ${idx + 1}`}
+                                      className="brief-img"
+                                    />
+                                  </figure>
+                                ))}
+                              </div>
+                            )
+                      ) : (
+                        // G. NO IMAGES
+                        <div className="aspect-[3/4] bg-neutral-50 border border-dashed border-neutral-200 flex items-center justify-center text-[11px] uppercase tracking-[0.16em] text-neutral-400">
+                          Visual reference coming soon
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-                {/* ACCESSORIES STRIP – ONLY FOR HAIR SECTION */}
-                {isHairSection && (
-                  <div className="mt-10 relative">
-                    {/* LEFT ARROW */}
-                    <button
-                      type="button"
-                      onClick={() => scrollAccessories("left")}
-                      className="scroll-arrow-btn scroll-arrow-btn--left scroll-arrow-btn--gutter"
-                    >
-                      ‹
-                    </button>
+                    {/* ACCESSORIES STRIP – ONLY FOR HAIR SECTION */}
+                    {isHairSection && (
+                      <div className="mt-10 relative">
+                        {/* LEFT ARROW */}
+                        <button
+                          type="button"
+                          onClick={() => scrollAccessories("left")}
+                          className="scroll-arrow-btn scroll-arrow-btn--left scroll-arrow-btn--gutter"
+                        >
+                          ‹
+                        </button>
 
-                    {/* SCROLL STRIP */}
-                    <div
-                      ref={accStripRef}
-                      className="
+                        {/* SCROLL STRIP */}
+                        <div
+                          ref={accStripRef}
+                          className="
                       acc-strip strip-with-gutter no-scrollbar
                       flex gap-6 overflow-x-auto
                       pl-6 pr-6
                       "
-                    >
-                      <figure className="acc-card william-accessory-card--stagger william-stagger-item william-stagger-item--1">
-                        <div className="acc-figure">
-                          <img
-                            src={williamLeftRings}
-                            alt="Left hand – ring stack"
-                            className="brief-img"
-                          />
+                        >
+                          <figure className="acc-card william-accessory-card--stagger william-stagger-item william-stagger-item--1">
+                            <div className="acc-figure">
+                              <img
+                                src={williamLeftRings}
+                                alt="Left hand – ring stack"
+                                className="brief-img"
+                              />
+                            </div>
+                            <figcaption className="acc-caption william-caption text-center mt-2">
+                              {accessoryCaptions.leftRing}
+                            </figcaption>
+                          </figure>
+
+                          <figure className="acc-card william-accessory-card--stagger william-stagger-item william-stagger-item--2">
+                            <div className="acc-figure">
+                              <img
+                                src={williamRightRings}
+                                alt="Right hand – wedding ring"
+                                className="brief-img"
+                              />
+                            </div>
+                            <figcaption className="acc-caption william-caption text-center mt-2">
+                              {accessoryCaptions.rightRing}
+                            </figcaption>
+                          </figure>
+
+                          <figure className="acc-card william-accessory-card--stagger william-stagger-item william-stagger-item--3">
+                            <div className="acc-figure">
+                              <img
+                                src={williamLeftEarrings}
+                                alt="Left ear – stack"
+                                className="brief-img"
+                              />
+                            </div>
+                            <figcaption className="acc-caption text-center mt-2">
+                              {accessoryCaptions.leftEar}
+                            </figcaption>
+                          </figure>
+
+                          <figure className="acc-card william-accessory-card--stagger william-stagger-item william-stagger-item--4">
+                            <div className="acc-figure">
+                              <img
+                                src={williamRightEarrings}
+                                alt="Right ear – stack"
+                                className="brief-img"
+                              />
+                            </div>
+                            <figcaption className="acc-caption text-center mt-2">
+                              {accessoryCaptions.rightEar}
+                            </figcaption>
+                          </figure>
+
+                          <figure className="acc-card william-accessory-card--stagger william-stagger-item william-stagger-item--5">
+                            <div className="acc-figure">
+                              <img
+                                src={williamToothGem}
+                                alt="Tooth gem"
+                                className="brief-img"
+                              />
+                            </div>
+                            <figcaption className="acc-caption text-center mt-2">
+                              {accessoryCaptions.toothGem}
+                            </figcaption>
+                          </figure>
                         </div>
-                        <figcaption className="acc-caption william-caption text-center mt-2">
-                          {accessoryCaptions.leftRing}
-                        </figcaption>
-                      </figure>
-
-                      <figure className="acc-card william-accessory-card--stagger william-stagger-item william-stagger-item--2">
-                        <div className="acc-figure">
-                          <img
-                            src={williamRightRings}
-                            alt="Right hand – wedding ring"
-                            className="brief-img"
-                          />
-                        </div>
-                        <figcaption className="acc-caption william-caption text-center mt-2">
-                          {accessoryCaptions.rightRing}
-                        </figcaption>
-                      </figure>
-
-                      <figure className="acc-card william-accessory-card--stagger william-stagger-item william-stagger-item--3">
-                        <div className="acc-figure">
-                          <img
-                            src={williamLeftEarrings}
-                            alt="Left ear – stack"
-                            className="brief-img"
-                          />
-                        </div>
-                        <figcaption className="acc-caption text-center mt-2">
-                          {accessoryCaptions.leftEar}
-                        </figcaption>
-                      </figure>
-
-                      <figure className="acc-card william-accessory-card--stagger william-stagger-item william-stagger-item--4">
-                        <div className="acc-figure">
-                          <img
-                            src={williamRightEarrings}
-                            alt="Right ear – stack"
-                            className="brief-img"
-                          />
-                        </div>
-                        <figcaption className="acc-caption text-center mt-2">
-                          {accessoryCaptions.rightEar}
-                        </figcaption>
-                      </figure>
-
-                      <figure className="acc-card william-accessory-card--stagger william-stagger-item william-stagger-item--5">
-                        <div className="acc-figure">
-                          <img
-                            src={williamToothGem}
-                            alt="Tooth gem"
-                            className="brief-img"
-                          />
-                        </div>
-                        <figcaption className="acc-caption text-center mt-2">
-                          {accessoryCaptions.toothGem}
-                        </figcaption>
-                      </figure>
-                    </div>
 
 
-                    {/* RIGHT ARROW */}
-                    <button
-                      type="button"
-                      onClick={() => scrollAccessories("right")}
-                      className="scroll-arrow-btn scroll-arrow-btn--right scroll-arrow-btn--gutter"
-                    >
-                      ›
-                    </button>
-                  </div>
-                )}
-              </section>
-            );
-          })}
+                        {/* RIGHT ARROW */}
+                        <button
+                          type="button"
+                          onClick={() => scrollAccessories("right")}
+                          className="scroll-arrow-btn scroll-arrow-btn--right scroll-arrow-btn--gutter"
+                        >
+                          ›
+                        </button>
+                      </div>
+                    )}
+                  </section>
+                );
+              })}
 
 
-        </div>
-        {/* WILLIAM SOLO COMMISSIONS GALLERY */}
-        <section id="gallery" className="commission-gallery william-gallery-section mt-20">
-          <h3 className="commission-gallery-title text-slate-100">
-            Gallery
-          </h3>
-
-          <div className="mt-8 relative">
-            {/* LEFT ARROW */}
-            <button
-              type="button"
-              onClick={() => scrollGallery("left")}
-              className="scroll-arrow-btn scroll-arrow-btn--left scroll-arrow-btn--gutter"
-            >
-              ‹
-            </button>
-
-            {/* STRIP */}
-            <div
-              ref={galleryStripRef}
-              className="gallery-strip strip-with-gutter no-scrollbar"
-            >
-              {williamSoloGallery.map((item, idx) => (
-                <figure key={idx} className="gallery-card figure-zoom">
-                  <button
-                    type="button"
-                    className="gallery-card-button"
-                    onClick={() =>
-                      setSelectedGalleryImage({
-                        src: item.src,
-                        alt: `William solo commission by ${item.artist}`,
-                        caption: item.artist,
-                      })
-                    }
-                    aria-label={`Open William solo commission by ${item.artist}`}
-                  >
-                    <div className="gallery-figure">
-                      <img
-                        src={item.src}
-                        alt={`William solo commission by ${item.artist}`}
-                        className="gallery-img"
-                      />
-                    </div>
-                  </button>
-                  <figcaption className="gallery-caption">
-                    <span className="gallery-caption-artist text-slate-300">
-                      {item.artist}
-                    </span>
-                  </figcaption>
-                </figure>
-              ))}
             </div>
+            {/* WILLIAM SOLO COMMISSIONS GALLERY */}
+            <section id="gallery" className="commission-gallery william-gallery-section mt-20">
+              <h3 className="commission-gallery-title text-slate-100">
+                Gallery
+              </h3>
 
-            {/* RIGHT ARROW */}
-            <button
-              type="button"
-              onClick={() => scrollGallery("right")}
-              className="scroll-arrow-btn scroll-arrow-btn--right scroll-arrow-btn--gutter"
-            >
-              ›
-            </button>
+              <div className="mt-8 relative">
+                {/* LEFT ARROW */}
+                <button
+                  type="button"
+                  onClick={() => scrollGallery("left")}
+                  className="scroll-arrow-btn scroll-arrow-btn--left scroll-arrow-btn--gutter"
+                >
+                  ‹
+                </button>
+
+                {/* STRIP */}
+                <div
+                  ref={galleryStripRef}
+                  className="gallery-strip strip-with-gutter no-scrollbar"
+                >
+                  {williamSoloGallery.map((item, idx) => (
+                    <figure key={idx} className="gallery-card figure-zoom">
+                      <button
+                        type="button"
+                        className="gallery-card-button"
+                        onClick={() =>
+                          setSelectedGalleryImage({
+                            src: item.src,
+                            alt: `William solo commission by ${item.artist}`,
+                            caption: item.artist,
+                          })
+                        }
+                        aria-label={`Open William solo commission by ${item.artist}`}
+                      >
+                        <div className="gallery-figure">
+                          <img
+                            src={item.src}
+                            alt={`William solo commission by ${item.artist}`}
+                            className="gallery-img"
+                          />
+                        </div>
+                      </button>
+                      <figcaption className="gallery-caption">
+                        <span className="gallery-caption-artist text-slate-300">
+                          {item.artist}
+                        </span>
+                      </figcaption>
+                    </figure>
+                  ))}
+                </div>
+
+                {/* RIGHT ARROW */}
+                <button
+                  type="button"
+                  onClick={() => scrollGallery("right")}
+                  className="scroll-arrow-btn scroll-arrow-btn--right scroll-arrow-btn--gutter"
+                >
+                  ›
+                </button>
+              </div>
+            </section>
+
+            <PageCredit tone="on-light" className="mt-10" />
+
+            <GalleryLightbox
+              image={selectedGalleryImage}
+              onClose={() => setSelectedGalleryImage(null)}
+            />
           </div>
-        </section>
-
-        <PageCredit tone="on-light" className="mt-10" />
-
-        <GalleryLightbox
-          image={selectedGalleryImage}
-          onClose={() => setSelectedGalleryImage(null)}
-        />
+        </div>
       </div>
+      <nav className="brief-chapter-bottom brief-chapter-bottom--light" aria-label="William quick jump">
+        {chapterItems.map((item) => (
+          <button
+            key={item.anchor}
+            type="button"
+            onClick={() => handleChapterJump(item.anchor)}
+            className={`brief-chapter-bottom-item ${activeAnchor === item.anchor ? "is-active" : ""}`}
+          >
+            {item.label}
+          </button>
+        ))}
+      </nav>
     </HeroScrollPage>
   );
 }
