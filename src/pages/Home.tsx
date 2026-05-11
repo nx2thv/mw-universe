@@ -107,6 +107,8 @@ function getSharedIdeaId() {
 
 export default function Home() {
   const mainRef = useRef<HTMLElement | null>(null);
+  const didRestoreStoredSectionRef = useRef(false);
+  const isRestoringSectionRef = useRef(false);
   const [showTos, setShowTos] = useState(false);
   const [activeSection, setActiveSection] = useState<SectionKey>(getStoredSection);
   const [isCompactViewport, setIsCompactViewport] = useState(false);
@@ -325,9 +327,13 @@ export default function Home() {
       : `${idea.assignedTo} is working on this brief`;
   };
 
-  const handleOpenBrief = async (briefPath: string) => {
+  const handleOpenBrief = async (idea: CommissionIdea) => {
     try {
-      await openBriefDocument(briefPath);
+      await openBriefDocument(idea.briefPath, {
+        ideaId: idea.id,
+        ideaTitle: idea.title,
+        character: idea.character ?? null,
+      });
     } catch (error) {
       console.error("Could not open brief:", error);
       window.alert("Could not open this brief right now.");
@@ -407,6 +413,27 @@ export default function Home() {
 
   useEffect(() => {
     if (!isCompactViewport) return;
+    if (didRestoreStoredSectionRef.current) return;
+    const root = mainRef.current;
+    const section = root?.querySelector<HTMLElement>(`#${activeSection}`);
+    if (!root || !section) return;
+
+    didRestoreStoredSectionRef.current = true;
+    isRestoringSectionRef.current = true;
+    root.scrollTo({
+      top: section.offsetTop,
+      behavior: "auto",
+    });
+
+    const timeoutId = window.setTimeout(() => {
+      isRestoringSectionRef.current = false;
+    }, 250);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [activeSection, isCompactViewport]);
+
+  useEffect(() => {
+    if (!isCompactViewport) return;
     const root = mainRef.current;
     if (!root) return;
 
@@ -418,6 +445,8 @@ export default function Home() {
 
     const observer = new IntersectionObserver(
       (entries) => {
+        if (isRestoringSectionRef.current) return;
+
         const visible = entries
           .filter((entry) => entry.isIntersecting)
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
@@ -623,7 +652,7 @@ export default function Home() {
                   <span className="home-journey-portal-name">{t.sections.universe.story}</span>
                   <span className="home-journey-portal-cta">{t.sections.universe.storyCta}</span>
                 </Link>
-                <Link to="/them/au" className="home-journey-universe-choice-link">
+                <Link to="/au" className="home-journey-universe-choice-link">
                   <span className="home-journey-portal-name">{t.sections.universe.au}</span>
                   <span className="home-journey-portal-cta">{t.sections.universe.auCta}</span>
                 </Link>
@@ -738,7 +767,7 @@ export default function Home() {
                             </span>
                             <button
                               type="button"
-                              onClick={() => handleOpenBrief(idea.briefPath)}
+                              onClick={() => handleOpenBrief(idea)}
                               className="home-journey-idea-link"
                             >
                               {t.sections.briefs.openBrief}

@@ -165,6 +165,7 @@ export default function MarcusBriefPage() {
             "Occupation:\nFormer NYPD cop (ESU Captain).\nNow an elite operator in U.S. military.",
             "Vibe:\nStoic, deliberate, masculine in the most unpretentious way.\n" +
             "The kind of man whose presence alone tells you nothing will touch you.",
+            "Bonus quirk:\n Always has to read a physics book before sleep.\n",
           ],
         },
         {
@@ -361,8 +362,8 @@ export default function MarcusBriefPage() {
       jawScar: "Left jawline scar",
 
       // HAIR / BEARD / ACCESSORIES
-      hair1: "Hair ref 1",
-      hair2: "Hair ref 2",
+      hair1: "Hair ref 1 (Slicked back)",
+      hair2: "Hair ref 2 (A bit tousled)",
       beard: "Beard",
       weddingRing: "Wedding ring",
       dogtags: "Dog tags",
@@ -455,332 +456,332 @@ export default function MarcusBriefPage() {
             ))}
           </aside>
           <div className="brief-chapter-main">
-        {/* divider under hero */}
-        <div className="marcus-content-divider h-px w-full bg-slate-500/60 opacity-80 rounded-full" />
+            {/* divider under hero */}
+            <div className="marcus-content-divider h-px w-full bg-slate-500/60 opacity-80 rounded-full" />
 
-        <div className="space-y-28 md:space-y-36">
-          {sectionAnchors.map((section, sectionIndex) => {
-            const isVisible = visibleSections[sectionIndex] ?? false;
+            <div className="space-y-28 md:space-y-36">
+              {sectionAnchors.map((section, sectionIndex) => {
+                const isVisible = visibleSections[sectionIndex] ?? false;
 
-            const bodyText =
-              section.body ??
-              section.bullets
-                ?.map((item) =>
-                  typeof item === "string"
-                    ? `• ${item}`
-                    : `${item.title}\n${item.detail.map((d) => `• ${d}`).join("\n")}`
-                )
-                .join("\n\n");
+                const bodyText =
+                  section.body ??
+                  section.bullets
+                    ?.map((item) =>
+                      typeof item === "string"
+                        ? `• ${item}`
+                        : `${item.title}\n${item.detail.map((d) => `• ${d}`).join("\n")}`
+                    )
+                    .join("\n\n");
 
-            const imageIds: string[] = sectionImageIds[section.id] ?? [];
-            const images = imageIds
-              .map((id: string) => imageMap[id])
-              .filter((src): src is string => Boolean(src));
+                const imageIds: string[] = sectionImageIds[section.id] ?? [];
+                const images = imageIds
+                  .map((id: string) => imageMap[id])
+                  .filter((src): src is string => Boolean(src));
 
-            const isPaletteSection = section.id === "basic info";
-            const isFaceSection = section.id === "face";
-            const isHairSection = section.id === "hair and stuffs";
-            const isBodySection = section.id === "dilf coded";
-            const isTattooSection = section.id === "tatts";
+                const isPaletteSection = section.id === "basic info";
+                const isFaceSection = section.id === "face";
+                const isHairSection = section.id === "hair and stuffs";
+                const isBodySection = section.id === "dilf coded";
+                const isTattooSection = section.id === "tatts";
 
-            // pick correct ref for scroll sections
-            const currentStripRef = isFaceSection
-              ? faceStripRef
-              : isHairSection
-                ? hairStripRef
-                : isBodySection
-                  ? bodyStripRef
-                  : null;
+                // pick correct ref for scroll sections
+                const currentStripRef = isFaceSection
+                  ? faceStripRef
+                  : isHairSection
+                    ? hairStripRef
+                    : isBodySection
+                      ? bodyStripRef
+                      : null;
 
-            return (
-              <section
-                key={section.id}
-                id={section.anchor}
-                data-section-index={sectionIndex}
-                className={`marcus-chapter py-16 lg:py-24 ${isVisible ? "is-visible" : ""}`}
-              >
-                <div
-                  className={`marcus-chapter-shell ${sectionIndex % 2 === 0
-                      ? "marcus-chapter-shell--media-right"
-                      : "marcus-chapter-shell--media-left"
-                    }`}
-                >
-                  {/* TEXT BLOCK */}
-                  <div className="marcus-chapter-text max-w-3xl mx-auto text-center space-y-4 leading-relaxed">
+                return (
+                  <section
+                    key={section.id}
+                    id={section.anchor}
+                    data-section-index={sectionIndex}
+                    className={`marcus-chapter py-16 lg:py-24 ${isVisible ? "is-visible" : ""}`}
+                  >
                     <div
-                      className="marcus-section-kicker marcus-reveal-item marcus-reveal-item--kicker text-[11px] md:text-xs uppercase tracking-[0.18em] text-slate-200/80"
+                      className={`marcus-chapter-shell ${sectionIndex % 2 === 0
+                        ? "marcus-chapter-shell--media-right"
+                        : "marcus-chapter-shell--media-left"
+                        }`}
                     >
-                      {section.kicker}
-                    </div>
-
-                    {bodyText && (
-                      <p
-                        className="marcus-body-text marcus-reveal-item marcus-reveal-item--body mt-4 whitespace-pre-line text-[12px] md:text-sm md:leading-[1.9] leading-[1.8] tracking-[0.16em] uppercase text-slate-100"
-                      >
-                        {bodyText}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* IMAGE AREA */}
-                  {images.length > 0 && (
-                    <div
-                      className="marcus-chapter-media marcus-reveal-item marcus-reveal-item--media"
-                    >
-                    {/* PALETTE – match William's layout */}
-                    {isPaletteSection && images.length === 1 && (
-                      <div
-                        data-marcus-basic-info-media
-                        className={`mt-10 marcus-basic-info-media ${isBasicInfoMediaVisible ? "is-media-visible" : ""}`}
-                      >
-                        <figure className="ref-image marcus-basic-info-media__item marcus-basic-info-media__item--palette bg-neutral-50 border border-neutral-200 overflow-hidden">
-                          <img
-                            src={images[0]}
-                            alt="Marcus colour palette"
-                            className="w-full h-auto object-contain block"
-                          />
-                        </figure>
-
-                        <figure className="ref-image marcus-basic-info-media__item marcus-basic-info-media__item--aesthetic bg-neutral-50 border border-neutral-200 overflow-hidden">
-                          <img
-                            src={marcusAesthetic}
-                            alt="Marcus aesthetic reference"
-                            className="w-full h-auto object-contain block"
-                          />
-                        </figure>
-
-                        <div className="marcus-basic-info-media__playlist marcus-basic-info-media__playlist--stagger">
-                          <FloatingSoundtrackBar
-                            title="Marcus's soundtrack"
-                            embedUrl={marcusPlaylistEmbedUrl}
-                          />
+                      {/* TEXT BLOCK */}
+                      <div className="marcus-chapter-text max-w-3xl mx-auto text-center space-y-4 leading-relaxed">
+                        <div
+                          className="marcus-section-kicker marcus-reveal-item marcus-reveal-item--kicker text-[11px] md:text-xs uppercase tracking-[0.18em] text-slate-200/80"
+                        >
+                          {section.kicker}
                         </div>
+
+                        {bodyText && (
+                          <p
+                            className="marcus-body-text marcus-reveal-item marcus-reveal-item--body mt-4 whitespace-pre-line text-[12px] md:text-sm md:leading-[1.9] leading-[1.8] tracking-[0.16em] uppercase text-slate-100"
+                          >
+                            {bodyText}
+                          </p>
+                        )}
                       </div>
-                    )}
 
-                    {/* FACE / HAIR / BODY → HORIZONTAL STRIP WITH ARROWS */}
-                    {(isFaceSection || isHairSection || isBodySection) &&
-                      !isPaletteSection &&
-                      currentStripRef && (
-                        <div className="mt-10 relative">
-                          {/* LEFT ARROW */}
-                          <button
-                            type="button"
-                            onClick={() =>
-                              scrollStrip(currentStripRef?.current ?? null, "left")
-                            }
-                            className="scroll-arrow-btn scroll-arrow-btn--left scroll-arrow-btn--gutter"
-                          >
-                            ‹
-                          </button>
-
-                          <div
-                            ref={currentStripRef}
-                            className={`no-scrollbar marcus-scroll-strip strip-with-gutter ${isFaceSection ? "marcus-scroll-strip--face" : ""}`}
-                          >
-                            {imageIds.map((id: string, idx: number) => {
-                              const src = imageMap[id];
-                              if (!src) return null;
-                              const label = imageLabels[id] ?? "";
-
-                              return (
-                                <div
-                                  key={`${section.id}-${idx}`}
-                                  className={`marcus-scroll-item ${isFaceSection ? "marcus-scroll-item--face" : ""}`}
-                                >
-                                  <figure className="marcus-scroll-card">
-                                    <div className="marcus-scroll-card-inner">
-                                      <img
-                                        src={src}
-                                        alt={label || `${section.kicker} reference ${idx + 1}`}
-                                        className="w-full h-full object-cover"
-                                      />
-                                    </div>
-                                  </figure>
-
-                                  {label && (
-                                    <div className="marcus-scroll-caption">
-                                      {label}
-                                    </div>
-                                  )}
-                                </div>
-                              );
-                            })}
-                          </div>
-
-                          {/* RIGHT ARROW */}
-                          <button
-                            type="button"
-                            onClick={() =>
-                              scrollStrip(currentStripRef?.current ?? null, "right")
-                            }
-                            className="scroll-arrow-btn scroll-arrow-btn--right scroll-arrow-btn--gutter"
-                          >
-                            ›
-                          </button>
-                        </div>
-                      )}
-
-                    {/* TATTOO SECTION → SINGLE CENTERED IMAGE */}
-                    {isTattooSection &&
-                      !isFaceSection &&
-                      !isHairSection &&
-                      !isBodySection &&
-                      !isPaletteSection && (
-                        <div className="mt-10 relative">
-                          <button
-                            type="button"
-                            onClick={() => scrollStrip(tattooStripRef.current, "left")}
-                            className="scroll-arrow-btn scroll-arrow-btn--left scroll-arrow-btn--gutter"
-                          >
-                            ‹
-                          </button>
-
-                          <div
-                            ref={tattooStripRef}
-                            className="no-scrollbar marcus-scroll-strip marcus-scroll-strip--tattoo strip-with-gutter"
-                          >
-                            <div className="marcus-scroll-item marcus-scroll-item--tattoo">
-                              <figure className="marcus-scroll-card">
-                                <div className="marcus-scroll-card-inner">
-                                  <img
-                                    src={marcusTattoo}
-                                    alt={`${section.kicker} reference 1`}
-                                    className="w-full h-full object-cover"
-                                  />
-                                </div>
-                              </figure>
-                              <div className="marcus-scroll-caption tattoo-image-caption">
-                                (A): MAR QYH
-                              </div>
-                            </div>
-
-                            <div className="marcus-scroll-item marcus-scroll-item--tattoo">
-                              <figure className="marcus-scroll-card marcus-tattoo-combo-card">
-                                <div className="marcus-scroll-card-inner marcus-tattoo-combo">
-                                  <img
-                                    src={marcusTattoo3}
-                                    alt={`${section.kicker} combined reference base`}
-                                    className="marcus-tattoo-combo__base"
-                                  />
-                                  <img
-                                    src={marcusTattoo2}
-                                    alt={`${section.kicker} combined reference detail`}
-                                    className="marcus-tattoo-combo__overlay"
-                                  />
-                                </div>
-                              </figure>
-                            </div>
-                          </div>
-
-                          <button
-                            type="button"
-                            onClick={() => scrollStrip(tattooStripRef.current, "right")}
-                            className="scroll-arrow-btn scroll-arrow-btn--right scroll-arrow-btn--gutter"
-                          >
-                            ›
-                          </button>
-                        </div>
-                      )}
-
-                    {/* FALLBACK GRID FOR ANY OTHER SECTIONS */}
-                    {!isFaceSection &&
-                      !isHairSection &&
-                      !isBodySection &&
-                      !isTattooSection &&
-                      !isPaletteSection && (
-                        <div className="mt-10">
-                          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-                            {images.map((src: string, idx: number) => (
-                              <figure
-                                key={`${section.id}-${idx}`}
-                                className="ref-image w-full aspect-[3/4] bg-slate-900/60 border border-slate-700/60 rounded-xl overflow-hidden shadow-lg"
-                              >
+                      {/* IMAGE AREA */}
+                      {images.length > 0 && (
+                        <div
+                          className="marcus-chapter-media marcus-reveal-item marcus-reveal-item--media"
+                        >
+                          {/* PALETTE – match William's layout */}
+                          {isPaletteSection && images.length === 1 && (
+                            <div
+                              data-marcus-basic-info-media
+                              className={`mt-10 marcus-basic-info-media ${isBasicInfoMediaVisible ? "is-media-visible" : ""}`}
+                            >
+                              <figure className="ref-image marcus-basic-info-media__item marcus-basic-info-media__item--palette bg-neutral-50 border border-neutral-200 overflow-hidden">
                                 <img
-                                  src={src}
-                                  alt={`${section.kicker} reference ${idx + 1}`}
-                                  className="w-full h-full object-cover"
+                                  src={images[0]}
+                                  alt="Marcus colour palette"
+                                  className="w-full h-auto object-contain block"
                                 />
                               </figure>
-                            ))}
-                          </div>
+
+                              <figure className="ref-image marcus-basic-info-media__item marcus-basic-info-media__item--aesthetic bg-neutral-50 border border-neutral-200 overflow-hidden">
+                                <img
+                                  src={marcusAesthetic}
+                                  alt="Marcus aesthetic reference"
+                                  className="w-full h-auto object-contain block"
+                                />
+                              </figure>
+
+                              <div className="marcus-basic-info-media__playlist marcus-basic-info-media__playlist--stagger">
+                                <FloatingSoundtrackBar
+                                  title="Marcus's soundtrack"
+                                  embedUrl={marcusPlaylistEmbedUrl}
+                                />
+                              </div>
+                            </div>
+                          )}
+
+                          {/* FACE / HAIR / BODY → HORIZONTAL STRIP WITH ARROWS */}
+                          {(isFaceSection || isHairSection || isBodySection) &&
+                            !isPaletteSection &&
+                            currentStripRef && (
+                              <div className="mt-10 relative">
+                                {/* LEFT ARROW */}
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    scrollStrip(currentStripRef?.current ?? null, "left")
+                                  }
+                                  className="scroll-arrow-btn scroll-arrow-btn--left scroll-arrow-btn--gutter"
+                                >
+                                  ‹
+                                </button>
+
+                                <div
+                                  ref={currentStripRef}
+                                  className={`no-scrollbar marcus-scroll-strip strip-with-gutter ${isFaceSection ? "marcus-scroll-strip--face" : ""}`}
+                                >
+                                  {imageIds.map((id: string, idx: number) => {
+                                    const src = imageMap[id];
+                                    if (!src) return null;
+                                    const label = imageLabels[id] ?? "";
+
+                                    return (
+                                      <div
+                                        key={`${section.id}-${idx}`}
+                                        className={`marcus-scroll-item ${isFaceSection ? "marcus-scroll-item--face" : ""}`}
+                                      >
+                                        <figure className="marcus-scroll-card">
+                                          <div className="marcus-scroll-card-inner">
+                                            <img
+                                              src={src}
+                                              alt={label || `${section.kicker} reference ${idx + 1}`}
+                                              className="w-full h-full object-cover"
+                                            />
+                                          </div>
+                                        </figure>
+
+                                        {label && (
+                                          <div className="marcus-scroll-caption">
+                                            {label}
+                                          </div>
+                                        )}
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+
+                                {/* RIGHT ARROW */}
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    scrollStrip(currentStripRef?.current ?? null, "right")
+                                  }
+                                  className="scroll-arrow-btn scroll-arrow-btn--right scroll-arrow-btn--gutter"
+                                >
+                                  ›
+                                </button>
+                              </div>
+                            )}
+
+                          {/* TATTOO SECTION → SINGLE CENTERED IMAGE */}
+                          {isTattooSection &&
+                            !isFaceSection &&
+                            !isHairSection &&
+                            !isBodySection &&
+                            !isPaletteSection && (
+                              <div className="mt-10 relative">
+                                <button
+                                  type="button"
+                                  onClick={() => scrollStrip(tattooStripRef.current, "left")}
+                                  className="scroll-arrow-btn scroll-arrow-btn--left scroll-arrow-btn--gutter"
+                                >
+                                  ‹
+                                </button>
+
+                                <div
+                                  ref={tattooStripRef}
+                                  className="no-scrollbar marcus-scroll-strip marcus-scroll-strip--tattoo strip-with-gutter"
+                                >
+                                  <div className="marcus-scroll-item marcus-scroll-item--tattoo">
+                                    <figure className="marcus-scroll-card">
+                                      <div className="marcus-scroll-card-inner">
+                                        <img
+                                          src={marcusTattoo}
+                                          alt={`${section.kicker} reference 1`}
+                                          className="w-full h-full object-cover"
+                                        />
+                                      </div>
+                                    </figure>
+                                    <div className="marcus-scroll-caption tattoo-image-caption">
+                                      (A): MAR QYH
+                                    </div>
+                                  </div>
+
+                                  <div className="marcus-scroll-item marcus-scroll-item--tattoo">
+                                    <figure className="marcus-scroll-card marcus-tattoo-combo-card">
+                                      <div className="marcus-scroll-card-inner marcus-tattoo-combo">
+                                        <img
+                                          src={marcusTattoo3}
+                                          alt={`${section.kicker} combined reference base`}
+                                          className="marcus-tattoo-combo__base"
+                                        />
+                                        <img
+                                          src={marcusTattoo2}
+                                          alt={`${section.kicker} combined reference detail`}
+                                          className="marcus-tattoo-combo__overlay"
+                                        />
+                                      </div>
+                                    </figure>
+                                  </div>
+                                </div>
+
+                                <button
+                                  type="button"
+                                  onClick={() => scrollStrip(tattooStripRef.current, "right")}
+                                  className="scroll-arrow-btn scroll-arrow-btn--right scroll-arrow-btn--gutter"
+                                >
+                                  ›
+                                </button>
+                              </div>
+                            )}
+
+                          {/* FALLBACK GRID FOR ANY OTHER SECTIONS */}
+                          {!isFaceSection &&
+                            !isHairSection &&
+                            !isBodySection &&
+                            !isTattooSection &&
+                            !isPaletteSection && (
+                              <div className="mt-10">
+                                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+                                  {images.map((src: string, idx: number) => (
+                                    <figure
+                                      key={`${section.id}-${idx}`}
+                                      className="ref-image w-full aspect-[3/4] bg-slate-900/60 border border-slate-700/60 rounded-xl overflow-hidden shadow-lg"
+                                    >
+                                      <img
+                                        src={src}
+                                        alt={`${section.kicker} reference ${idx + 1}`}
+                                        className="w-full h-full object-cover"
+                                      />
+                                    </figure>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
                         </div>
                       )}
                     </div>
-                )}
+                  </section>
+                );
+              })}
+
+              {/* SIMPLE GALLERY – rows, no scroll */}
+              <section id="gallery" className="commission-gallery marcus-gallery-section mt-20">
+                <h3 className="commission-gallery-title text-slate-100">
+                  Gallery
+                </h3>
+                <div className="mt-8 relative">
+                  {/* LEFT ARROW */}
+                  <button
+                    type="button"
+                    onClick={() => scrollStrip(galleryStripRef.current, "left")}
+                    className="scroll-arrow-btn scroll-arrow-btn--left scroll-arrow-btn--gutter"
+                  >
+                    ‹
+                  </button>
+
+                  {/* STRIP */}
+                  <div
+                    ref={galleryStripRef}
+                    className="gallery-strip strip-with-gutter no-scrollbar"
+                  >
+                    {marcusSoloGallery.map((item, idx) => (
+                      <figure key={idx} className="gallery-card figure-zoom">
+                        <button
+                          type="button"
+                          className="gallery-card-button"
+                          onClick={() =>
+                            setSelectedGalleryImage({
+                              src: item.src,
+                              alt: `Marcus solo commission ${item.label}`,
+                              caption: item.label,
+                            })
+                          }
+                          aria-label={`Open Marcus solo commission ${item.label}`}
+                        >
+                          <div className="gallery-figure">
+                            <img
+                              src={item.src}
+                              alt={`Marcus solo commission ${item.label}`}
+                              className="gallery-img"
+                            />
+                          </div>
+                        </button>
+                        <figcaption className="gallery-caption">
+                          <span className="gallery-caption-artist text-slate-300">
+                            {item.label}
+                          </span>
+                        </figcaption>
+                      </figure>
+                    ))}
+                  </div>
+                  {/* RIGHT ARROW */}
+                  <button
+                    type="button"
+                    onClick={() => scrollStrip(galleryStripRef.current, "right")}
+                    className="scroll-arrow-btn scroll-arrow-btn--right scroll-arrow-btn--gutter"
+                  >
+                    ›
+                  </button>
                 </div>
               </section>
-            );
-          })}
 
-          {/* SIMPLE GALLERY – rows, no scroll */}
-          <section id="gallery" className="commission-gallery marcus-gallery-section mt-20">
-            <h3 className="commission-gallery-title text-slate-100">
-              Gallery
-            </h3>
-            <div className="mt-8 relative">
-              {/* LEFT ARROW */}
-              <button
-                type="button"
-                onClick={() => scrollStrip(galleryStripRef.current, "left")}
-                className="scroll-arrow-btn scroll-arrow-btn--left scroll-arrow-btn--gutter"
-              >
-                ‹
-              </button>
+              <PageCredit tone="on-dark" className="mt-10" />
 
-              {/* STRIP */}
-              <div
-                ref={galleryStripRef}
-                className="gallery-strip strip-with-gutter no-scrollbar"
-              >
-                {marcusSoloGallery.map((item, idx) => (
-                  <figure key={idx} className="gallery-card figure-zoom">
-                    <button
-                      type="button"
-                      className="gallery-card-button"
-                      onClick={() =>
-                        setSelectedGalleryImage({
-                          src: item.src,
-                          alt: `Marcus solo commission ${item.label}`,
-                          caption: item.label,
-                        })
-                      }
-                      aria-label={`Open Marcus solo commission ${item.label}`}
-                    >
-                      <div className="gallery-figure">
-                        <img
-                          src={item.src}
-                          alt={`Marcus solo commission ${item.label}`}
-                          className="gallery-img"
-                        />
-                      </div>
-                    </button>
-                    <figcaption className="gallery-caption">
-                      <span className="gallery-caption-artist text-slate-300">
-                        {item.label}
-                      </span>
-                    </figcaption>
-                  </figure>
-                ))}
-              </div>
-              {/* RIGHT ARROW */}
-              <button
-                type="button"
-                onClick={() => scrollStrip(galleryStripRef.current, "right")}
-                className="scroll-arrow-btn scroll-arrow-btn--right scroll-arrow-btn--gutter"
-              >
-                ›
-              </button>
+              <GalleryLightbox
+                image={selectedGalleryImage}
+                onClose={() => setSelectedGalleryImage(null)}
+              />
             </div>
-          </section>
-
-          <PageCredit tone="on-dark" className="mt-10" />
-
-          <GalleryLightbox
-            image={selectedGalleryImage}
-            onClose={() => setSelectedGalleryImage(null)}
-          />
-        </div>
           </div>
         </div>
       </div>

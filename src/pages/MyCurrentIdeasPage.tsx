@@ -351,7 +351,11 @@ function IdeaCard({ idea }: { idea: CommissionIdea }) {
   const nsfwLabel = idea.nsfw === "nsfw" ? f.nsfwLabel : f.sfw;
   const handleOpenBrief = async () => {
     try {
-      await openBriefDocument(idea.briefPath);
+      await openBriefDocument(idea.briefPath, {
+        ideaId: idea.id,
+        ideaTitle: idea.title,
+        character: idea.character ?? null,
+      });
     } catch (error) {
       console.error("Could not open brief:", error);
       window.alert("Could not open this brief right now.");

@@ -50,12 +50,14 @@ function AppLayout() {
     const normalizedPathname = pathname.replace(/\/+$/, "") || "/";
     const isHomeRoute = normalizedPathname === "/";
     const isAboutThemRoute = normalizedPathname.startsWith("/them");
+    const isAuRoute = normalizedPathname === "/au";
     const isFooterlessRoute =
         isHomeRoute ||
         normalizedPathname === "/ideas" ||
         normalizedPathname === "/marcus" ||
         normalizedPathname === "/william" ||
-        isAboutThemRoute;
+        isAboutThemRoute ||
+        isAuRoute;
 
     return (
         <>
@@ -66,7 +68,8 @@ function AppLayout() {
             <Route path="/ideas" element={<MyCurrentIdeasPage />} />
             <Route path="/them" element={<Navigate to="/them/story" replace />} />
             <Route path="/them/story" element={<TheirStory />} />
-            <Route path="/them/au" element={<AuArchive />} />
+            <Route path="/them/au" element={<Navigate to="/au" replace />} />
+            <Route path="/au" element={<AuArchive />} />
             <Route path="/brief-loading" element={<BriefLoadingPage />} />
             <Route path=":id" element={<BriefPage />} />
         </Routes>

@@ -506,10 +506,29 @@ export default function TheirStory() {
   const [wallPage, setWallPage] = useState(0);
   const [timelineProgress, setTimelineProgress] = useState(0);
   const [visibleTimelineIds, setVisibleTimelineIds] = useState<string[]>([]);
+  const [visibleStaggerIds, setVisibleStaggerIds] = useState<string[]>([]);
   const [nsfwPromptId, setNsfwPromptId] = useState<string | null>(null);
   const [revealedNsfwIds, setRevealedNsfwIds] = useState<string[]>([]);
   const t = translations[language] || translations.en;
   const timelineEntries = t.timeline;
+
+  const handleSectionJump = (sectionId: string) => {
+    document.getElementById(sectionId)?.scrollIntoView({
+      block: "start",
+      behavior: "smooth",
+    });
+    setIndexDrawerOpen(false);
+  };
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const hashId = window.location.hash.replace("#", "");
+    const isStorySectionHash = t.rail.some((entry) => entry.id === hashId);
+    if (!isStorySectionHash) return;
+
+    window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [t.rail]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -573,6 +592,46 @@ export default function TheirStory() {
       window.removeEventListener("resize", onScroll);
     };
   }, [timelineEntries]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const scrollRoot = document.querySelector<HTMLElement>(".about-story__paper");
+    if (!scrollRoot) return;
+
+    const revealTargets = Array.from(
+      scrollRoot.querySelectorAll<HTMLElement>("[data-stagger-id]")
+    );
+    if (revealTargets.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const idsToAdd: string[] = [];
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const staggerId = (entry.target as HTMLElement).dataset.staggerId;
+          if (staggerId) idsToAdd.push(staggerId);
+        });
+        if (idsToAdd.length === 0) return;
+        setVisibleStaggerIds((current) => {
+          const next = new Set(current);
+          idsToAdd.forEach((id) => next.add(id));
+          return Array.from(next);
+        });
+      },
+      {
+        root: scrollRoot,
+        threshold: 0.18,
+        rootMargin: "0px 0px -14% 0px",
+      }
+    );
+
+    revealTargets.forEach((target) => observer.observe(target));
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [timelineEntries, wallPage, t.letters]);
 
   const orderedFragments = useMemo(
     () =>
@@ -650,14 +709,14 @@ export default function TheirStory() {
             <ol className="about-story__rail-list">
               {t.rail.map((entry) => (
                 <li key={entry.id}>
-                  <a
-                    href={`#${entry.id}`}
+                  <button
+                    type="button"
                     className="about-story__rail-link"
-                    onClick={() => setIndexDrawerOpen(false)}
+                    onClick={() => handleSectionJump(entry.id)}
                   >
                     <span className="about-story__rail-numeral">{entry.numeral}</span>
                     <span className="about-story__rail-label">{entry.label}</span>
-                  </a>
+                  </button>
                 </li>
               ))}
             </ol>
@@ -667,7 +726,11 @@ export default function TheirStory() {
         <section className="about-story__paper">
           <section className="about-story__editorial about-story__editorial--timeline" id="story-timeline">
             <div className="about-story__timeline-heading">
-              <div className="about-story__section-heading">
+              <div
+                className={`about-story__section-heading ${visibleStaggerIds.includes("heading-timeline") ? "is-visible" : ""}`}
+                data-stagger-id="heading-timeline"
+                style={{ "--stagger-index": "0" } as CSSProperties}
+              >
                 <p className="about-story__section-kicker">Archive Run</p>
                 <h2 className="about-story__section-title">{t.timelineTitle}</h2>
               </div>
@@ -687,7 +750,9 @@ export default function TheirStory() {
                     key={entry.id}
                     id={entry.id}
                     data-timeline-id={entry.id}
+                    data-stagger-id={`timeline-${entry.id}`}
                     className={`about-story__timeline-row ${index % 2 === 1 ? "is-flipped" : ""} ${media ? "has-media" : "no-media"} ${isVisible ? "is-visible" : ""}`}
+                    style={{ "--stagger-index": `${index}` } as CSSProperties}
                   >
                     <div className="about-story__timeline-marker" aria-hidden="true">
                       <span className="about-story__timeline-dot" />
@@ -718,7 +783,11 @@ export default function TheirStory() {
           </section>
 
           <section className="about-story__editorial about-story__editorial--memories" id="story-moments">
-            <div className="about-story__section-heading">
+            <div
+              className={`about-story__section-heading ${visibleStaggerIds.includes("heading-moments") ? "is-visible" : ""}`}
+              data-stagger-id="heading-moments"
+              style={{ "--stagger-index": "1" } as CSSProperties}
+            >
               <h2 className="about-story__section-title">{t.memoryTitle}</h2>
             </div>
 
@@ -728,11 +797,17 @@ export default function TheirStory() {
                 {wallFragments.length > 0 ? (
                   <>
                     <div className="about-story__moments-wall" aria-live="polite">
-                      {wallFragments.map((fragment) => (
+                      {wallFragments.map((fragment, index) => {
+                        const staggerId = `moment-${activeWallPage}-${fragment.id}`;
+                        return (
                         <article
                           key={fragment.id}
-                          className={`about-story__moment-card about-story__moment-card--wall about-story__moment-card--${getFragmentOrientation(fragment)}`}
-                          style={{ transform: `rotate(${((stableHash(fragment.id) % 9) - 4) * 0.45}deg)` }}
+                          data-stagger-id={staggerId}
+                          className={`about-story__moment-card about-story__moment-card--wall about-story__moment-card--${getFragmentOrientation(fragment)} ${visibleStaggerIds.includes(staggerId) ? "is-visible" : ""}`}
+                          style={{
+                            "--stagger-index": `${index}`,
+                            "--moment-tilt": `${((stableHash(fragment.id) % 9) - 4) * 0.45}deg`,
+                          } as CSSProperties}
                         >
                           <span
                             className="about-story__moment-pin"
@@ -790,7 +865,8 @@ export default function TheirStory() {
                             <p className="about-story__card-body">{fragment.excerpt}</p>
                           </div>
                         </article>
-                      ))}
+                        );
+                      })}
                     </div>
 
                     {wallCount > 1 ? (
@@ -816,7 +892,11 @@ export default function TheirStory() {
           </section>
 
           <section className="about-story__editorial about-story__editorial--letters" id="story-letters">
-            <div className="about-story__section-heading">
+            <div
+              className={`about-story__section-heading ${visibleStaggerIds.includes("heading-letters") ? "is-visible" : ""}`}
+              data-stagger-id="heading-letters"
+              style={{ "--stagger-index": "2" } as CSSProperties}
+            >
               <h2 className="about-story__section-title">{t.lettersTitle}</h2>
             </div>
 
@@ -824,7 +904,9 @@ export default function TheirStory() {
               {t.letters.map((entry, index) => (
                 <article
                   key={entry.title}
-                  className={`about-story__letter-sheet ${index === 0 ? "is-primary" : "is-secondary"} ${entry.coverStampImage ? "has-cover-stamp" : ""} ${openLetterIndex === index ? "is-open" : ""}`}
+                  data-stagger-id={`letter-${entry.label}-${index}`}
+                  className={`about-story__letter-sheet ${index === 0 ? "is-primary" : "is-secondary"} ${entry.coverStampImage ? "has-cover-stamp" : ""} ${openLetterIndex === index ? "is-open" : ""} ${visibleStaggerIds.includes(`letter-${entry.label}-${index}`) ? "is-visible" : ""}`}
+                  style={{ "--stagger-index": `${index}` } as CSSProperties}
                 >
                   <button
                     type="button"

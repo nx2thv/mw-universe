@@ -4,6 +4,12 @@ type StorageRef = {
   bucket: string;
   path: string;
 };
+type OpenBriefOptions = {
+  expiresIn?: number;
+  ideaId?: string;
+  ideaTitle?: string;
+  character?: "william" | "marcus" | "couple" | null;
+};
 
 function isAbsoluteUrl(value: string) {
   return /^https?:\/\//.test(value);
@@ -78,10 +84,27 @@ export async function resolveBriefUrl(briefRef: string, expiresIn = 86400) {
   return toSupabaseUrl(data.signedUrl);
 }
 
-export async function openBriefDocument(briefRef: string, expiresIn = 86400) {
+export async function openBriefDocument(
+  briefRef: string,
+  expiresIn: number | OpenBriefOptions = 86400,
+) {
+  const options: OpenBriefOptions =
+    typeof expiresIn === "number"
+      ? { expiresIn }
+      : expiresIn;
+
   const loadingUrl = new URL("/brief-loading", window.location.origin);
   loadingUrl.searchParams.set("brief", briefRef);
-  loadingUrl.searchParams.set("expiresIn", String(expiresIn));
+  loadingUrl.searchParams.set("expiresIn", String(options.expiresIn ?? 86400));
+  if (options.ideaId) {
+    loadingUrl.searchParams.set("ideaId", options.ideaId);
+  }
+  if (options.ideaTitle) {
+    loadingUrl.searchParams.set("ideaTitle", options.ideaTitle);
+  }
+  if (options.character) {
+    loadingUrl.searchParams.set("character", options.character);
+  }
 
   const popup = window.open(loadingUrl.toString(), "_blank");
 

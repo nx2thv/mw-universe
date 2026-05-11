@@ -1027,6 +1027,7 @@ body {
 }
 
 .home-journey-ideas-filter select {
+  box-sizing: border-box;
   width: 100%;
   border: 1px solid rgba(255, 255, 255, 0.24);
   background: rgba(10, 10, 10, 0.72);
@@ -1548,6 +1549,18 @@ body {
     margin-right: clamp(4vw, 6vw, 8vw);
   }
 
+  .home-journey-section--briefs .home-journey-text.home-journey-text--briefs {
+    width: calc(100vw - 2rem);
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+
+  .home-journey-section--briefs .home-journey-ideas-board {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
   .home-journey-universe-choices,
   .home-journey-portal-options {
     display: flex;
@@ -1672,6 +1685,11 @@ body {
     margin-left: clamp(8vw, 10vw, 12vw);
   }
 
+  .home-journey-section--briefs .home-journey-text.home-journey-text--briefs {
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+
   .home-journey-universe-choices,
   .home-journey-portal-options {
     justify-content: flex-start;
@@ -1685,12 +1703,26 @@ body {
   }
 
   .home-journey-text--briefs {
-    width: min(94vw, 34rem);
+    width: calc(100vw - 2rem);
+    margin-left: 1rem;
+    margin-right: 1rem;
     padding-bottom: 2.4rem;
+  }
+
+  .home-journey-text--briefs .home-journey-copy {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .home-journey-ideas-board {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
   }
 
   .home-journey-ideas-filters {
     gap: 0.5rem;
+    width: 100%;
   }
 
   .home-journey-ideas-filter {
@@ -1704,12 +1736,47 @@ body {
   }
 }
 
+@media (max-width: 1100px) {
+  .home-journey-section--briefs {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .home-journey-section--briefs .home-journey-text.home-journey-text--briefs {
+    width: 100%;
+    max-width: none;
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .home-journey-section--briefs .home-journey-ideas-board {
+    width: 100%;
+    max-width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .home-journey-section--briefs .home-journey-ideas-filters {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    overflow: visible;
+    max-width: 100%;
+  }
+
+  .home-journey-section--briefs .home-journey-ideas-filter {
+    min-width: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .home-journey-ambient,
   .home-journey-contours,
   .home-journey-glow,
   .home-journey-grain,
   .home-journey-dust,
+  .brief-portal-card,
   .home-journey-loop-slider,
   .home-journey-left-link,
   .home-journey-left-link::before,
@@ -3830,7 +3897,204 @@ section[data-section-index] {
   color: #ffffff;
 }
 
+.brief-portal-page .home-journey-section {
+  overflow-y: auto;
+}
+
+.brief-portal-page .home-journey-text--briefs {
+  margin-left: auto;
+  margin-right: auto;
+  width: min(94vw, 52rem);
+}
+
+.brief-portal-content {
+  width: 100%;
+  margin-top: clamp(1.5rem, 4vh, 3rem);
+  padding-bottom: 3.5rem;
+}
+
+@media (max-width: 1280px) and (min-width: 901px) {
+  .brief-portal-content {
+    margin-top: clamp(2.4rem, 8vh, 5rem);
+  }
+}
+
+.brief-portal-page .home-journey-text--briefs::before {
+  display: none;
+}
+
+.brief-portal-idea-meta {
+  margin-top: 0.35rem;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.56rem;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: rgba(206, 191, 174, 0.66);
+}
+
+.brief-portal-grid {
+  margin-top: 1.15rem;
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 0.72rem;
+  align-items: start;
+  align-content: start;
+}
+
+.brief-portal-card {
+  position: relative;
+  border-left: 2px solid rgba(238, 223, 198, 0.46);
+  border-bottom: 1px solid rgba(222, 208, 190, 0.24);
+  background:
+    linear-gradient(96deg, rgba(255, 245, 226, 0.04) 0%, rgba(255, 245, 226, 0.01) 40%, rgba(255, 245, 226, 0) 100%),
+    rgba(8, 7, 7, 0.38);
+  padding: 1.05rem 0.95rem 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.82rem;
+  min-height: 9.8rem;
+  opacity: 0;
+  transform: translate3d(0, 14px, 0);
+  animation: briefPortalStaggerIn 560ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.brief-portal-card--character {
+  background:
+    linear-gradient(104deg, rgba(186, 173, 158, 0.11) 0%, rgba(186, 173, 158, 0.02) 54%, rgba(186, 173, 158, 0) 100%),
+    rgba(8, 7, 7, 0.48);
+}
+
+.brief-portal-card--commission {
+  border-left-color: rgba(238, 223, 198, 0.46);
+}
+
+.brief-portal-card-kicker {
+  margin: 0;
+  position: absolute;
+  top: 0.9rem;
+  right: 0.92rem;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.54rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(206, 191, 174, 0.78);
+}
+
+.brief-portal-card-title {
+  margin: 0;
+  font-family: "Cormorant Unicase", serif;
+  font-size: clamp(1.08rem, 1.38vw, 1.34rem);
+  line-height: 1.2;
+  color: var(--type-ivory);
+  max-width: 16ch;
+  padding-right: 2.5rem;
+}
+
+.brief-portal-link-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: auto;
+  padding-top: 0.35rem;
+  justify-content: flex-start;
+  align-self: flex-start;
+}
+
+.brief-portal-link-row.is-couple {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.brief-portal-link {
+  display: inline-flex;
+  align-items: center;
+  border: 0;
+  border-bottom: 1px solid rgba(236, 220, 196, 0.44);
+  background: transparent;
+  color: rgba(244, 233, 219, 0.93);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 0.24rem 0;
+  cursor: pointer;
+}
+
+.brief-portal-link-row.is-couple .brief-portal-link {
+  width: 100%;
+  justify-content: flex-start;
+}
+
+.brief-portal-link-button {
+  border-radius: 0;
+}
+
+.brief-portal-link:hover,
+.brief-portal-link:focus-visible {
+  border-bottom-color: rgba(247, 231, 206, 0.86);
+  color: rgba(255, 244, 226, 0.98);
+  outline: none;
+}
+
+.brief-portal-link:disabled {
+  cursor: default;
+  opacity: 0.64;
+}
+
+.brief-portal-link-static {
+  cursor: pointer;
+  border-bottom-color: rgba(236, 220, 196, 0.46);
+  color: rgba(238, 224, 205, 0.92);
+}
+
+.brief-portal-link-static:hover,
+.brief-portal-link-static:focus-visible {
+  border-bottom-color: rgba(247, 231, 206, 0.86);
+  color: rgba(255, 244, 226, 0.98);
+}
+
+.brief-portal-link-action {
+  color: rgba(246, 232, 209, 0.98);
+  color: rgba(227, 213, 194, 0.82);
+}
+
+.brief-portal-link-action:hover,
+.brief-portal-link-action:focus-visible {
+  color: rgba(255, 243, 223, 1);
+  border-bottom-color: rgba(248, 214, 164, 0.9);
+}
+
+.brief-portal-error {
+  margin: 0.85rem 0 0;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: rgba(243, 165, 165, 0.92);
+}
+
+.brief-portal-back-link:hover,
+.brief-portal-back-link:focus-visible {
+  color: #fffaf2;
+}
+
+@keyframes briefPortalStaggerIn {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
 @media (min-width: 768px) {
+  .brief-portal-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   .ideas-intro p {
     font-size: 1.125rem;
   }

@@ -3,7 +3,6 @@ import { useParams, Link } from "react-router-dom";
 import { openBriefDocument } from "../lib/briefLinks";
 import { supabase } from "../lib/supabaseClients";
 import { normalizeCharacter, type CommissionIdea } from "../data/commissionIdeas";
-import { useLanguage } from "../LanguageContext";
 
 type DbIdeaRow = {
     id: string;
@@ -18,7 +17,6 @@ type DbIdeaRow = {
 
 export default function IdeaDetailPage() {
     const { id } = useParams<{ id: string }>();
-    const { language } = useLanguage();
 
     const [idea, setIdea] = useState<CommissionIdea | null>(null);
     const [loading, setLoading] = useState(true);
@@ -78,10 +76,13 @@ export default function IdeaDetailPage() {
         );
     }
 
-    const isVi = language === "vi";
     const handleOpenBrief = async () => {
         try {
-            await openBriefDocument(idea.briefPath);
+            await openBriefDocument(idea.briefPath, {
+                ideaId: idea.id,
+                ideaTitle: idea.title,
+                character: idea.character ?? null,
+            });
         } catch (error) {
             console.error("Could not open brief:", error);
             window.alert("Could not open this brief right now.");
@@ -96,7 +97,6 @@ export default function IdeaDetailPage() {
                     to="/ideas"
                     className="text-[11px] uppercase tracking-[0.18em] text-slate-300 hover:text-white underline underline-offset-4"
                 >
-                    ← {isVi ? "Về trang brief" : "Back to ideas"}
                 </Link>
 
                 <h1 className="mt-4 text-2xl md:text-3xl font-semibold tracking-wide">
