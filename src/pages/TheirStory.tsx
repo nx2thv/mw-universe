@@ -1,6 +1,7 @@
 import "./about-them.css";
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { useLanguage } from "../LanguageContext";
+import heroImg from "../../assets/themStory1.jpeg";
 import timelineImg1 from "../../assets/timelineImg1.jpeg";
 import timelineImg2 from "../../assets/timelineImg2.jpeg";
 import timelineImg3 from "../../assets/timelineImg3.jpeeg.png";
@@ -47,6 +48,7 @@ type StoryBeat = {
   title: string;
   body: string;
   mediaIndex?: number;
+  mediaType?: "letters";
 };
 
 type LetterRecord = {
@@ -369,16 +371,25 @@ function getFragmentWallSlots(fragment: LoreFragment) {
 
 const translations = {
   en: {
-    masthead: "always want more time ...",
     eyebrow: "Main Universe Archive",
-    timelineTitle: "Chronology of Us",
-    memoryTitle: "Illustrated Moments",
-    lettersTitle: "Paper Trail",
-    rail: [
-      { id: "story-timeline", numeral: "I", label: "Timeline" },
-      { id: "story-moments", numeral: "II", label: "Moments" },
-      { id: "story-letters", numeral: "III", label: "Letters" },
+    heroTitle: "#cartiercaughthayes",
+    heroIntro:
+      "A private archive of the boy next door, the soldier who came home, and the life they kept choosing long after the first orbit.",
+    heroMeta: [
+      { label: "Origin", value: "Westchester / New York" },
+      { label: "Current file", value: "Cartier-Hayes home record" },
     ],
+    timelineTitle: "Chronology of Us",
+    quoteKicker: "Private mythology",
+    quoteLines: [
+      "NEXT-DOOR ORBIT",
+      "LETTERS BETWEEN BREAKS",
+      "CHOOSING US OUT LOUD",
+      "BROOKLYN YEARS",
+      "PROPOSAL, WEDDING, HOME",
+      "A LOUD HOUSE, STILL IN LOVE",
+    ],
+    memoryTitle: "Illustrated Moments",
     timeline: [
       {
         id: "story-beat-neighbors",
@@ -438,21 +449,29 @@ const translations = {
         body:
           "Their home grew with Leo, Banana, and Cloud. It is affectionate, noisy, and full of private jokes that never end.\n\n" +
           "Deployments are still the hardest chapter. Every return matters, and they keep building a life that survives each goodbye.",
-        mediaIndex: 1,
+        mediaType: "letters",
       }
     ] satisfies StoryBeat[],
     letters: storyLetters,
   },
   vi: {
-    masthead: "always want more time ...",
-    timelineTitle: "Chronology of Us",
-    memoryTitle: "Illustrated Moments",
-    lettersTitle: "Paper Trail",
-    rail: [
-      { id: "story-timeline", numeral: "I", label: "Timeline" },
-      { id: "story-moments", numeral: "II", label: "Moments" },
-      { id: "story-letters", numeral: "III", label: "Letters" },
+    heroTitle: "#cartiercaughthayes",
+    heroIntro:
+      "Một hồ sơ riêng về cậu bé nhà bên, người lính trở về, và cuộc đời mà họ vẫn chọn cùng nhau sau tất cả những năm tháng đầu tiên.",
+    heroMeta: [
+      { label: "Khởi điểm", value: "Westchester / New York" },
+      { label: "Hồ sơ hiện tại", value: "Cartier-Hayes home record" },
     ],
+    timelineTitle: "Chronology of Us",
+    quoteKicker: "Private mythology",
+    quoteLines: [
+      "GẶP NHAU Ở NHÀ KẾ BÊN",
+      "KHOẢNG CÁCH VÀ CHỜ ĐỢI",
+      "CHỌN NHAU MỘT CÁCH RÕ RÀNG",
+      "NGÔI NHÀ ỒN ÀO",
+      "NHƯNG HẠNH PHÚC",
+    ],
+    memoryTitle: "Illustrated Moments",
     timeline: [
       {
         id: "story-beat-neighbors",
@@ -492,7 +511,7 @@ const translations = {
         body:
           "Gia đình của họ lớn dần với Leo, Banana và Cloud. Ngôi nhà luôn ồn ào, nhiều tiếng cười và rất nhiều yêu thương.\n\n" +
           "Những lần deployment vẫn là phần khó nhất, nhưng mỗi lần trở về lại khiến họ chắc chắn hơn về cuộc sống đã chọn.",
-        mediaIndex: 3,
+        mediaType: "letters",
       },
     ] satisfies StoryBeat[],
     letters: storyLettersVi,
@@ -501,8 +520,7 @@ const translations = {
 
 export default function TheirStory() {
   const { language } = useLanguage();
-  const [indexDrawerOpen, setIndexDrawerOpen] = useState(false);
-  const [openLetterIndex, setOpenLetterIndex] = useState<number | null>(null);
+  const [openLetterIndex, setOpenLetterIndex] = useState<number | null>(0);
   const [wallPage, setWallPage] = useState(0);
   const [timelineProgress, setTimelineProgress] = useState(0);
   const [visibleTimelineIds, setVisibleTimelineIds] = useState<string[]>([]);
@@ -511,24 +529,6 @@ export default function TheirStory() {
   const [revealedNsfwIds, setRevealedNsfwIds] = useState<string[]>([]);
   const t = translations[language] || translations.en;
   const timelineEntries = t.timeline;
-
-  const handleSectionJump = (sectionId: string) => {
-    document.getElementById(sectionId)?.scrollIntoView({
-      block: "start",
-      behavior: "smooth",
-    });
-    setIndexDrawerOpen(false);
-  };
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const hashId = window.location.hash.replace("#", "");
-    const isStorySectionHash = t.rail.some((entry) => entry.id === hashId);
-    if (!isStorySectionHash) return;
-
-    window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
-    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-  }, [t.rail]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -686,44 +686,141 @@ export default function TheirStory() {
     });
   };
 
+  const renderLetters = (context: "timeline") => (
+    <div className={`about-story__letters-layout about-story__letters-layout--${context}`}>
+      {t.letters.map((entry, index) => {
+        const staggerId = `${context}-letter-${entry.label}-${index}`;
+        const panelId = `story-${context}-letter-panel-${index}`;
+        const isOpen = openLetterIndex === index;
+
+        return (
+          <article
+            key={`${context}-${entry.title}`}
+            data-stagger-id={staggerId}
+            className={`about-story__letter-sheet ${index === 0 ? "is-primary" : "is-secondary"} ${entry.coverStampImage ? "has-cover-stamp" : ""} ${isOpen ? "is-open" : ""} ${visibleStaggerIds.includes(staggerId) ? "is-visible" : ""}`}
+            style={{ "--stagger-index": `${index}` } as CSSProperties}
+          >
+            <button
+              type="button"
+              className="about-story__letter-envelope"
+              aria-expanded={isOpen}
+              aria-controls={panelId}
+              onClick={() => setOpenLetterIndex((current) => (current === index ? null : index))}
+            >
+              <span className="about-story__envelope-back" aria-hidden="true" />
+              {entry.coverStampImage ? (
+                <span
+                  className="about-story__letter-cover-stamp"
+                  aria-hidden="true"
+                  style={{ backgroundImage: `url(${entry.coverStampImage})` }}
+                />
+              ) : (
+                <span className="about-story__letter-stamp" aria-hidden="true">{entry.stamp}</span>
+              )}
+              <span className="about-story__letter-postmark" aria-hidden="true">{entry.postmark}</span>
+
+              <div className="about-story__envelope-front">
+                <div className="about-story__envelope-sender">
+                  <p className="about-story__envelope-name">{entry.from}</p>
+                  {entry.fromAddress.map((line) => (
+                    <p key={`${entry.title}-${line}`} className="about-story__envelope-line">
+                      {line}
+                    </p>
+                  ))}
+                </div>
+
+                <div className="about-story__envelope-recipient">
+                  <p className="about-story__envelope-name is-recipient">{entry.to}</p>
+                  {entry.toAddress.map((line) => (
+                    <p key={`${entry.label}-${line}`} className="about-story__envelope-line is-recipient">
+                      {line}
+                    </p>
+                  ))}
+                </div>
+
+                <div className="about-story__letter-header">
+                  <span>{entry.label}</span>
+                  <span className={`about-story__letter-toggle ${isOpen ? "is-open" : ""}`}>
+                    {isOpen ? "Fold" : "Unseal"}
+                  </span>
+                </div>
+              </div>
+            </button>
+
+            <div
+              id={panelId}
+              className={`about-story__letter-content ${isOpen ? "is-open" : ""}`}
+            >
+              <article className="about-story__letter-paper about-story__letter-paper--trifold">
+                <div className="about-story__letter-paper-scroll">
+                  <p
+                    className="about-story__card-body"
+                    style={{
+                      fontFamily: entry.bodyFontFamily,
+                      fontStyle: entry.bodyFontStyle,
+                    }}
+                  >
+                    {entry.body}
+                  </p>
+                  <p
+                    className="about-story__letter-signoff"
+                    style={{
+                      fontFamily: entry.signOffFontFamily,
+                      fontStyle: entry.signOffFontStyle,
+                    }}
+                  >
+                    {entry.signOff}
+                    <br />
+                    {entry.signOffName}
+                  </p>
+                  <p
+                    className="about-story__letter-note"
+                    style={{
+                      fontFamily: entry.bodyFontFamily,
+                      fontStyle: entry.bodyFontStyle,
+                    }}
+                  >
+                    {entry.note}
+                  </p>
+                </div>
+              </article>
+            </div>
+          </article>
+        );
+      })}
+    </div>
+  );
+
   return (
     <main className="about-story relative min-h-screen overflow-hidden">
-      <div className="about-story__masthead-note">{t.masthead}</div>
-
       <div className="about-story__layout">
-        <aside className={`about-story__index-drawer ${indexDrawerOpen ? "is-open" : ""}`}>
-          <button
-            type="button"
-            className="about-story__index-tab"
-            aria-controls="about-story-index"
-            aria-expanded={indexDrawerOpen}
-            aria-label={indexDrawerOpen ? "Collapse section index" : "Expand section index"}
-            onClick={() => setIndexDrawerOpen((open) => !open)}
-          >
-            <span className={`about-story__index-arrow ${indexDrawerOpen ? "is-open" : ""}`} aria-hidden="true">
-              ›
-            </span>
-          </button>
-
-          <nav id="about-story-index" className="about-story__rail" aria-label="Their Story sections">
-            <ol className="about-story__rail-list">
-              {t.rail.map((entry) => (
-                <li key={entry.id}>
-                  <button
-                    type="button"
-                    className="about-story__rail-link"
-                    onClick={() => handleSectionJump(entry.id)}
-                  >
-                    <span className="about-story__rail-numeral">{entry.numeral}</span>
-                    <span className="about-story__rail-label">{entry.label}</span>
-                  </button>
-                </li>
-              ))}
-            </ol>
-          </nav>
-        </aside>
-
         <section className="about-story__paper">
+          <section
+            className={`about-story__hero ${visibleStaggerIds.includes("hero-intro") ? "is-visible" : ""}`}
+            data-stagger-id="hero-intro"
+            style={{ "--stagger-index": "0" } as CSSProperties}
+            aria-labelledby="story-hero-title"
+          >
+            <div className="about-story__hero-rule" aria-hidden="true" />
+            <div className="about-story__hero-copy">
+              <h1 id="story-hero-title" className="about-story__hero-title">
+                {t.heroTitle}
+              </h1>
+              <p className="about-story__hero-intro">{t.heroIntro}</p>
+            </div>
+            <figure className="about-story__hero-figure">
+              <img src={heroImg} alt="Close crop of Marcus and William's eyes" />
+            </figure>
+            <dl className="about-story__hero-meta">
+              {t.heroMeta.map((item) => (
+                <div className="about-story__hero-meta-item" key={item.label}>
+                  <dt>{item.label}</dt>
+                  <dd>{item.value}</dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+
           <section className="about-story__editorial about-story__editorial--timeline" id="story-timeline">
             <div className="about-story__timeline-heading">
               <div
@@ -741,6 +838,7 @@ export default function TheirStory() {
               style={{ "--timeline-progress": `${timelineProgress}` } as CSSProperties}
             >
               {timelineEntries.map((entry, index) => {
+                const hasTimelineLetters = entry.mediaType === "letters";
                 const media = typeof entry.mediaIndex === "number"
                   ? timelineMedia[entry.mediaIndex % timelineMedia.length]
                   : null;
@@ -751,7 +849,7 @@ export default function TheirStory() {
                     id={entry.id}
                     data-timeline-id={entry.id}
                     data-stagger-id={`timeline-${entry.id}`}
-                    className={`about-story__timeline-row ${index % 2 === 1 ? "is-flipped" : ""} ${media ? "has-media" : "no-media"} ${isVisible ? "is-visible" : ""}`}
+                    className={`about-story__timeline-row ${index % 2 === 1 ? "is-flipped" : ""} ${media || hasTimelineLetters ? "has-media" : "no-media"} ${hasTimelineLetters ? "has-letters" : ""} ${isVisible ? "is-visible" : ""}`}
                     style={{ "--stagger-index": `${index}` } as CSSProperties}
                   >
                     <div className="about-story__timeline-marker" aria-hidden="true">
@@ -760,12 +858,17 @@ export default function TheirStory() {
                     </div>
 
                     <div className="about-story__timeline-content">
+                      <p className="about-story__timeline-date">{entry.range}</p>
                       <p className="about-story__timeline-phase">{entry.era}</p>
                       <h3 className="about-story__timeline-title">{entry.title}</h3>
                       <p className="about-story__card-body">{entry.body}</p>
                     </div>
 
-                    {media ? (
+                    {hasTimelineLetters ? (
+                      <div className="about-story__timeline-media about-story__timeline-media--letters">
+                        {renderLetters("timeline")}
+                      </div>
+                    ) : media ? (
                       <div className="about-story__timeline-media">
                         <figure className="about-story__timeline-figure">
                           <img
@@ -779,6 +882,28 @@ export default function TheirStory() {
                   </article>
                 );
               })}
+            </div>
+          </section>
+
+          <section
+            className={`about-story__cover-interlude ${visibleStaggerIds.includes("cover-interlude") ? "is-visible" : ""}`}
+            data-stagger-id="cover-interlude"
+            style={{ "--stagger-index": "1" } as CSSProperties}
+            aria-label="Design interlude"
+          >
+            <div className="about-story__cover-figure">
+              <p className="about-story__cover-wordmark" aria-hidden="true">RUE STUDIO</p>
+              <figure className="about-story__cover-photo">
+                <img src={timelineImg4} alt="Marcus and William editorial portrait" />
+              </figure>
+              <div className="about-story__cover-meta about-story__cover-meta--left" aria-hidden="true">
+                <span>Rue studio</span>
+                <span>City file</span>
+              </div>
+              <div className="about-story__cover-meta about-story__cover-meta--right" aria-hidden="true">
+                <span>Physical</span>
+                <span>Archive</span>
+              </div>
             </div>
           </section>
 
@@ -891,111 +1016,26 @@ export default function TheirStory() {
             </div>
           </section>
 
-          <section className="about-story__editorial about-story__editorial--letters" id="story-letters">
-            <div
-              className={`about-story__section-heading ${visibleStaggerIds.includes("heading-letters") ? "is-visible" : ""}`}
-              data-stagger-id="heading-letters"
-              style={{ "--stagger-index": "2" } as CSSProperties}
-            >
-              <h2 className="about-story__section-title">{t.lettersTitle}</h2>
-            </div>
-
-            <div className="about-story__letters-layout">
-              {t.letters.map((entry, index) => (
-                <article
-                  key={entry.title}
-                  data-stagger-id={`letter-${entry.label}-${index}`}
-                  className={`about-story__letter-sheet ${index === 0 ? "is-primary" : "is-secondary"} ${entry.coverStampImage ? "has-cover-stamp" : ""} ${openLetterIndex === index ? "is-open" : ""} ${visibleStaggerIds.includes(`letter-${entry.label}-${index}`) ? "is-visible" : ""}`}
-                  style={{ "--stagger-index": `${index}` } as CSSProperties}
-                >
-                  <button
-                    type="button"
-                    className="about-story__letter-envelope"
-                    aria-expanded={openLetterIndex === index}
-                    aria-controls={`story-letter-panel-${index}`}
-                    onClick={() => setOpenLetterIndex((current) => (current === index ? null : index))}
-                  >
-                    <span className="about-story__envelope-back" aria-hidden="true" />
-                    {entry.coverStampImage ? (
-                      <span
-                        className="about-story__letter-cover-stamp"
-                        aria-hidden="true"
-                        style={{ backgroundImage: `url(${entry.coverStampImage})` }}
-                      />
-                    ) : (
-                      <span className="about-story__letter-stamp" aria-hidden="true">{entry.stamp}</span>
-                    )}
-                    <span className="about-story__letter-postmark" aria-hidden="true">{entry.postmark}</span>
-
-                    <div className="about-story__envelope-front">
-                      <div className="about-story__envelope-sender">
-                        <p className="about-story__envelope-name">{entry.from}</p>
-                        {entry.fromAddress.map((line) => (
-                          <p key={`${entry.title}-${line}`} className="about-story__envelope-line">
-                            {line}
-                          </p>
-                        ))}
-                      </div>
-
-                      <div className="about-story__envelope-recipient">
-                        <p className="about-story__envelope-name is-recipient">{entry.to}</p>
-                        {entry.toAddress.map((line) => (
-                          <p key={`${entry.label}-${line}`} className="about-story__envelope-line is-recipient">
-                            {line}
-                          </p>
-                        ))}
-                      </div>
-
-                      <div className="about-story__letter-header">
-                        <span>{entry.label}</span>
-                        <span className={`about-story__letter-toggle ${openLetterIndex === index ? "is-open" : ""}`}>
-                          {openLetterIndex === index ? "Fold" : "Unseal"}
-                        </span>
-                      </div>
-                    </div>
-                  </button>
-
-                  <div
-                    id={`story-letter-panel-${index}`}
-                    className={`about-story__letter-content ${openLetterIndex === index ? "is-open" : ""}`}
-                  >
-                    <article className="about-story__letter-paper about-story__letter-paper--trifold">
-                      <div className="about-story__letter-paper-scroll">
-                        <p
-                          className="about-story__card-body"
-                          style={{
-                            fontFamily: entry.bodyFontFamily,
-                            fontStyle: entry.bodyFontStyle,
-                          }}
-                        >
-                          {entry.body}
-                        </p>
-                        <p
-                          className="about-story__letter-signoff"
-                          style={{
-                            fontFamily: entry.signOffFontFamily,
-                            fontStyle: entry.signOffFontStyle,
-                          }}
-                        >
-                          {entry.signOff}
-                          <br />
-                          {entry.signOffName}
-                        </p>
-                        <p
-                          className="about-story__letter-note"
-                          style={{
-                            fontFamily: entry.bodyFontFamily,
-                            fontStyle: entry.bodyFontStyle,
-                          }}
-                        >
-                          {entry.note}
-                        </p>
-                      </div>
-                    </article>
-                  </div>
-                </article>
+          <section
+            className={`about-story__quote-wall ${visibleStaggerIds.includes("quote-wall") ? "is-visible" : ""}`}
+            data-stagger-id="quote-wall"
+            style={{ "--stagger-index": "2" } as CSSProperties}
+            aria-label={t.quoteKicker}
+          >
+            <p className="about-story__quote-kicker">{t.quoteKicker}</p>
+            <figure className="about-story__quote-stamp about-story__quote-stamp--left" aria-hidden="true">
+              <img src={timelineMedia[0].image} alt="" />
+            </figure>
+            <blockquote className="about-story__quote-lines">
+              {t.quoteLines.map((line, index) => (
+                <span key={line} className={index % 2 === 1 ? "is-script" : ""}>
+                  {line}
+                </span>
               ))}
-            </div>
+            </blockquote>
+            <figure className="about-story__quote-stamp about-story__quote-stamp--right" aria-hidden="true">
+              <img src={timelineMedia[3].image} alt="" />
+            </figure>
           </section>
 
         </section>
