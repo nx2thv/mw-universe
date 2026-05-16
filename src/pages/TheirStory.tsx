@@ -891,19 +891,58 @@ export default function TheirStory() {
             style={{ "--stagger-index": "1" } as CSSProperties}
             aria-label="Design interlude"
           >
-            <div className="about-story__cover-figure">
-              <p className="about-story__cover-wordmark" aria-hidden="true">RUE STUDIO</p>
-              <figure className="about-story__cover-photo">
+            <div className="about-story__cover-figure about-story__news-spread">
+              <figure className="about-story__news-hero-image">
                 <img src={timelineImg4} alt="Marcus and William editorial portrait" />
               </figure>
-              <div className="about-story__cover-meta about-story__cover-meta--left" aria-hidden="true">
-                <span>Rue studio</span>
-                <span>City file</span>
+
+              <div className="about-story__news-title-block">
+                <p className="about-story__news-kicker">The</p>
+                <h2 className="about-story__news-title">
+                  CARTIER-HAYES
+                  <br />
+                  FILE.
+                </h2>
+                <p className="about-story__news-byline">By MW Universe Archive</p>
               </div>
-              <div className="about-story__cover-meta about-story__cover-meta--right" aria-hidden="true">
-                <span>Physical</span>
-                <span>Archive</span>
+
+              <div className="about-story__news-clippings" aria-hidden="true">
+                <figure>
+                  <img src={timelineImg4} alt="" />
+                  <figcaption>City file</figcaption>
+                </figure>
+                <figure>
+                  <img src={timelineImg4} alt="" />
+                  <figcaption>Physical archive</figcaption>
+                </figure>
               </div>
+
+              <article className="about-story__news-copy">
+                <p className="about-story__news-section">Private mythology</p>
+                <h3>Belong to each other.</h3>
+                <p className="about-story__news-subhead">
+                  A short story of an idea that became a home.
+                </p>
+                <p>
+                  Letters, train platforms, city apartments, and returns from deployment become
+                  evidence here: not spectacle, just the record of two people choosing the same
+                  life again and again.
+                </p>
+                <p>
+                  The archive keeps what public memory would miss. The jokes. The waiting.
+                  The little proofs that love stayed practical, stubborn, and alive.
+                </p>
+                <dl className="about-story__news-facts">
+                  <div>
+                    <dt>Issue</dt>
+                    <dd>08</dd>
+                  </div>
+                  <div>
+                    <dt>File</dt>
+                    <dd>Home record</dd>
+                  </div>
+                </dl>
+              </article>
             </div>
           </section>
 
