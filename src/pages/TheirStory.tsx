@@ -373,13 +373,24 @@ const translations = {
   en: {
     eyebrow: "Main Universe Archive",
     heroTitle: "#cartiercaughthayes",
-    heroIntro:
-      "A private archive of the boy next door, the soldier who came home, and the life they kept choosing long after the first orbit.",
     heroMeta: [
       { label: "Origin", value: "Westchester / New York" },
       { label: "Current file", value: "Cartier-Hayes home record" },
     ],
     timelineTitle: "Chronology of Us",
+    timelineMark: {
+      script: "Circa Summer",
+      year: "2005",
+    },
+    newsCopy: {
+      section: "Public Sightings",
+      title: "A familiar pairing",
+      subhead: "Chanel darling William Cartier seen once again with husband Marcus Hayes.",
+      body: [
+        "Last night, the former runway model and Chanel's youngest head designer appeared in Lower Manhattan beside Hayes, the former NYPD ESU captain known for keeping a notably lower profile.",
+        'Witnesses described the pair as "clingy," "affectionate," and "impossible not to notice" as they left a downtown venue shortly after midnight.',
+      ],
+    },
     quoteKicker: "Private mythology",
     quoteLines: [
       "NEXT-DOOR ORBIT",
@@ -389,7 +400,7 @@ const translations = {
       "PROPOSAL, WEDDING, HOME",
       "A LOUD HOUSE, STILL IN LOVE",
     ],
-    memoryTitle: "Illustrated Moments",
+    memoryTitle: "Moments",
     timeline: [
       {
         id: "story-beat-neighbors",
@@ -457,12 +468,25 @@ const translations = {
   vi: {
     heroTitle: "#cartiercaughthayes",
     heroIntro:
-      "Một hồ sơ riêng về cậu bé nhà bên, người lính trở về, và cuộc đời mà họ vẫn chọn cùng nhau sau tất cả những năm tháng đầu tiên.",
+      "",
     heroMeta: [
       { label: "Khởi điểm", value: "Westchester / New York" },
       { label: "Hồ sơ hiện tại", value: "Cartier-Hayes home record" },
     ],
     timelineTitle: "Chronology of Us",
+    timelineMark: {
+      script: "Circa Summer",
+      year: "2005",
+    },
+    newsCopy: {
+      section: "Public Sightings",
+      title: "A familiar pairing",
+      subhead: "Chanel darling William Cartier seen once again with husband Marcus Hayes.",
+      body: [
+        "Last night, the former runway model and Chanel's youngest head designer appeared in Lower Manhattan beside Hayes, the former NYPD ESU captain known for keeping a notably lower profile.",
+        'Witnesses described the pair as "clingy," "affectionate," and "impossible not to notice" as they left a downtown venue shortly after midnight.',
+      ],
+    },
     quoteKicker: "Private mythology",
     quoteLines: [
       "GẶP NHAU Ở NHÀ KẾ BÊN",
@@ -471,7 +495,7 @@ const translations = {
       "NGÔI NHÀ ỒN ÀO",
       "NHƯNG HẠNH PHÚC",
     ],
-    memoryTitle: "Illustrated Moments",
+    memoryTitle: "Moments",
     timeline: [
       {
         id: "story-beat-neighbors",
@@ -673,6 +697,8 @@ export default function TheirStory() {
   const wallFragments = wallGroups[activeWallPage] ?? [];
 
   const handleWallPageChange = (pageIndex: number) => {
+    if (pageIndex === activeWallPage) return;
+    setVisibleStaggerIds((current) => current.filter((id) => !id.startsWith("moment-")));
     setWallPage(pageIndex);
     setNsfwPromptId(null);
     if (typeof window === "undefined") return;
@@ -806,7 +832,6 @@ export default function TheirStory() {
               <h1 id="story-hero-title" className="about-story__hero-title">
                 {t.heroTitle}
               </h1>
-              <p className="about-story__hero-intro">{t.heroIntro}</p>
             </div>
             <figure className="about-story__hero-figure">
               <img src={heroImg} alt="Close crop of Marcus and William's eyes" />
@@ -828,8 +853,24 @@ export default function TheirStory() {
                 data-stagger-id="heading-timeline"
                 style={{ "--stagger-index": "0" } as CSSProperties}
               >
-                <p className="about-story__section-kicker">Archive Run</p>
-                <h2 className="about-story__section-title">{t.timelineTitle}</h2>
+                <h2 className="about-story__timeline-mark" aria-label={`${t.timelineMark.script} ${t.timelineMark.year}`}>
+                  <span className="about-story__timeline-mark-script about-story__timeline-mark-script--circa">
+                    Circa
+                  </span>
+                  <span className="about-story__timeline-mark-year" aria-hidden="true">
+                    {t.timelineMark.year.split("").map((digit, index) => (
+                      <span
+                        className={`about-story__timeline-mark-digit about-story__timeline-mark-digit--${index}`}
+                        key={`${digit}-${index}`}
+                      >
+                        {digit}
+                      </span>
+                    ))}
+                  </span>
+                  <span className="about-story__timeline-mark-script about-story__timeline-mark-script--summer">
+                    Summer
+                  </span>
+                </h2>
               </div>
             </div>
 
@@ -897,40 +938,28 @@ export default function TheirStory() {
               </figure>
 
               <div className="about-story__news-title-block">
-                <p className="about-story__news-kicker">The</p>
                 <h2 className="about-story__news-title">
-                  CARTIER-HAYES
+                  The
                   <br />
-                  FILE.
+                  Saint
                 </h2>
-                <p className="about-story__news-byline">By MW Universe Archive</p>
-              </div>
-
-              <div className="about-story__news-clippings" aria-hidden="true">
-                <figure>
-                  <img src={timelineImg4} alt="" />
-                  <figcaption>City file</figcaption>
-                </figure>
-                <figure>
-                  <img src={timelineImg4} alt="" />
-                  <figcaption>Physical archive</figcaption>
-                </figure>
+                <p className="about-story__news-byline">Photographed by Tinh Tú</p>
               </div>
 
               <article className="about-story__news-copy">
-                <p className="about-story__news-section">Private mythology</p>
-                <h3>Belong to each other.</h3>
+                <p className="about-story__news-section">Public Sightings</p>
+                <h3>A familiar pairing</h3>
                 <p className="about-story__news-subhead">
-                  A short story of an idea that became a home.
+                  Chanel darling William Cartier seen once again with husband Marcus Hayes.
                 </p>
                 <p>
-                  Letters, train platforms, city apartments, and returns from deployment become
-                  evidence here: not spectacle, just the record of two people choosing the same
-                  life again and again.
+                  Last night, the former runway model and Chanel's youngest head designer
+                  appeared in Lower Manhattan beside Hayes, the former NYPD ESU captain known
+                  for keeping a notably lower profile.
                 </p>
                 <p>
-                  The archive keeps what public memory would miss. The jokes. The waiting.
-                  The little proofs that love stayed practical, stubborn, and alive.
+                  Witnesses described the pair as "clingy," "affectionate," and "impossible
+                  not to notice" as they left a downtown venue shortly after midnight.
                 </p>
                 <dl className="about-story__news-facts">
                   <div>
@@ -939,7 +968,7 @@ export default function TheirStory() {
                   </div>
                   <div>
                     <dt>File</dt>
-                    <dd>Home record</dd>
+                    <dd>Downtown Archive</dd>
                   </div>
                 </dl>
               </article>
@@ -952,7 +981,9 @@ export default function TheirStory() {
               data-stagger-id="heading-moments"
               style={{ "--stagger-index": "1" } as CSSProperties}
             >
-              <h2 className="about-story__section-title">{t.memoryTitle}</h2>
+              <h2 className="about-story__section-title about-story__memory-heading-title" aria-label={t.memoryTitle}>
+                <span aria-hidden="true">Moments</span>
+              </h2>
             </div>
 
             <div className="about-story__moments-layout">
@@ -1055,27 +1086,15 @@ export default function TheirStory() {
             </div>
           </section>
 
-          <section
-            className={`about-story__quote-wall ${visibleStaggerIds.includes("quote-wall") ? "is-visible" : ""}`}
-            data-stagger-id="quote-wall"
-            style={{ "--stagger-index": "2" } as CSSProperties}
-            aria-label={t.quoteKicker}
-          >
-            <p className="about-story__quote-kicker">{t.quoteKicker}</p>
-            <figure className="about-story__quote-stamp about-story__quote-stamp--left" aria-hidden="true">
-              <img src={timelineMedia[0].image} alt="" />
-            </figure>
-            <blockquote className="about-story__quote-lines">
-              {t.quoteLines.map((line, index) => (
-                <span key={line} className={index % 2 === 1 ? "is-script" : ""}>
-                  {line}
+          <div className="about-story__memory-marquee" aria-label="Still being written. More memories forming. The story continues.">
+            <div className="about-story__memory-marquee-track" aria-hidden="true">
+              {Array.from({ length: 8 }, (_, index) => (
+                <span key={`memory-marquee-${index}`}>
+                  STILL BEING WRITTEN • MORE MEMORIES FORMING • THE STORY CONTINUES •
                 </span>
               ))}
-            </blockquote>
-            <figure className="about-story__quote-stamp about-story__quote-stamp--right" aria-hidden="true">
-              <img src={timelineMedia[3].image} alt="" />
-            </figure>
-          </section>
+            </div>
+          </div>
 
         </section>
       </div>

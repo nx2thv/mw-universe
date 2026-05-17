@@ -857,6 +857,8 @@ h1.portal-fade-up {
 .about-story__hero-title {
   margin: 0;
   max-width: 11.8em;
+  justify-self: end;
+  text-align: right;
   font-family: "Monsieur La Doulaise", cursive;
   font-size: clamp(2.55rem, 8vw, 5.35rem);
   font-weight: 320;
@@ -964,7 +966,13 @@ h1.portal-fade-up {
     gap: clamp(1.8rem, 7vw, 7rem);
   }
 
+  .about-story__hero-title {
+    grid-column: 1 / -1;
+  }
+
   .about-story__hero-intro {
+    grid-column: 2;
+    justify-self: end;
     padding-top: 0.52rem;
   }
 
@@ -1177,7 +1185,7 @@ h1.portal-fade-up {
   font-family: "Bodoni Moda", "Playfair Display", serif;
   font-size: clamp(4rem, 9.2vw, 11.4rem);
   font-weight: 900;
-  line-height: 0.72;
+  line-height: 0.82;
   letter-spacing: -0.055em;
   text-transform: uppercase;
 }
@@ -1189,47 +1197,6 @@ h1.portal-fade-up {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: rgba(216, 210, 200, 0.78);
-}
-
-.about-story__news-clippings {
-  position: absolute;
-  left: clamp(38%, 41vw, 48%);
-  bottom: clamp(1.2rem, 4vw, 3.5rem);
-  z-index: 3;
-  display: flex;
-  align-items: end;
-  gap: 0.7rem;
-  transform: rotate(-5deg);
-}
-
-.about-story__news-clippings figure {
-  width: clamp(4.6rem, 8vw, 7.5rem);
-  margin: 0;
-  padding: 0.28rem 0.28rem 0.42rem;
-  background: #d8d2c8;
-  box-shadow: 0 16px 28px rgba(0, 0, 0, 0.34);
-}
-
-.about-story__news-clippings figure:nth-child(2) {
-  transform: translateY(0.7rem) rotate(9deg);
-}
-
-.about-story__news-clippings img {
-  display: block;
-  width: 100%;
-  aspect-ratio: 0.76;
-  object-fit: cover;
-  filter: grayscale(1) contrast(1.06) brightness(0.82);
-}
-
-.about-story__news-clippings figcaption {
-  margin-top: 0.28rem;
-  font-family: var(--story-label-font);
-  font-size: 0.46rem;
-  line-height: 1;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: rgba(23, 20, 19, 0.68);
 }
 
 .about-story__news-copy {
@@ -1359,6 +1326,47 @@ h1.portal-fade-up {
   overflow: hidden;
 }
 
+.about-story__editorial--memories {
+  position: relative;
+  overflow: visible;
+}
+
+.about-story__editorial--memories .about-story__section-heading {
+  position: absolute;
+  z-index: 2;
+  left: clamp(-3rem, -2vw, -3rem);
+  top: clamp(40rem, 56vw, 36rem);
+  max-width: none;
+  min-height: 0;
+  justify-items: start;
+  align-content: start;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.about-story__memory-heading-title {
+  display: grid;
+  gap: 0.12em;
+  margin: 0;
+  width: max-content;
+  font-family: "Monsieur La Doulaise", "Allura", cursive;
+  font-size: clamp(7.2rem, 11.6vw, 13.8rem);
+  font-weight: 400;
+  line-height: 0.5;
+  letter-spacing: -0.055em;
+  color: rgba(188, 119, 104, 0.9);
+  text-transform: none;
+  text-shadow: none;
+  transform: rotate(-90deg);
+  transform-origin: left top;
+  pointer-events: none;
+  user-select: none;
+}
+
+.about-story__memory-heading-title span {
+  display: block;
+}
+
 .about-story__timeline-heading {
   display: grid;
   gap: 1.15rem;
@@ -1367,12 +1375,88 @@ h1.portal-fade-up {
   margin-inline: auto;
 }
 
+.about-story__editorial--timeline .about-story__section-heading {
+  max-width: none;
+  min-height: clamp(11.5rem, 20vw, 18rem);
+  justify-items: end;
+  align-content: center;
+}
+
 .about-story__editorial--timeline .about-story__section-kicker {
   color: rgba(216, 210, 200, 0.58);
 }
 
 .about-story__editorial--timeline .about-story__section-title {
   color: var(--story-text-primary);
+}
+
+.about-story__timeline-mark {
+  --timeline-mark-size: clamp(8.4rem, 24vw, 15.8rem);
+  --timeline-script-size: clamp(2.65rem, calc(var(--timeline-mark-size) * 0.34), 5.25rem);
+  position: relative;
+  display: block;
+  width: min(100%, calc(var(--timeline-mark-size) * 2.55));
+  margin: 0;
+  color: var(--story-text-primary);
+  text-align: right;
+}
+
+.about-story__timeline-mark-script {
+  position: absolute;
+  z-index: 2;
+  font-family: "Monsieur La Doulaise", "Allura", cursive;
+  font-size: var(--timeline-script-size);
+  font-weight: 400;
+  line-height: 0.74;
+  letter-spacing: 0;
+  color: rgba(188, 119, 104, 0.9);
+  text-shadow: 0 10px 20px rgba(0, 0, 0, 0.32);
+  white-space: nowrap;
+}
+
+.about-story__timeline-mark-script--circa {
+  left: calc(var(--timeline-mark-size) * 0.80);
+  top: calc(var(--timeline-mark-size) * -0.15);
+  transform: none;
+}
+
+.about-story__timeline-mark-script--summer {
+  right: calc(var(--timeline-mark-size) * 0.35);
+  bottom: calc(var(--timeline-mark-size) * -0.155);
+  transform: none;
+}
+
+.about-story__timeline-mark-year {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: 0;
+  font-family: "Bodoni 72 Display", "Bodoni 72", "Bodoni Moda", "Didot", serif;
+  font-size: var(--timeline-mark-size);
+  font-optical-sizing: auto;
+  font-variation-settings: "opsz" 96;
+  font-weight: 900;
+  line-height: 0.66;
+  letter-spacing: -0.105em;
+  color: rgba(222, 217, 207, 0.96);
+  text-shadow: 0 20px 42px rgba(0, 0, 0, 0.34);
+  transform: scaleX(1.05);
+  transform-origin: right center;
+}
+
+.about-story__timeline-mark-digit {
+  display: block;
+  line-height: 0.66;
+}
+
+.about-story__timeline-mark-digit--1 {
+  margin-right: 0.02em;
+}
+
+.about-story__timeline-mark-digit--2 {
+  margin-left: 0.02em;
 }
 
 .about-story__editorial--timeline .about-story__timeline-phase {
@@ -1648,7 +1732,21 @@ h1.portal-fade-up {
   }
 }
 
-@media (min-width: 768px) and (max-width: 1439px) {
+@media (min-width: 768px) and (max-width: 1300px) {
+  .about-story__editorial--memories .about-story__section-heading {
+    position: relative;
+    left: auto;
+    top: auto;
+    margin-bottom: 0.6rem;
+    pointer-events: none;
+  }
+
+  .about-story__memory-heading-title {
+    font-size: clamp(7.4rem, 12vw, 10.2rem);
+    line-height: 0.72;
+    transform: none;
+  }
+
   .about-story__cover-interlude {
     min-height: auto;
     padding-block: clamp(5rem, 8vw, 7rem);
@@ -1689,6 +1787,8 @@ h1.portal-fade-up {
 }
 
 .about-story__moments-layout {
+  position: relative;
+  z-index: 1;
   display: grid;
   gap: 1rem;
   align-content: start;
@@ -2003,11 +2103,14 @@ h1.portal-fade-up {
 }
 
 .about-story__wall-pagination {
+  position: relative;
+  z-index: 5;
   margin: 0;
   padding: 0;
   list-style: none;
   display: flex;
   flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 0.35rem;
 }
 
@@ -2037,6 +2140,36 @@ h1.portal-fade-up {
   border-color: rgba(216, 210, 200, 0.72);
   background: rgba(123, 76, 67, 0.32);
   color: var(--story-text-primary);
+}
+
+.about-story__memory-marquee {
+  width: 100%;
+  margin: clamp(2.8rem, 7vw, 6rem) 0 0;
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
+}
+
+.about-story__memory-marquee-track {
+  display: flex;
+  width: max-content;
+  align-items: center;
+  gap: clamp(4rem, 9vw, 9rem);
+  font-family: "IBM Plex Mono", "Cutive Mono", monospace;
+  font-size: clamp(0.68rem, 1vw, 0.92rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(216, 210, 200, 0.65);
+  text-shadow: 0 0 18px rgba(216, 210, 200, 0.14);
+  filter: blur(0.08px);
+  animation: about-story-memory-marquee 52s linear infinite;
+  will-change: transform;
+}
+
+.about-story__memory-marquee-track span {
+  flex: 0 0 auto;
+  white-space: nowrap;
 }
 
 .about-story__memory-note {
@@ -2653,6 +2786,15 @@ h1.portal-fade-up {
   }
 }
 
+@keyframes about-story-memory-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
 @media (max-width: 1023px) {
   .about-story__layout {
     height: 100%;
@@ -2744,6 +2886,24 @@ h1.portal-fade-up {
     grid-template-columns: 1fr;
   }
 
+  .about-story__editorial--memories .about-story__section-heading {
+    position: relative;
+    left: auto;
+    top: auto;
+    margin-bottom: 0.4rem;
+    pointer-events: none;
+  }
+
+  .about-story__memory-heading-title {
+    font-size: clamp(6.4rem, 17vw, 8.8rem);
+    line-height: 0.72;
+    transform: none;
+  }
+
+  .about-story__timeline-mark {
+    --timeline-mark-size: clamp(8.4rem, 38vw, 11.6rem);
+  }
+
   .about-story__quote-wall {
     padding-left: 1rem;
     padding-right: 1rem;
@@ -2793,18 +2953,6 @@ h1.portal-fade-up {
 
   .about-story__news-title {
     font-size: clamp(3.2rem, 16vw, 5.4rem);
-  }
-
-  .about-story__news-clippings {
-    left: 1rem;
-    right: auto;
-    bottom: 1.1rem;
-    transform: rotate(-3deg);
-    opacity: 0.72;
-  }
-
-  .about-story__news-clippings figure {
-    width: 3.75rem;
   }
 
   .about-story__news-copy {
@@ -3001,6 +3149,7 @@ h1.portal-fade-up {
   .about-story__letter-sheet,
   .about-story__timeline-row,
   .about-story__timeline-figure,
+  .about-story__memory-marquee-track,
   .about-portal__choice-link::after,
   .about-story__back-link::after {
     animation: none !important;
