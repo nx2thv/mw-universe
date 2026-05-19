@@ -5,7 +5,13 @@ import heroImg from "../../assets/themStory1.jpeg";
 import timelineImg1 from "../../assets/timelineImg1.jpeg";
 import timelineImg2 from "../../assets/timelineImg2.jpeg";
 import timelineImg3 from "../../assets/timelineImg3.jpeeg.png";
-import timelineImg4 from "../../assets/timelineImg4.jpeg";
+import timelineImg4 from "../../assets/littleMomentImage2.jpeg";
+import timelineImg5 from "../../assets/timelineImg4.jpeg";
+import dividerCamera from "../../assets/camera.png";
+import dividerDogtag from "../../assets/dogtag.png";
+import dividerKissmark from "../../assets/kissmark.png";
+import dividerReceipt from "../../assets/receipt.png";
+import dividerAnimal from "../../assets/dogprint.png";
 
 import littleMomentImage1 from "../../assets/littleMomentImage1.jpeg";
 import littleMomentImage2 from "../../assets/littleMomentImage2.jpeg";
@@ -18,12 +24,19 @@ import littleMomentImage8 from "../../assets/littleMomentImage8.jpeg";
 import littleMomentImage9 from "../../assets/littleMomentImage9.jpeg";
 
 import nycStamp from "../../assets/nycstamp.jpeg";
-const timelineMedia = [
-  { image: timelineImg1, credit: "(A): ADD ARTIST 1" },
-  { image: timelineImg2, credit: "(A): ADD ARTIST 2" },
-  { image: timelineImg3, credit: "(A): ADD ARTIST 3" },
-  { image: timelineImg4, credit: "(A): ADD ARTIST 4" },
-] as const;
+
+type TimelineMedia = {
+  image: string;
+  credit: string;
+  tone?: "black-white";
+};
+
+const timelineMedia: TimelineMedia[] = [
+  { image: timelineImg1, credit: "(A): Tinh Tú" },
+  { image: timelineImg2, credit: "(A): Tinh Tú" },
+  { image: timelineImg3, credit: "(A): Tinh Tú" },
+  { image: timelineImg4, credit: "(A): Peen Nut", tone: "black-white" },
+];
 const littleMomentImages = [littleMomentImage1, littleMomentImage2, littleMomentImage3, littleMomentImage4, littleMomentImage5, littleMomentImage6, littleMomentImage7, littleMomentImage8, littleMomentImage9];
 
 type PolaroidOrientation = "portrait" | "landscape" | "square";
@@ -46,7 +59,8 @@ type StoryBeat = {
   era: string;
   range: string;
   title: string;
-  body: string;
+  bodyPreview: string;
+  bodyFull?: string;
   mediaIndex?: number;
   mediaType?: "letters";
 };
@@ -89,11 +103,11 @@ const letterDraftText = {
     "Dear the man who left me alone with a fat cat, an even chubbier dog, and a little boy who keeps demanding baseball,\n\n" +
     "I was having the absolute worst day of my life at the start of this week and, tragically, found no big biceps to cry on. In moments like this, I blame you and your enthusiasm for chasing men around with ten thousand dollars' worth of government-issued equipment.\n\n" +
     "First, I went to get my croissant from the usual place down the street, the one with the old florist lady who always sings while she waters things. They told me they'd sold out. I nearly cried on the spot. But I was in a YSL suit and refuseed to cry while having a good hair day. So I soldiered on and went to work with nothing but vengeance and a bagel as a miserable substitute.\n\n" +
-    "To make matters worse, my intern forgot to put in the order for the fabric I was dying to get my hands on. At that point, the only thing holding back my tears, again, was the suit.\n\n"+
+    "To make matters worse, my intern forgot to put in the order for the fabric I was dying to get my hands on. At that point, the only thing holding back my tears, again, was the suit.\n\n" +
     "When I got home, I found out Banana had not, in fact, peed in your shoes. He peed on your gun. And that was absolutely his way of asserting his dominance. He's so me. Cloud didn't fall, which impressed me, so I rewarded him with an extra bowl of food. Leo, on the other hand, got caught trying on your spare bulletproof vest. I refused to even look.\n\n" +
     "Then, at night, I put on that specific baby blue dress you like and got irritated at myself in the mirror. Because why did you leave me unsupervised and gorgeous? Terrible decision. My waist was serving and you were not there. A complete waste of resources.\n\n" +
     "That led me to one final judgment: I would like my large, brooding husband back immediately. I need my big competent idiot to solve my stupid problems.\n\n" +
-    "Anyway. Enough about me. I hope you're eating something green occasionally. Stop eating beef jerky like it counts as fine dining.\n\n"+
+    "Anyway. Enough about me. I hope you're eating something green occasionally. Stop eating beef jerky like it counts as fine dining.\n\n" +
     "There's a new rooftop bar open in SoHo, so you are not allowed to do anything heroic out there and die before trying it with me first.\n\n" +
     "I guess all I really want to say is that there are too many things you've missed while you've been away. And somehow, none of them are particularly interesting without you beside me.\n\n" +
     "We're doing fine at home. I hope you're doing fine out there too.\n\n" +
@@ -159,30 +173,30 @@ const storyLetters = [
 // Viet version
 const letterDraftTextVi = {
   deployment:
-  "Gửi bé yêu tóc vàng của anh,\n\n" +
-  "Anh mong mọi người ở nhà đều ổn. Anh nhớ em. Nhớ cả Leo. Không thể tin được rằng đây là điều anh sắp nói, nhưng anh cũng nhớ hai ông hoàng lông lá bụ bẫm ở nhà lắm. Điều này không có nghĩa là em được bắt đầu lên mặt đâu đấy.\n\n" +
-  "Triển khai quân sự lần này ổn. Anh vẫn lành lặn, vì thật sự điều cuối cùng anh cần lúc này là nghe em cằn nhằn nếu anh có vết xước nào đó mới. Anh còn đem theo cả hình em nữa. Cứ nhìn em trong hình là anh tự nhắc bản thân rằng mình không thể bị thương được. Anh thật sự tin rằng em có tí phép thuật nào đó trong cái bộ não thú vị của em, rồi kiểu gì em cũng sẽ tìm được cách chui ra khỏi khung ảnh xong mắng anh tại chỗ vào giây phút đó. Nên thôi, anh tự bảo rằng anh nên cẩn thận thêm thì vẫn hơn.\n\n" +
-  "Thằng Jayce, lại lần nữa, mới trêu anh là simp chúa.\n\n" +
-  "Anh kệ mẹ nó. Vì nó sao hiểu được tâm lý của người có gia đình, phải không?\n\n" +
-  "Quên kể em, hôm trước anh còn thấy thằng nào ở đây với nguyên bộ râu ria lồm xồm dài quá nửa cổ. Anh đã nghĩ nếu em mà ở đây, có lẽ em sẽ móc mỉa gì đó về gã. Rồi anh lại phải nhanh chóng kéo em đi chỗ khác trước khi có cãi nhau.\n\n" +
-  "Mà anh đi lâu vậy nên chắc cũng quen ngủ một mình rồi nhỉ. Nhưng đừng có quen quá đấy. Quen quá xong 2 tuần sau anh về nhà lại đòi đuổi anh sang phòng khác ngủ. Anh chỉ muốn ôm em ngủ thôi. À, còn nữa, ngưng luôn cái trò chọc ghẹo anh trong thư đi nhé. Nếu không thì đừng bắt đầu la làng nói em sai rồi khi anh về tới.\n\n" +
-  "Còn nữa, anh tìm thấy nhẫn của em trên cái dĩa trang trí trong phòng thay đồ đấy. Anh nhắc rồi đó, đừng có khóc loạn lên ở nhà rồi đi tìm khắp nơi.\n\n" +
-  "Nhớ nhắc Banana đừng có tiểu vào giày của anh nữa. Và đừng có mà bắt đầu cái điệp khúc 'nó chỉ đang đánh dấu lãnh thổ thôi' của em. Sẵn thì bảo Cloud ngừng ngay việc tự chơi trò truy đuổi với cái bóng của nó luôn đi. Anh không có ở nhà, nên nó mà ngã lăn ra đó nữa thì chẳng ai đỡ nó dậy nổi đâu. Nhắc cả Leo là anh biết thằng bé hay ăn vụng thêm đồ ngọt đấy, và anh biết em cũng là người tiếp tay cho nó luôn. Bảo nó nghe lời anh, nghe chưa?\n\n" +
-  "Còn em thì nên hút ít thuốc lại. À phải rồi thuốc lá, anh lén lút mang theo một điếu thuốc Vogue sang chảnh gì gì của em đấy. Vì anh không vác em theo được, nên anh mang tấm hình cùng thứ luôn kè kè bên em để việc cầu may hiệu quả nhân đôi.\n\n" +
-  "Em là bùa may mắn của anh đấy, bé yêu.\n\n" +
-  "Ở nhà ngoan. Bảo mấy đứa nhỏ cũng thế. Anh sẽ về sớm thôi",
-  reply: 
-  "Gửi người đàn ông tồi tệ đã để em lại một mình với một con mèo béo, một con chó còn béo hơn, và một thằng nhóc suốt ngày vòi em phải chơi bóng chày cùng nó,\n\n" +
-  "Em đã có một ngày tồi tệ nhất cuộc đời vào đầu tuần này, và bi thảm thay, em chẳng có cặp bắp tay to oành nào để dựa vào mà khóc lóc. Vào những lúc như thế này, em phải nói là em hận anh và cái sự nhiệt tình cuồng dại của anh trong việc mạo hiểm tính mạng chỉ để đuổi theo mấy gã ất ơ nào đó ngoài kia cùng với đống đồ nghề do chính phủ cấp trị giá cả chục nghìn đô.\n\n" +
-  "Đầu tiên nhé, em đã đi xuống chỗ gần nhà để mua croissant ăn sáng, cái chỗ gần tiệm hoa và có bà cụ lớn tuổi hay hát lúc tưới hoa ấy. Tiệm bánh nói họ đã hết croissant rồi. Em suýt thì đã rơi lệ ngay tại chỗ. Nhưng em từ chối khóc vào ngày em mặc suit của YSL nên em nuốt ngược nước mắt vào trong và ngẩng cao đầu để đi làm tiếp. Em dã rất căm phẫn, nhưng em cũng chấp nhận làm một việc rất cao cả: em chấp nhận thay croissant bằng cái thảm hại hơn, bagel. Anh cần phải thưởng cho sự tiến hóa này của em khi anh về đến nhà.\n\n" +
-  "Để làm mọi chuyện tồi tệ hơn nữa, cô nhóc intern của em đã quên bẵng luôn việc đặt đơn vải, cái loại mà em mong ngóng gần chết bấy lâu nay. Và một lần nữa, bộ suit là lý do ngăn em rơi hai dòng lệ.\n\n" +
-  "Tin vui cho anh, và có lẽ cũng cho em, là Banana đã không tiểu vào giày anh! Nhưng nó đã tiểu lên súng của anh. Em rất lấy làm tiếc nhưng đó thật sự chỉ là cách nó khẳng định ai mới là kẻ cầm đầu trong nhà thôi, nên anh không được giận hay mắng nó. Nó như vậy mới đúng là con trai của em. Cloud thì không ngã, ấn tượng phải không? Em cũng thấy vậy, nên em đã thưởng thêm đồ ăn cho nó. Còn Leo hả? Bữa trước em bắt gặp nó lén lút thử áo chống đạn dự phòng của anh. Em quyết định vờ như không thấy.\n\n" +
-  "Rồi cho đến tối, em quyết định đi ngủ với chiếc váy màu xanh nhạt anh thích. Em phải nói nhé là em rất bực mình khi phải thấy mình trong gương. Vì tại sao anh lại có thể bỏ em xinh đẹp ở nhà một mình không có ai trông chừng vậy? Một quyết định ngu ngốc. Đây là một việc quá phí phạm tài nguyên và tiềm năng của em.\n\n" +
-  "Cũng từ đó, em đi đến kết luận cuối cùng: em muốn chồng em về nhà ngay lập tức. Em cần một gã ngốc to xác nhưng lại cực kỳ hữu dụng ở đây để giải quyết cả tá vấn đề ngốc nghếch này của em.\n\n" +
-  "Mà thôi. Nói về em đủ rồi. Giờ tới anh. Em mong anh ở đó vẫn ăn uống đầy đủ. Trước khi anh kịp trả lời lại ở thư tiếp theo thì em nói luôn, thịt bò khô không được tính là đầy đủ đâu đấy.\n\n" +
-  "Còn nữa, ở SoHo mới mở thêm quán bar rooftop đó. Nên anh tuyệt đối đừng có chơi trò anh hùng gì đó xong chết dúi ở đâu trước khi kịp đi khám phá chỗ mới ấy cùng em.\n\n" +
-  "Nói dài dòng vậy rồi em mới nhận ra ý chính của em thật sự chỉ muốn nói là anh đã bỏ lỡ rất nhiều khi xa nhà đó. Và dù nhiều việc đã xảy ra vậy, em chẳng thấy có gì đủ thú vị như lúc có anh ở đây cùng em và con.\n\n" +
-  "Anh nhớ giữ điếu thuốc lá cẩn thận nhé. Em muốn cùng anh hút nó vào ngày anh về.",
+    "Gửi bé yêu tóc vàng của anh,\n\n" +
+    "Anh mong mọi người ở nhà đều ổn. Anh nhớ em. Nhớ cả Leo. Không thể tin được rằng đây là điều anh sắp nói, nhưng anh cũng nhớ hai ông hoàng lông lá bụ bẫm ở nhà lắm. Điều này không có nghĩa là em được bắt đầu lên mặt đâu đấy.\n\n" +
+    "Triển khai quân sự lần này ổn. Anh vẫn lành lặn, vì thật sự điều cuối cùng anh cần lúc này là nghe em cằn nhằn nếu anh có vết xước nào đó mới. Anh còn đem theo cả hình em nữa. Cứ nhìn em trong hình là anh tự nhắc bản thân rằng mình không thể bị thương được. Anh thật sự tin rằng em có tí phép thuật nào đó trong cái bộ não thú vị của em, rồi kiểu gì em cũng sẽ tìm được cách chui ra khỏi khung ảnh xong mắng anh tại chỗ vào giây phút đó. Nên thôi, anh tự bảo rằng anh nên cẩn thận thêm thì vẫn hơn.\n\n" +
+    "Thằng Jayce, lại lần nữa, mới trêu anh là simp chúa.\n\n" +
+    "Anh kệ mẹ nó. Vì nó sao hiểu được tâm lý của người có gia đình, phải không?\n\n" +
+    "Quên kể em, hôm trước anh còn thấy thằng nào ở đây với nguyên bộ râu ria lồm xồm dài quá nửa cổ. Anh đã nghĩ nếu em mà ở đây, có lẽ em sẽ móc mỉa gì đó về gã. Rồi anh lại phải nhanh chóng kéo em đi chỗ khác trước khi có cãi nhau.\n\n" +
+    "Mà anh đi lâu vậy nên chắc cũng quen ngủ một mình rồi nhỉ. Nhưng đừng có quen quá đấy. Quen quá xong 2 tuần sau anh về nhà lại đòi đuổi anh sang phòng khác ngủ. Anh chỉ muốn ôm em ngủ thôi. À, còn nữa, ngưng luôn cái trò chọc ghẹo anh trong thư đi nhé. Nếu không thì đừng bắt đầu la làng nói em sai rồi khi anh về tới.\n\n" +
+    "Còn nữa, anh tìm thấy nhẫn của em trên cái dĩa trang trí trong phòng thay đồ đấy. Anh nhắc rồi đó, đừng có khóc loạn lên ở nhà rồi đi tìm khắp nơi.\n\n" +
+    "Nhớ nhắc Banana đừng có tiểu vào giày của anh nữa. Và đừng có mà bắt đầu cái điệp khúc 'nó chỉ đang đánh dấu lãnh thổ thôi' của em. Sẵn thì bảo Cloud ngừng ngay việc tự chơi trò truy đuổi với cái bóng của nó luôn đi. Anh không có ở nhà, nên nó mà ngã lăn ra đó nữa thì chẳng ai đỡ nó dậy nổi đâu. Nhắc cả Leo là anh biết thằng bé hay ăn vụng thêm đồ ngọt đấy, và anh biết em cũng là người tiếp tay cho nó luôn. Bảo nó nghe lời anh, nghe chưa?\n\n" +
+    "Còn em thì nên hút ít thuốc lại. À phải rồi thuốc lá, anh lén lút mang theo một điếu thuốc Vogue sang chảnh gì gì của em đấy. Vì anh không vác em theo được, nên anh mang tấm hình cùng thứ luôn kè kè bên em để việc cầu may hiệu quả nhân đôi.\n\n" +
+    "Em là bùa may mắn của anh đấy, bé yêu.\n\n" +
+    "Ở nhà ngoan. Bảo mấy đứa nhỏ cũng thế. Anh sẽ về sớm thôi",
+  reply:
+    "Gửi người đàn ông tồi tệ đã để em lại một mình với một con mèo béo, một con chó còn béo hơn, và một thằng nhóc suốt ngày vòi em phải chơi bóng chày cùng nó,\n\n" +
+    "Em đã có một ngày tồi tệ nhất cuộc đời vào đầu tuần này, và bi thảm thay, em chẳng có cặp bắp tay to oành nào để dựa vào mà khóc lóc. Vào những lúc như thế này, em phải nói là em hận anh và cái sự nhiệt tình cuồng dại của anh trong việc mạo hiểm tính mạng chỉ để đuổi theo mấy gã ất ơ nào đó ngoài kia cùng với đống đồ nghề do chính phủ cấp trị giá cả chục nghìn đô.\n\n" +
+    "Đầu tiên nhé, em đã đi xuống chỗ gần nhà để mua croissant ăn sáng, cái chỗ gần tiệm hoa và có bà cụ lớn tuổi hay hát lúc tưới hoa ấy. Tiệm bánh nói họ đã hết croissant rồi. Em suýt thì đã rơi lệ ngay tại chỗ. Nhưng em từ chối khóc vào ngày em mặc suit của YSL nên em nuốt ngược nước mắt vào trong và ngẩng cao đầu để đi làm tiếp. Em dã rất căm phẫn, nhưng em cũng chấp nhận làm một việc rất cao cả: em chấp nhận thay croissant bằng cái thảm hại hơn, bagel. Anh cần phải thưởng cho sự tiến hóa này của em khi anh về đến nhà.\n\n" +
+    "Để làm mọi chuyện tồi tệ hơn nữa, cô nhóc intern của em đã quên bẵng luôn việc đặt đơn vải, cái loại mà em mong ngóng gần chết bấy lâu nay. Và một lần nữa, bộ suit là lý do ngăn em rơi hai dòng lệ.\n\n" +
+    "Tin vui cho anh, và có lẽ cũng cho em, là Banana đã không tiểu vào giày anh! Nhưng nó đã tiểu lên súng của anh. Em rất lấy làm tiếc nhưng đó thật sự chỉ là cách nó khẳng định ai mới là kẻ cầm đầu trong nhà thôi, nên anh không được giận hay mắng nó. Nó như vậy mới đúng là con trai của em. Cloud thì không ngã, ấn tượng phải không? Em cũng thấy vậy, nên em đã thưởng thêm đồ ăn cho nó. Còn Leo hả? Bữa trước em bắt gặp nó lén lút thử áo chống đạn dự phòng của anh. Em quyết định vờ như không thấy.\n\n" +
+    "Rồi cho đến tối, em quyết định đi ngủ với chiếc váy màu xanh nhạt anh thích. Em phải nói nhé là em rất bực mình khi phải thấy mình trong gương. Vì tại sao anh lại có thể bỏ em xinh đẹp ở nhà một mình không có ai trông chừng vậy? Một quyết định ngu ngốc. Đây là một việc quá phí phạm tài nguyên và tiềm năng của em.\n\n" +
+    "Cũng từ đó, em đi đến kết luận cuối cùng: em muốn chồng em về nhà ngay lập tức. Em cần một gã ngốc to xác nhưng lại cực kỳ hữu dụng ở đây để giải quyết cả tá vấn đề ngốc nghếch này của em.\n\n" +
+    "Mà thôi. Nói về em đủ rồi. Giờ tới anh. Em mong anh ở đó vẫn ăn uống đầy đủ. Trước khi anh kịp trả lời lại ở thư tiếp theo thì em nói luôn, thịt bò khô không được tính là đầy đủ đâu đấy.\n\n" +
+    "Còn nữa, ở SoHo mới mở thêm quán bar rooftop đó. Nên anh tuyệt đối đừng có chơi trò anh hùng gì đó xong chết dúi ở đâu trước khi kịp đi khám phá chỗ mới ấy cùng em.\n\n" +
+    "Nói dài dòng vậy rồi em mới nhận ra ý chính của em thật sự chỉ muốn nói là anh đã bỏ lỡ rất nhiều khi xa nhà đó. Và dù nhiều việc đã xảy ra vậy, em chẳng thấy có gì đủ thú vị như lúc có anh ở đây cùng em và con.\n\n" +
+    "Anh nhớ giữ điếu thuốc lá cẩn thận nhé. Em muốn cùng anh hút nó vào ngày anh về.",
 } as const;
 
 const storyLettersVi = [
@@ -406,18 +420,21 @@ const translations = {
         id: "story-beat-neighbors",
         era: "Growing Up",
         range: "Ages 8-15",
-        title: "Next-Door Orbit",
-        body:
+        title: "Tree & Button",
+        bodyPreview:
           "They met in a quiet Westchester neighborhood when Marcus' family moved in next door. Marcus was fifteen; William was eight.\n\n" +
-          "William declared them best friends on day one. Marcus acted confused, then quietly became the person who always watched out for him.",
+          "William declared them best friends on day one. Marcus looked mildly alarmed by the announcement, then ended up spending the next several years acting like a very large, very overprotective bodyguard.",
+        bodyFull:
+          "William, meanwhile, was simply delighted to finally have a friend tall enough to reach the top shelf.\n\n" +
+          "The little blond immediately named Marcus 'Tree.' He then insisted Marcus name him back. Marcus — confused, awkward, and clearly unequipped for negotiations with eight-year-olds — eventually settled on 'Button.' William loved it. Marcus would later regret giving him that level of emotional power.",
         mediaIndex: 0,
       },
       {
         id: "story-beat-distance",
         era: "Distance Years",
-        range: "Ages 15-20",
-        title: "Letters Between Breaks",
-        body:
+        range: "Ages 11-20",
+        title: "The Last Bit of Childhood",
+        bodyPreview:
           "After high school, Marcus left for military service. Coming home meant short reunions, then long stretches apart.\n\n" +
           "In those gaps, William grew up fast. By the time Marcus returned for good, their bond no longer felt like childhood.",
         mediaIndex: 1,
@@ -426,40 +443,53 @@ const translations = {
         id: "story-beat-dating",
         era: "Dating",
         range: "Ages 17-24",
-        title: "Choosing Us Out Loud",
-        body:
-          "What followed was a year of hesitation, stubborn pursuit, and tension neither of them could ignore.\n\n" +
-          "When they finally started dating, the relationship was messy, ambitious, and alive. Even then, they kept choosing each other.",
-        mediaIndex: 2,
+        title: "Brooklyn Years",
+        bodyPreview:
+          "They finally started dating after Marcus spent far too long wrestling with his own moral codes and William worked far too hard to prove he knew what he was choosing.\n\n" +
+          "After William finished high school and Marcus graduated from the NYPD Academy, they moved into New York together. Their families offered to help with rent. They refused, because pride and love had apparently formed a joint illness.",
+        bodyFull:
+          "Their first Brooklyn apartment was tiny, loud, and barely functional. The bedroom hardly fit a mattress, the walls blocked nothing, and William named one of the rats 'Gucci.' They had no money, no real furniture, and each other.\n\n" +
+          "Marcus worked long precinct shifts while William juggled Parsons, modeling, travel, and the darker side of being seen too much. Addiction, disordered eating, stalkers — all of it caught up eventually.\n\n" +
+          "When one stalker encounter sent William to the hospital, Marcus finally understood how much his boyfriend had been carrying alone. The man went to prison. William came home to rest. And their life together had to become softer, not just stronger.",
+        mediaIndex: 1,
       },
       {
         id: "story-beat-brooklyn",
         era: "Building",
-        range: "Ages 22-30",
-        title: "Brooklyn Years",
-        body:
-          "After graduation they moved to Brooklyn and built a life with less comfort and more purpose.\n\n" +
-          "William pursued fashion. Marcus entered the NYPD academy. They learned how to grow side by side without drifting apart.",
+        range: "Ages 23-30",
+        title: "Familiarity",
+        bodyPreview:
+          "After Marcus made the news for taking down William’s stalker, his name started moving through the department faster than he expected. By thirty, he had been promoted to ESU Captain.\n\n" +
+          "William, meanwhile, entered what he lovingly called his stay-at-home boyfriend era. He still walked shows and took select jobs, but no longer treated survival like part of the work.",
+        bodyFull:
+          "This was the era of side quests: rooftop bars, raves, midnight walks, movie nights ruined by their unsolicited commentary, and one extremely permanent decision where William got Marcus’ last name tattooed. He also soft-launched Marcus online, and the internet immediately lost its mind.\n\n" +
+          "During these years, William became the first male model to walk Victoria’s Secret. Marcus complained about the outfits half the time. The other half, he stood there staring at his boyfriend like a man silently thanking whatever past-life version of himself had earned this.\n\n" +
+          "William also bought Marcus his first real car: a Hellcat, funded by supermodel money and terrible impulse control. Naturally, this led to more late-night drives, usually because William decided at 9 P.M. that he needed a croissant or he would perish.",
         mediaIndex: 3,
       },
       {
         id: "story-beat-vows",
         era: "Settling In",
-        range: "Ages 26-34",
+        range: "Ages 25-32",
         title: "Proposal, Wedding, Home",
-        body:
-          "Marcus proposed on their eighth anniversary. A year later they married, then moved into their three-story brownstone in the West Village.\n\n" +
-          "The wedding, honeymoon, and new home marked the first season where their long-held plans became tangible.",
+        bodyPreview:
+          "Marcus proposed on their eighth anniversary. By then, they finally had enough to choose a home together: a three-storey brownstone on Perry Street in the West Village. They moved in first. A year later, they got married.\n\n" +
+          "Above everything else, though, they found each other again. Not as the tiny blond warlord and the emotionally weak brute from next door. Not as exhausted boyfriends fighting rent, distance, work, and their own terrible coping mechanisms. But as husbands.",
+        bodyFull:
+          "Marriage, quite frankly, did nothing to reduce the chaos. If anything, legal husbandhood only gave them better funding and fewer excuses. Their newlywed era included a honeymoon through Bali and Vietnam, William showing up to Marcus’ birthday dinner in an inflatable seal costume, and Marcus flying William to Lake Como for his twenty-eighth birthday in a move that was romantic, excessive, and suspiciously close to kidnapping. Several further incidents occured. Legal counsel has advised, with great concern, against listing them all here.\n\n" +
+          "Somewhere in the middle of all that, a grey cat wandered into their kitchen at the worst possible time, was immediately adopted, and became Banana.\n\n" +
+          "William also officially retired from full-time modeling at 27 and took the offer to work at Chanel as their Head Designer.\n\n" +
+          "With a house. A cat. Too many keys. And a life that kept getting louder because they finally had room for all of it.",
         mediaIndex: 2,
       },
       {
         id: "story-beat-now",
         era: "Living The Life",
-        range: "Ages 28-36+",
+        range: "Ages 28-35+",
         title: "A Loud House, Still In Love",
-        body:
-          "Their home grew with Leo, Banana, and Cloud. It is affectionate, noisy, and full of private jokes that never end.\n\n" +
-          "Deployments are still the hardest chapter. Every return matters, and they keep building a life that survives each goodbye.",
+        bodyPreview:
+          "At 34, when Marcus was offered a higher position in NYPD, something more suit-and-tie and press conferences rather than hands-on field engagement, Marcus was torn. Then, unexpectedly, he got a recruitment letter from Delta, the most elite force of the U.S., and with much encouragement and pep talks from William and their families, Marcus finally accepted the offer.\n\n" +
+          "",
         mediaType: "letters",
       }
     ] satisfies StoryBeat[],
@@ -502,7 +532,7 @@ const translations = {
         era: "Tuổi thơ",
         range: "8-15 tuổi",
         title: "Gặp nhau ở nhà kế bên",
-        body:
+        bodyPreview:
           "Họ gặp nhau ở Westchester khi gia đình Marcus chuyển đến ngay sát nhà Cartier. Marcus 15 tuổi, William 8 tuổi.\n\n" +
           "William coi Marcus là bạn thân ngay từ ngày đầu. Marcus giả vờ khó hiểu nhưng luôn là người bảo vệ William.",
         mediaIndex: 0,
@@ -512,7 +542,7 @@ const translations = {
         era: "Những năm xa nhau",
         range: "15-20 tuổi",
         title: "Khoảng cách và chờ đợi",
-        body:
+        bodyPreview:
           "Sau trung học, Marcus đi nghĩa vụ và thường xuyên xa nhà. Họ chỉ có những lần gặp ngắn rồi lại chia tay.\n\n" +
           "Chính những khoảng trống đó khiến cảm xúc của cả hai thay đổi theo cách không thể quay lại như cũ.",
         mediaIndex: 1,
@@ -522,7 +552,7 @@ const translations = {
         era: "Bắt đầu yêu",
         range: "17-24 tuổi",
         title: "Chọn nhau một cách rõ ràng",
-        body:
+        bodyPreview:
           "Sau một thời gian giằng co, họ chính thức hẹn hò và cùng chuyển đến Brooklyn để tự xây dựng cuộc sống.\n\n" +
           "William theo đuổi thời trang, Marcus vào NYPD. Dù áp lực lớn, họ vẫn chọn nhau mỗi ngày.",
         mediaIndex: 2,
@@ -532,7 +562,7 @@ const translations = {
         era: "Hiện tại",
         range: "28-36+",
         title: "Ngôi nhà ồn ào nhưng hạnh phúc",
-        body:
+        bodyPreview:
           "Gia đình của họ lớn dần với Leo, Banana và Cloud. Ngôi nhà luôn ồn ào, nhiều tiếng cười và rất nhiều yêu thương.\n\n" +
           "Những lần deployment vẫn là phần khó nhất, nhưng mỗi lần trở về lại khiến họ chắc chắn hơn về cuộc sống đã chọn.",
         mediaType: "letters",
@@ -548,11 +578,20 @@ export default function TheirStory() {
   const [wallPage, setWallPage] = useState(0);
   const [timelineProgress, setTimelineProgress] = useState(0);
   const [visibleTimelineIds, setVisibleTimelineIds] = useState<string[]>([]);
+  const [openTimelineIds, setOpenTimelineIds] = useState<string[]>([]);
   const [visibleStaggerIds, setVisibleStaggerIds] = useState<string[]>([]);
   const [nsfwPromptId, setNsfwPromptId] = useState<string | null>(null);
   const [revealedNsfwIds, setRevealedNsfwIds] = useState<string[]>([]);
   const t = translations[language] || translations.en;
   const timelineEntries = t.timeline;
+
+  const toggleTimelineEntry = (entryId: string) => {
+    setOpenTimelineIds((current) =>
+      current.includes(entryId)
+        ? current.filter((id) => id !== entryId)
+        : [...current, entryId]
+    );
+  };
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -884,6 +923,8 @@ export default function TheirStory() {
                   ? timelineMedia[entry.mediaIndex % timelineMedia.length]
                   : null;
                 const isVisible = visibleTimelineIds.includes(entry.id);
+                const isOpen = openTimelineIds.includes(entry.id);
+                const fullBody = "bodyFull" in entry ? entry.bodyFull : undefined;
                 return (
                   <article
                     key={entry.id}
@@ -902,7 +943,22 @@ export default function TheirStory() {
                       <p className="about-story__timeline-date">{entry.range}</p>
                       <p className="about-story__timeline-phase">{entry.era}</p>
                       <h3 className="about-story__timeline-title">{entry.title}</h3>
-                      <p className="about-story__card-body">{entry.body}</p>
+                      <p className="about-story__card-body">{entry.bodyPreview}</p>
+                      {fullBody ? (
+                        <>
+                          {isOpen ? (
+                            <p className="about-story__timeline-bonus">{fullBody}</p>
+                          ) : null}
+                          <button
+                            type="button"
+                            className="about-story__timeline-toggle"
+                            aria-expanded={isOpen}
+                            onClick={() => toggleTimelineEntry(entry.id)}
+                          >
+                            {isOpen ? "Fold this era" : "Unfold this era"}
+                          </button>
+                        </>
+                      ) : null}
                     </div>
 
                     {hasTimelineLetters ? (
@@ -913,6 +969,7 @@ export default function TheirStory() {
                       <div className="about-story__timeline-media">
                         <figure className="about-story__timeline-figure">
                           <img
+                            className={media.tone === "black-white" ? "is-black-white" : undefined}
                             src={media.image}
                             alt={`${entry.title} visual`}
                           />
@@ -927,6 +984,72 @@ export default function TheirStory() {
           </section>
 
           <section
+            className={`about-story__archive-tear ${visibleStaggerIds.includes("archive-tear") ? "is-visible" : ""}`}
+            data-stagger-id="archive-tear"
+            style={{ "--stagger-index": "0" } as CSSProperties}
+            aria-label="Life in West Village archive"
+          >
+            <div className="about-story__archive-tear-shadow" aria-hidden="true" />
+            <div className="about-story__archive-tear-paper">
+              <span className="about-story__archive-tear-surface" aria-hidden="true" />
+              <div className="about-story__archive-evidence" aria-hidden="true">
+                <img
+                  className="about-story__archive-object about-story__archive-object--camera"
+                  src={dividerCamera}
+                  alt=""
+                />
+                <img
+                  className="about-story__archive-object about-story__archive-object--kiss"
+                  src={dividerKissmark}
+                  alt=""
+                />
+                <img
+                  className="about-story__archive-object about-story__archive-object--dogtag"
+                  src={dividerDogtag}
+                  alt=""
+                />
+                <img
+                  className="about-story__archive-object about-story__archive-object--receipt"
+                  src={dividerReceipt}
+                  alt=""
+                />
+                <img
+                  className="about-story__archive-object about-story__archive-object--animal"
+                  src={dividerAnimal}
+                  alt=""
+                />
+              </div>
+              <div className="about-story__archive-tear-copy">
+                <span className="about-story__archive-william">marc!! where are
+                  <br />
+                  my rings?
+                </span>
+                <span className="about-story__archive-marcus">Banana get off
+                  <br />
+                  the counter now
+                </span>
+                <span className="about-story__archive-leo">DADDY, PAPA
+                  <br />
+                  CLOUD ATE MY SOCKS AGAIN!!
+                </span>
+                <span className="about-story__archive-tear-stamp">From Westchester To Manhattan</span>
+                <p className="about-story__archive-note">
+                  Somehow, every morning in this house
+                  <br />
+                  turns into a group project.
+                </p>
+                <span className="about-story__archive-tear-label">
+                  life in
+                  <br />
+                  west
+                  <br />
+                  village
+                </span>
+              </div>
+            </div>
+          </section>
+
+          <section
             className={`about-story__cover-interlude ${visibleStaggerIds.includes("cover-interlude") ? "is-visible" : ""}`}
             data-stagger-id="cover-interlude"
             style={{ "--stagger-index": "1" } as CSSProperties}
@@ -934,7 +1057,7 @@ export default function TheirStory() {
           >
             <div className="about-story__cover-figure about-story__news-spread">
               <figure className="about-story__news-hero-image">
-                <img src={timelineImg4} alt="Marcus and William editorial portrait" />
+                <img src={timelineImg5} alt="Marcus and William editorial portrait" />
               </figure>
 
               <div className="about-story__news-title-block">
@@ -995,71 +1118,71 @@ export default function TheirStory() {
                       {wallFragments.map((fragment, index) => {
                         const staggerId = `moment-${activeWallPage}-${fragment.id}`;
                         return (
-                        <article
-                          key={fragment.id}
-                          data-stagger-id={staggerId}
-                          className={`about-story__moment-card about-story__moment-card--wall about-story__moment-card--${getFragmentOrientation(fragment)} ${visibleStaggerIds.includes(staggerId) ? "is-visible" : ""}`}
-                          style={{
-                            "--stagger-index": `${index}`,
-                            "--moment-tilt": `${((stableHash(fragment.id) % 9) - 4) * 0.45}deg`,
-                          } as CSSProperties}
-                        >
-                          <span
-                            className="about-story__moment-pin"
-                            style={{ transform: `translateX(${(stableHash(fragment.id) % 17) - 8}px)` }}
-                            aria-hidden="true"
-                          />
-                          <span
-                            className={`about-story__artist-tag ${fragment.tag_direction === "left" ? "is-left" : "is-right"}`}
+                          <article
+                            key={fragment.id}
+                            data-stagger-id={staggerId}
+                            className={`about-story__moment-card about-story__moment-card--wall about-story__moment-card--${getFragmentOrientation(fragment)} ${visibleStaggerIds.includes(staggerId) ? "is-visible" : ""}`}
+                            style={{
+                              "--stagger-index": `${index}`,
+                              "--moment-tilt": `${((stableHash(fragment.id) % 9) - 4) * 0.45}deg`,
+                            } as CSSProperties}
                           >
-                            {`(A) ${fragment.artist}`}
-                          </span>
-                          <figure
-                            className={`about-story__moment-photo about-story__moment-photo--${getFragmentOrientation(fragment)} ${fragment.is_nsfw ? "is-nsfw" : ""} ${fragment.is_nsfw && revealedNsfwIds.includes(fragment.id) ? "is-revealed" : ""}`}
-                          >
-                            <img src={fragment.image} alt={`${fragment.title} placeholder`} />
-                            {fragment.is_nsfw && !revealedNsfwIds.includes(fragment.id) && nsfwPromptId !== fragment.id ? (
-                              <button
-                                type="button"
-                                className="about-story__nsfw-mask"
-                                onClick={() => setNsfwPromptId(fragment.id)}
-                              >
-                                NSFW content. Click to view.
-                              </button>
-                            ) : null}
-                            {fragment.is_nsfw && !revealedNsfwIds.includes(fragment.id) && nsfwPromptId === fragment.id ? (
-                              <div className="about-story__nsfw-confirm" role="dialog" aria-label="NSFW confirmation">
-                                <p>This is NSFW. View?</p>
-                                <div className="about-story__nsfw-actions">
-                                  <button
-                                    type="button"
-                                    onClick={() => {
-                                      setRevealedNsfwIds((current) =>
-                                        current.includes(fragment.id) ? current : [...current, fragment.id]
-                                      );
-                                      setNsfwPromptId(null);
-                                    }}
-                                  >
-                                    Yes
-                                  </button>
-                                  <button
-                                    type="button"
-                                    onClick={() => {
-                                      setNsfwPromptId(null);
-                                    }}
-                                  >
-                                    No
-                                  </button>
+                            <span
+                              className="about-story__moment-pin"
+                              style={{ transform: `translateX(${(stableHash(fragment.id) % 17) - 8}px)` }}
+                              aria-hidden="true"
+                            />
+                            <span
+                              className={`about-story__artist-tag ${fragment.tag_direction === "left" ? "is-left" : "is-right"}`}
+                            >
+                              {`(A) ${fragment.artist}`}
+                            </span>
+                            <figure
+                              className={`about-story__moment-photo about-story__moment-photo--${getFragmentOrientation(fragment)} ${fragment.is_nsfw ? "is-nsfw" : ""} ${fragment.is_nsfw && revealedNsfwIds.includes(fragment.id) ? "is-revealed" : ""}`}
+                            >
+                              <img src={fragment.image} alt={`${fragment.title} placeholder`} />
+                              {fragment.is_nsfw && !revealedNsfwIds.includes(fragment.id) && nsfwPromptId !== fragment.id ? (
+                                <button
+                                  type="button"
+                                  className="about-story__nsfw-mask"
+                                  onClick={() => setNsfwPromptId(fragment.id)}
+                                >
+                                  NSFW content. Click to view.
+                                </button>
+                              ) : null}
+                              {fragment.is_nsfw && !revealedNsfwIds.includes(fragment.id) && nsfwPromptId === fragment.id ? (
+                                <div className="about-story__nsfw-confirm" role="dialog" aria-label="NSFW confirmation">
+                                  <p>This is NSFW. View?</p>
+                                  <div className="about-story__nsfw-actions">
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setRevealedNsfwIds((current) =>
+                                          current.includes(fragment.id) ? current : [...current, fragment.id]
+                                        );
+                                        setNsfwPromptId(null);
+                                      }}
+                                    >
+                                      Yes
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setNsfwPromptId(null);
+                                      }}
+                                    >
+                                      No
+                                    </button>
+                                  </div>
                                 </div>
-                              </div>
-                            ) : null}
-                          </figure>
-                          <div className="about-story__moment-caption">
-                            <p className="about-story__memory-tone">Age {fragment.ageRange}</p>
-                            <h3 className="about-story__moment-title">{fragment.title}</h3>
-                            <p className="about-story__card-body">{fragment.excerpt}</p>
-                          </div>
-                        </article>
+                              ) : null}
+                            </figure>
+                            <div className="about-story__moment-caption">
+                              <p className="about-story__memory-tone">Age {fragment.ageRange}</p>
+                              <h3 className="about-story__moment-title">{fragment.title}</h3>
+                              <p className="about-story__card-body">{fragment.excerpt}</p>
+                            </div>
+                          </article>
                         );
                       })}
                     </div>
