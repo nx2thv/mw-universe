@@ -68,6 +68,32 @@ const auEntries = [
       { title: "The Captain & The Spare", artist: "maxiine", image: commissionBoard1, orientation: "landscape", note: "formal portrait" },
     ],
   },
+
+  {
+  id: "au2",
+  code: "AU-002",
+  title: "Your AU Title",
+  shortTitle: "Short Name",
+  premise: "One-line vibe or joke/premise.",
+  setting: "Where this AU takes place.",
+  background: [
+    "Paragraph one.",
+    "Paragraph two.",
+    "Paragraph three.",
+  ],
+  motifs: ["motif one", "motif two", "motif three"],
+  commissions: [
+    {
+      title: "Commission title",
+      artist: "artist name",
+      image: commissionBoard1,
+      orientation: "landscape",
+      note: "optional note",
+    },
+  ],
+},
+
+
 ] satisfies AuEntry[];
 
 const translations = {
@@ -116,6 +142,7 @@ function getSharedAuId() {
 export default function AuArchive() {
   const { language } = useLanguage();
   const [sharedAuId, setSharedAuId] = useState<string | null>(getSharedAuId);
+  const [selectedAuId, setSelectedAuId] = useState<string | null>(null);
   const [openAuMenuId, setOpenAuMenuId] = useState<string | null>(null);
   const [copiedAuId, setCopiedAuId] = useState<string | null>(null);
   const t = translations[language] || translations.en;
@@ -124,7 +151,11 @@ export default function AuArchive() {
       const sharedValue = sharedAuId.toLowerCase();
       return entry.id.toLowerCase() === sharedValue || entry.code.toLowerCase() === sharedValue;
     })
-    : auEntries;
+    : selectedAuId
+      ? auEntries.filter((entry) => entry.id === selectedAuId)
+      : [];
+  const showWelcome = !sharedAuId && !selectedAuId;
+  const selectedAuIndex = selectedAuId ? auEntries.findIndex((entry) => entry.id === selectedAuId) : -1;
 
   const getAuShareUrl = (entry: AuEntry) => {
     const url = new URL("/au", window.location.origin);
@@ -150,8 +181,14 @@ export default function AuArchive() {
     setSharedAuId(null);
   };
 
+  const openAuEntry = (entry: AuEntry) => {
+    setSelectedAuId(entry.id);
+    setOpenAuMenuId(null);
+    setCopiedAuId(null);
+  };
+
   return (
-    <main className="au-archive about-portal relative min-h-screen overflow-hidden text-[#f2ede2]">
+    <main className={`au-archive ${showWelcome ? "au-archive--welcome" : ""} about-portal relative min-h-screen overflow-hidden text-[#f2ede2]`}>
       <div className="about-portal__vignette pointer-events-none fixed inset-0" aria-hidden="true" />
       <div className="about-portal__grain pointer-events-none fixed inset-0" aria-hidden="true" />
 
@@ -174,23 +211,71 @@ export default function AuArchive() {
         ))}
       </div>
 
-      <section className="au-archive__hero">
-        <h1 className="au-archive__title portal-fade-up">{t.title}</h1>
-        <p className="au-archive__intro portal-fade-up portal-fade-up--subheading">{t.intro}</p>
-      </section>
-
-      <section className="au-archive__shelf" aria-label={t.title}>
-        {sharedAuId ? (
-          <div className="au-archive__shared-bar portal-fade-up portal-fade-up--choices">
-            <span>{t.sharedView}</span>
-            <button type="button" onClick={clearSharedAu}>
-              {t.clearSharedView}
-            </button>
+      {showWelcome ? (
+        <section className="au-archive__welcome" aria-labelledby="au-archive-title">
+          <div className="au-archive__hero">
+            <h1 id="au-archive-title" className="au-archive__title portal-fade-up">{t.title}</h1>
+            <p className="au-archive__intro portal-fade-up portal-fade-up--subheading">{t.intro}</p>
           </div>
-        ) : null}
 
-        {visibleAuEntries.map((entry, entryIndex) => (
-          <article key={entry.id} id={entry.id} className="au-card">
+          <nav className="au-archive__index portal-fade-up portal-fade-up--choices" aria-label={t.jumpLabel}>
+            {auEntries.map((entry) => {
+              const coverImage = entry.commissions.find((commission) => commission.image)?.image;
+
+              return (
+                <button key={entry.id} type="button" className="au-archive__index-link" onClick={() => openAuEntry(entry)}>
+                  <span className="au-archive__index-thumb" aria-hidden="true">
+                    {coverImage ? <img src={coverImage} alt="" loading="lazy" /> : <span>{entry.code}</span>}
+                  </span>
+                  <span className="au-archive__index-name">{entry.shortTitle}</span>
+                </button>
+              );
+            })}
+          </nav>
+        </section>
+      ) : null}
+
+      {!showWelcome && !sharedAuId ? (
+        <nav className="au-archive__index portal-fade-up portal-fade-up--choices" aria-label={t.jumpLabel}>
+          {auEntries.map((entry, entryIndex) => {
+            const coverImage = entry.commissions.find((commission) => commission.image)?.image;
+
+            return (
+              <button
+                key={entry.id}
+                type="button"
+                className={`au-archive__index-link ${selectedAuId === entry.id ? "is-active" : ""}`}
+                style={{
+                  ["--au-offset" as string]: selectedAuIndex >= 0 ? `${entryIndex - selectedAuIndex}` : "0",
+                  ["--au-offset-x" as string]: selectedAuIndex >= 0
+                    ? `calc(${entryIndex - selectedAuIndex} * clamp(7rem, 13vw, 10.75rem))`
+                    : "0px",
+                } as CSSProperties}
+                onClick={() => openAuEntry(entry)}
+              >
+                <span className="au-archive__index-thumb" aria-hidden="true">
+                  {coverImage ? <img src={coverImage} alt="" loading="lazy" /> : <span>{entry.code}</span>}
+                </span>
+                <span className="au-archive__index-name">{entry.shortTitle}</span>
+              </button>
+            );
+          })}
+        </nav>
+      ) : null}
+
+      {!showWelcome ? (
+        <section className="au-archive__shelf portal-fade-up portal-fade-up--choices" aria-label={t.title}>
+          {sharedAuId ? (
+            <div className="au-archive__shared-bar portal-fade-up portal-fade-up--choices">
+              <span>{t.sharedView}</span>
+              <button type="button" onClick={clearSharedAu}>
+                {t.clearSharedView}
+              </button>
+            </div>
+          ) : null}
+
+          {visibleAuEntries.map((entry, entryIndex) => (
+            <article key={entry.id} id={entry.id} className="au-card au-card--stagger">
             <div className="au-card__actions">
               <button
                 type="button"
@@ -211,7 +296,7 @@ export default function AuArchive() {
             </div>
             <div className="au-card__header">
               <p className="au-card__code">{entry.code}</p>
-              <div>
+              <div className="au-card__heading-copy">
                 <h2 className="au-card__title">{entry.title}</h2>
                 <p className="au-card__premise">{entry.premise}</p>
               </div>
@@ -290,11 +375,12 @@ export default function AuArchive() {
             {copiedAuId === entry.id ? (
               <p className="au-card__copy-state">{t.copied}</p>
             ) : null}
-          </article>
-        ))}
-      </section>
+            </article>
+          ))}
+        </section>
+      ) : null}
 
-      <div className="relative z-10 px-6 pb-6 sm:pb-8">
+      <div className="au-archive__credit">
         <PageCredit tone="on-dark" className="page-credit--bottom" />
       </div>
     </main>
