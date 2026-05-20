@@ -11,11 +11,6 @@ type ResolvedContextLink = {
   href: string;
   label?: string;
 };
-type IdeaContextLinks = {
-  background: ResolvedContextLink[];
-  commission: ResolvedContextLink[];
-  characters: ResolvedContextLink[];
-};
 type DustSpec = {
   left: string;
   top: string;
@@ -36,57 +31,13 @@ const dustSpecs: DustSpec[] = [
   { left: "90%", top: "33%", size: "2px", duration: "23s", delay: "-8s", driftX: "9px", driftY: "-20px" },
 ];
 
-function toResolvedContextLink(entry: unknown): ResolvedContextLink | null {
-  if (typeof entry === "string") {
-    const href = entry.trim();
-    return href ? { href } : null;
-  }
-
-  if (!entry || typeof entry !== "object") return null;
-  const value = entry as Record<string, unknown>;
-  const hrefCandidate = value.href ?? value.url ?? value.path ?? value.link;
-  if (typeof hrefCandidate !== "string" || !hrefCandidate.trim()) return null;
-
-  const labelCandidate = value.label ?? value.text ?? value.title;
-  return {
-    href: hrefCandidate.trim(),
-    label: typeof labelCandidate === "string" && labelCandidate.trim() ? labelCandidate.trim() : undefined,
-  };
-}
-
-function normalizeContextList(value: unknown): ResolvedContextLink[] {
-  if (Array.isArray(value)) {
-    return value
-      .map(toResolvedContextLink)
-      .filter((entry): entry is ResolvedContextLink => Boolean(entry));
-  }
-
-  const single = toResolvedContextLink(value);
-  return single ? [single] : [];
-}
-
-function parseContextLinks(value: unknown): IdeaContextLinks {
-  if (!value || typeof value !== "object") {
-    return { background: [], commission: [], characters: [] };
-  }
-
-  const raw = value as Record<string, unknown>;
-  const background = normalizeContextList(raw.background);
-  const commission = normalizeContextList(raw.commission);
-  const characters = normalizeContextList(raw.characters);
-
-  if (!background.length) {
-    background.push(...normalizeContextList([raw.background_story, raw.au_archive]));
-  }
-  if (!characters.length) {
-    characters.push(...normalizeContextList([raw.character_william, raw.character_marcus]));
-  }
-
-  return { background, commission, characters };
-}
-
 function isInternalPath(href: string) {
   return /^\/(?!\/)/.test(href);
+}
+
+function normalizeOptionalText(value?: string | null) {
+  const trimmed = value?.trim();
+  return trimmed || null;
 }
 
 export default function BriefLoadingPage() {
@@ -94,11 +45,11 @@ export default function BriefLoadingPage() {
   const [searchParams] = useSearchParams();
   const [openingCommissionHref, setOpeningCommissionHref] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [contextLinks, setContextLinks] = useState<IdeaContextLinks>({
-    background: [],
-    commission: [],
-    characters: [],
-  });
+  const [auPath, setAuPath] = useState<string | null>(null);
+  const [includeMainStory, setIncludeMainStory] = useState(true);
+  const [characterComment, setCharacterComment] = useState<string | null>(null);
+  const [backgroundComment, setBackgroundComment] = useState<string | null>(null);
+  const [commissionComment, setCommissionComment] = useState<string | null>(null);
 
   const briefRef = searchParams.get("brief") || "";
   const expiresIn = Number(searchParams.get("expiresIn") || "86400");
@@ -119,28 +70,32 @@ export default function BriefLoadingPage() {
       subheading: "Chọn tài liệu nền nhanh trước khi vào commission brief.",
       cardBackground: "Background brief",
       cardCommission: "Commission brief",
-      cardCharacter: "Characters' brief",
-      openLabel: "Open (→)",
+      cardCharacter: "Nhân vật",
+      openCommission: "Open commission brief →",
       openingLabel: "Opening...",
       noBrief: "Missing brief reference.",
       openError: "Could not open this brief right now.",
-      william: "William (→)",
-      marcus: "Marcus (→)",
+      william: "William →",
+      marcus: "Marcus →",
+      mainUniverse: "Main universe →",
+      au: "AU →",
       ideaPrefix: "Idea",
     }
     : {
       language: "Language",
       heading: "Before You Open The Brief",
       subheading: "Grab the key references first, then jump into the commission brief.",
-      cardBackground: "Background brief",
+      cardBackground: "Background",
       cardCommission: "Commission brief",
-      cardCharacter: "Characters' brief",
-      openLabel: "Open (→)",
+      cardCharacter: "Character(s)",
+      openCommission: "Open commission brief →",
       openingLabel: "Opening...",
       noBrief: "Missing brief reference.",
       openError: "Could not open this brief right now.",
-      william: "William (→)",
-      marcus: "Marcus (→)",
+      william: "William →",
+      marcus: "Marcus →",
+      mainUniverse: "Main universe →",
+      au: "AU →",
       ideaPrefix: "Idea",
     };
 
@@ -152,12 +107,16 @@ export default function BriefLoadingPage() {
 
       const { data, error } = await supabase
         .from("commission_ideas")
-        .select("brief_path, character, context_links")
+        .select("brief_path, character, au_path, include_main_story, character_comment, background_comment, commission_comment")
         .eq("id", ideaId)
         .maybeSingle<{
           brief_path: string;
           character: string | null;
-          context_links: unknown;
+          au_path: string | null;
+          include_main_story: boolean | null;
+          character_comment: string | null;
+          background_comment: string | null;
+          commission_comment: string | null;
         }>();
 
       if (cancelled) return;
@@ -170,7 +129,11 @@ export default function BriefLoadingPage() {
       if (data.brief_path?.trim()) {
         setResolvedBriefRef(data.brief_path.trim());
       }
-      setContextLinks(parseContextLinks(data.context_links));
+      setAuPath(data.au_path?.trim() || null);
+      setIncludeMainStory(data.include_main_story ?? true);
+      setCharacterComment(normalizeOptionalText(data.character_comment));
+      setBackgroundComment(normalizeOptionalText(data.background_comment));
+      setCommissionComment(normalizeOptionalText(data.commission_comment));
 
       const dbCharacter = normalizeCharacter(data.character);
       if (dbCharacter === "william" || dbCharacter === "marcus" || dbCharacter === "couple") {
@@ -193,26 +156,30 @@ export default function BriefLoadingPage() {
     ];
   }, [resolvedCharacter, t.marcus, t.william]);
 
-  const backgroundLinks = contextLinks.background.length
-    ? contextLinks.background
-    : [{ href: "/them/story" }];
-  const characterLinks = contextLinks.characters.length
-    ? contextLinks.characters
-    : fallbackCharacterLinks;
-  const commissionLinks = contextLinks.commission.length
-    ? contextLinks.commission
-    : (resolvedBriefRef.trim() ? [{ href: resolvedBriefRef }] : []);
+  const shouldShowBackgroundCard = resolvedCharacter === "couple" || resolvedCharacter === null;
+  const hasAuPath = Boolean(auPath);
+  const backgroundLinks = useMemo<ResolvedContextLink[]>(() => {
+    if (!shouldShowBackgroundCard) return [];
+
+    const links: ResolvedContextLink[] = [];
+    if (includeMainStory) {
+      links.push({ href: "/them/story", label: t.mainUniverse });
+    }
+    if (hasAuPath && auPath) {
+      links.push({ href: auPath, label: t.au });
+    }
+
+    return links;
+  }, [auPath, hasAuPath, includeMainStory, shouldShowBackgroundCard, t.au, t.mainUniverse]);
+  const characterLinks = fallbackCharacterLinks;
+  const commissionLinks = resolvedBriefRef.trim()
+    ? [{ href: resolvedBriefRef, label: t.openCommission }]
+    : [];
 
   const hasCommissionLinks = commissionLinks.length > 0;
-  const displayedCommissionLinks = hasCommissionLinks ? commissionLinks : [{ href: "", label: t.openLabel }];
-
-  const inferCharacterLabel = (link: ResolvedContextLink) => {
-    if (link.label) return link.label;
-    const href = link.href.toLowerCase();
-    if (href.includes("william")) return t.william;
-    if (href.includes("marcus")) return t.marcus;
-    return t.openLabel;
-  };
+  const displayedCommissionLinks = hasCommissionLinks ? commissionLinks : [{ href: "", label: t.openCommission }];
+  const commissionCardNumber = shouldShowBackgroundCard ? "03" : "02";
+  const commissionAnimationDelay = shouldShowBackgroundCard ? "270ms" : "170ms";
 
   const openContextLink = async (href: string) => {
     if (!href.trim()) return;
@@ -323,10 +290,13 @@ export default function BriefLoadingPage() {
             </h2>
             <p className="home-journey-copy">{t.subheading}</p>
 
-            <div className="brief-portal-grid">
+            <div className={`brief-portal-grid ${shouldShowBackgroundCard ? "is-couple" : "is-solo"}`}>
               <article className="brief-portal-card brief-portal-card--character" style={{ animationDelay: "70ms" }}>
                 <p className="brief-portal-card-kicker">01</p>
                 <h3 className="brief-portal-card-title">{t.cardCharacter}</h3>
+                {characterComment ? (
+                  <p className="brief-portal-card-comment">{characterComment}</p>
+                ) : null}
                 <div className={`brief-portal-link-row ${characterLinks.length > 1 ? "is-couple" : ""}`}>
                   {characterLinks.map((link) => (
                     <button
@@ -337,34 +307,42 @@ export default function BriefLoadingPage() {
                         void openContextLink(link.href);
                       }}
                     >
-                      {inferCharacterLabel(link)}
+                      {link.label}
                     </button>
                   ))}
                 </div>
               </article>
 
-              <article className="brief-portal-card brief-portal-card--background" style={{ animationDelay: "170ms" }}>
-                <p className="brief-portal-card-kicker">02</p>
-                <h3 className="brief-portal-card-title">{t.cardBackground}</h3>
-                <div className="brief-portal-link-row">
-                  {backgroundLinks.map((link, index) => (
-                    <button
-                      key={`${link.href}-${index}`}
-                      type="button"
-                      className="brief-portal-link brief-portal-link-static"
+              {shouldShowBackgroundCard ? (
+                <article className="brief-portal-card brief-portal-card--background" style={{ animationDelay: "170ms" }}>
+                  <p className="brief-portal-card-kicker">02</p>
+                  <h3 className="brief-portal-card-title">{t.cardBackground}</h3>
+                  {backgroundComment ? (
+                    <p className="brief-portal-card-comment">{backgroundComment}</p>
+                  ) : null}
+                  <div className="brief-portal-link-row">
+                    {backgroundLinks.map((link, index) => (
+                      <button
+                        key={`${link.href}-${index}`}
+                        type="button"
+                        className="brief-portal-link brief-portal-link-static"
                       onClick={() => {
                         void openContextLink(link.href);
                       }}
                     >
-                      {link.label ?? t.openLabel}
-                    </button>
-                  ))}
-                </div>
-              </article>
+                        {link.label}
+                      </button>
+                    ))}
+                  </div>
+                </article>
+              ) : null}
 
-              <article className="brief-portal-card brief-portal-card--commission" style={{ animationDelay: "270ms" }}>
-                <p className="brief-portal-card-kicker">03</p>
+              <article className="brief-portal-card brief-portal-card--commission" style={{ animationDelay: commissionAnimationDelay }}>
+                <p className="brief-portal-card-kicker">{commissionCardNumber}</p>
                 <h3 className="brief-portal-card-title">{t.cardCommission}</h3>
+                {commissionComment ? (
+                  <p className="brief-portal-card-comment">{commissionComment}</p>
+                ) : null}
                 <div className="brief-portal-link-row">
                   {displayedCommissionLinks.map((link, index) => (
                     <button
@@ -376,7 +354,7 @@ export default function BriefLoadingPage() {
                         void handleOpenCommission(link.href);
                       }}
                     >
-                      {openingCommissionHref === link.href ? t.openingLabel : (link.label ?? t.openLabel)}
+                      {openingCommissionHref === link.href ? t.openingLabel : link.label}
                     </button>
                   ))}
                 </div>

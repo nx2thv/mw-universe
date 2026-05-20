@@ -3987,7 +3987,17 @@ section[data-section-index] {
   line-height: 1.2;
   color: var(--type-ivory);
   max-width: 16ch;
-  padding-right: 2.5rem;
+  text-align: center;
+}
+
+.brief-portal-card-comment {
+  margin: -0.25rem 0 0;
+  max-width: 28ch;
+  font-family: "Lora", serif;
+  font-size: 0.72rem;
+  line-height: 1.55;
+  color: rgba(225, 212, 196, 0.72);
+  text-align: left;
 }
 
 .brief-portal-link-row {
@@ -4046,6 +4056,8 @@ section[data-section-index] {
   cursor: pointer;
   border-bottom-color: rgba(236, 220, 196, 0.46);
   color: rgba(238, 224, 205, 0.92);
+  letter-spacing: 0.12rem;
+  padding-left: 0.24rem;
 }
 
 .brief-portal-link-static:hover,
@@ -4093,6 +4105,10 @@ section[data-section-index] {
 @media (min-width: 768px) {
   .brief-portal-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .brief-portal-grid.is-solo {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .ideas-intro p {

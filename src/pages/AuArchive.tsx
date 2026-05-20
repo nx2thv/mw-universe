@@ -28,6 +28,7 @@ type AuEntry = {
   code: string;
   title: string;
   shortTitle: string;
+  indexImage?: string;
   premise: string;
   setting: string;
   background: string[];
@@ -45,7 +46,7 @@ const dustSpecs: DustSpec[] = [
   { left: "88%", top: "34%", size: "2px", duration: "19s", delay: "-6s", driftX: "10px", driftY: "-20px" },
 ];
 
-const auEntries = [
+const auEntries: AuEntry[] = [
   {
     id: "au1",
     code: "AU-001",
@@ -95,7 +96,7 @@ const auEntries = [
 
 
 
-] satisfies AuEntry[];
+];
 
 const translations = {
   en: {
@@ -176,12 +177,11 @@ export default function AuArchive() {
     }
   };
 
-  const clearSharedAu = () => {
-    window.history.replaceState(null, "", "/au");
-    setSharedAuId(null);
-  };
-
   const openAuEntry = (entry: AuEntry) => {
+    if (sharedAuId) {
+      window.history.replaceState(null, "", "/au");
+      setSharedAuId(null);
+    }
     setSelectedAuId(entry.id);
     setOpenAuMenuId(null);
     setCopiedAuId(null);
@@ -220,7 +220,7 @@ export default function AuArchive() {
 
           <nav className="au-archive__index portal-fade-up portal-fade-up--choices" aria-label={t.jumpLabel}>
             {auEntries.map((entry) => {
-              const coverImage = entry.commissions.find((commission) => commission.image)?.image;
+              const coverImage = entry.indexImage ?? entry.commissions.find((commission) => commission.image)?.image;
 
               return (
                 <button key={entry.id} type="button" className="au-archive__index-link" onClick={() => openAuEntry(entry)}>
@@ -235,17 +235,17 @@ export default function AuArchive() {
         </section>
       ) : null}
 
-      {!showWelcome && !sharedAuId ? (
+      {!showWelcome ? (
         <nav className="au-archive__index portal-fade-up portal-fade-up--choices" aria-label={t.jumpLabel}>
           <div className="au-archive__index-track">
             {auEntries.map((entry) => {
-              const coverImage = entry.commissions.find((commission) => commission.image)?.image;
+              const coverImage = entry.indexImage ?? entry.commissions.find((commission) => commission.image)?.image;
 
               return (
                 <button
                   key={entry.id}
                   type="button"
-                  className={`au-archive__index-link ${selectedAuId === entry.id ? "is-active" : ""}`}
+                  className={`au-archive__index-link ${activeAuEntry?.id === entry.id ? "is-active" : ""}`}
                   onClick={() => openAuEntry(entry)}
                 >
                   <span className="au-archive__index-thumb" aria-hidden="true">
@@ -259,17 +259,14 @@ export default function AuArchive() {
         </nav>
       ) : null}
 
+      {sharedAuId ? (
+        <div className="au-archive__shared-bar" role="status" aria-live="polite">
+          <span>{t.sharedView}</span>
+        </div>
+      ) : null}
+
       {!showWelcome ? (
         <section className="au-archive__shelf portal-fade-up portal-fade-up--choices" aria-label={t.title}>
-          {sharedAuId ? (
-            <div className="au-archive__shared-bar portal-fade-up portal-fade-up--choices">
-              <span>{t.sharedView}</span>
-              <button type="button" onClick={clearSharedAu}>
-                {t.clearSharedView}
-              </button>
-            </div>
-          ) : null}
-
           {activeAuEntry ? (
             <article key={activeAuEntry.id} id={activeAuEntry.id} className="au-card au-card--stagger">
             <div className="au-card__actions">

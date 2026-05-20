@@ -456,28 +456,27 @@ body:has(.au-archive) {
 }
 
 .au-archive__shared-bar {
-  display: flex;
+  position: fixed;
+  top: clamp(3.1rem, 6vw, 4.35rem);
+  left: 50%;
+  z-index: 30;
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.85rem;
+  justify-content: center;
   border: 1px solid rgba(188, 174, 155, 0.22);
-  background: rgba(18, 16, 16, 0.54);
-  padding: 0.72rem 0.85rem;
+  border-radius: 999px;
+  background: rgba(18, 16, 16, 0.72);
+  box-shadow: 0 0.85rem 2rem rgba(0, 0, 0, 0.22);
+  padding: 0.48rem 0.72rem;
   color: rgba(220, 204, 185, 0.82);
   font-family: "IBM Plex Mono", monospace;
-  font-size: 0.58rem;
+  font-size: 0.52rem;
   letter-spacing: 0.09em;
   text-transform: uppercase;
-}
-
-.au-archive__shared-bar button {
-  border: 0;
-  background: transparent;
-  color: rgba(247, 239, 226, 0.9);
-  font: inherit;
-  text-decoration: underline;
-  cursor: pointer;
-  padding: 0;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate3d(-50%, 0.85rem, 0);
+  animation: au-linked-bubble-lifecycle 8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
 .au-card {
@@ -3710,6 +3709,25 @@ body:has(.au-archive) {
   to {
     opacity: 1;
     transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes au-linked-bubble-lifecycle {
+  0% {
+    opacity: 0;
+    transform: translate3d(-50%, 0.85rem, 0);
+  }
+
+  14%,
+  86% {
+    opacity: 1;
+    transform: translate3d(-50%, 0, 0);
+  }
+
+  100% {
+    opacity: 0;
+    visibility: hidden;
+    transform: translate3d(-50%, 0, 0);
   }
 }
 
