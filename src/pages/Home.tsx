@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
 import { Link } from "react-router-dom";
+import Lottie from "lottie-react";
 import { useLanguage } from "../LanguageContext";
 import TosModal from "../components/TosModal";
 import UniversalTopBar from "../components/UniversalTopBar";
@@ -9,6 +10,7 @@ import { supabase } from "../lib/supabaseClients";
 import loop1 from "../../assets/loop1-carousel.jpg";
 import loop2 from "../../assets/loop2-carousel.jpg";
 import loop3 from "../../assets/loop3-carousel.jpg";
+import elephantLoading from "../../assets/lottie/elephant-loading.json";
 
 type SectionKey = "welcome" | "them" | "universe" | "briefs";
 type DustSpec = {
@@ -723,7 +725,9 @@ export default function Home() {
 
                 <div className="home-journey-ideas-grid">
                   {ideasLoading ? (
-                    <p className="home-journey-ideas-state">{t.sections.briefs.loading}</p>
+                    <div className="home-journey-ideas-loading" aria-label={t.sections.briefs.loading} role="status">
+                      <Lottie animationData={elephantLoading} loop />
+                    </div>
                   ) : null}
 
                   {!ideasLoading && !visibleIdeas.length ? (

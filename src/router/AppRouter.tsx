@@ -9,6 +9,7 @@ import TheirStory from "../pages/TheirStory";
 import AuArchive from "../pages/AuArchive";
 import Footer from "../components/Footer";
 import BriefLoadingPage from "../pages/BriefLoadingPage";
+import BriefOpeningPage from "../pages/BriefOpeningPage";
 
 function ScrollToTop() {
     const { pathname } = useLocation();
@@ -47,6 +48,8 @@ function RouteTransitionOverlay() {
 function AppLayout() {
     const { pathname } = useLocation();
     const isBriefLoadingRoute = pathname === "/brief-loading";
+    const isBriefOpeningRoute = pathname === "/brief-opening";
+    const isBriefFlowRoute = isBriefLoadingRoute || isBriefOpeningRoute;
     const normalizedPathname = pathname.replace(/\/+$/, "") || "/";
     const isHomeRoute = normalizedPathname === "/";
     const isAboutThemRoute = normalizedPathname.startsWith("/them");
@@ -62,7 +65,7 @@ function AppLayout() {
     return (
         <>
         <ScrollToTop />
-        {!isBriefLoadingRoute && !isHomeRoute && <UniversalTopBar />}
+        {!isBriefFlowRoute && !isHomeRoute && <UniversalTopBar />}
         <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/ideas" element={<MyCurrentIdeasPage />} />
@@ -71,9 +74,10 @@ function AppLayout() {
             <Route path="/them/au" element={<Navigate to="/au" replace />} />
             <Route path="/au" element={<AuArchive />} />
             <Route path="/brief-loading" element={<BriefLoadingPage />} />
+            <Route path="/brief-opening" element={<BriefOpeningPage />} />
             <Route path=":id" element={<BriefPage />} />
         </Routes>
-        {!isBriefLoadingRoute && !isFooterlessRoute && <Footer />}
+        {!isBriefFlowRoute && !isFooterlessRoute && <Footer />}
         <RouteTransitionOverlay />
         </>
     );

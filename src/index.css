@@ -1059,6 +1059,14 @@ body {
   gap: 0.86rem;
 }
 
+.home-journey-ideas-loading {
+  width: min(48vw, 13.75rem);
+  margin: 0.8rem auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .home-journey-ideas-shared-bar {
   display: flex;
   align-items: center;

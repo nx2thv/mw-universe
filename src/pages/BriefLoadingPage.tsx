@@ -79,7 +79,6 @@ export default function BriefLoadingPage() {
       marcus: "Marcus →",
       mainUniverse: "Main universe →",
       au: "AU →",
-      ideaPrefix: "Idea",
     }
     : {
       language: "Language",
@@ -96,7 +95,6 @@ export default function BriefLoadingPage() {
       marcus: "Marcus →",
       mainUniverse: "Main universe →",
       au: "AU →",
-      ideaPrefix: "Idea",
     };
 
   useEffect(() => {
@@ -211,39 +209,12 @@ export default function BriefLoadingPage() {
     }
 
     setErrorMessage(null);
-
-    if (isInternalPath(href)) {
-      window.location.assign(href);
-      return;
-    }
-
-    if (/^https?:\/\//i.test(href)) {
-      window.open(href, "_blank", "noopener,noreferrer");
-      return;
-    }
-
     setOpeningCommissionHref(href);
-    const popup = window.open("", "_blank");
-    if (popup) {
-      popup.opener = null;
-    }
 
-    try {
-      const signedUrl = await resolveBriefUrl(href, expiresIn);
-      if (popup) {
-        popup.location.replace(signedUrl);
-      } else {
-        window.location.assign(signedUrl);
-      }
-    } catch (error) {
-      console.error("Could not open brief:", error);
-      setErrorMessage(t.openError);
-      if (popup && !popup.closed) {
-        popup.close();
-      }
-    } finally {
-      setOpeningCommissionHref(null);
-    }
+    const openingUrl = new URL("/brief-opening", window.location.origin);
+    openingUrl.searchParams.set("brief", href);
+    openingUrl.searchParams.set("expiresIn", String(expiresIn));
+    window.location.assign(openingUrl.toString());
   };
 
   return (
@@ -280,7 +251,7 @@ export default function BriefLoadingPage() {
         <section className="home-journey-section home-journey-section--briefs is-active">
           <div className="home-journey-text home-journey-text--briefs brief-portal-content">
             <div className="brief-portal-idea-meta">
-              {ideaId ? `${t.ideaPrefix} ${ideaId}` : null}
+              {ideaId}
               {ideaId && ideaTitle ? " · " : null}
               {ideaTitle ? ideaTitle : null}
             </div>
