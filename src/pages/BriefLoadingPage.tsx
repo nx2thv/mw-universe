@@ -161,7 +161,7 @@ export default function BriefLoadingPage() {
 
     const links: ResolvedContextLink[] = [];
     if (includeMainStory) {
-      links.push({ href: "/them/story", label: t.mainUniverse });
+      links.push({ href: "/story", label: t.mainUniverse });
     }
     if (hasAuPath && auPath) {
       links.push({ href: auPath, label: t.au });

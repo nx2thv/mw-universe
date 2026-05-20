@@ -650,7 +650,7 @@ export default function Home() {
               </h2>
               <p className="home-journey-universe-prompt">{t.sections.universe.prompt}</p>
               <div className="home-journey-universe-choices" role="group" aria-label="Select an across-lifetime path">
-                <Link to="/them/story" className="home-journey-universe-choice-link">
+                <Link to="/story" className="home-journey-universe-choice-link">
                   <span className="home-journey-portal-name">{t.sections.universe.story}</span>
                   <span className="home-journey-portal-cta">{t.sections.universe.storyCta}</span>
                 </Link>

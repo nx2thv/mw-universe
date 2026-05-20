@@ -185,6 +185,128 @@ body {
   pointer-events: auto;
 }
 
+.route-transition-overlay {
+  --transition-base: #12100f;
+  --transition-mid: #1d1917;
+  --transition-smoke: #33241f;
+  --transition-rust: #7b4c43;
+  --transition-ivory: #e8ded0;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 30% 40%, rgba(123, 76, 67, 0.18), transparent 38%),
+    radial-gradient(circle at 72% 55%, rgba(232, 222, 208, 0.08), transparent 42%),
+    linear-gradient(135deg, #0f1012 0%, var(--transition-mid) 45%, var(--transition-smoke) 100%);
+  clip-path: inset(50% 0 50% 0);
+  opacity: 0;
+}
+
+.route-transition-overlay.is-leaving {
+  animation: routeTransitionCover 920ms cubic-bezier(0.68, 0, 0.18, 1) forwards;
+}
+
+.route-transition-overlay.is-arriving {
+  clip-path: inset(0 0 0 0);
+  opacity: 1;
+  animation: routeTransitionReveal 960ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.route-transition-overlay__texture,
+.route-transition-overlay__frame {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.route-transition-overlay__texture {
+  opacity: 0.38;
+  background:
+    linear-gradient(90deg, rgba(232, 222, 208, 0.04) 0 1px, transparent 1px 16%),
+    radial-gradient(circle at 24% 42%, rgba(123, 76, 67, 0.22), transparent 34%),
+    radial-gradient(circle at 72% 58%, rgba(232, 222, 208, 0.16), transparent 44%),
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.018), transparent 58%);
+  background-size: 54px 100%, 100% 100%, 100% 100%;
+  mix-blend-mode: screen;
+  transform: scale(1.06);
+}
+
+.route-transition-overlay.is-leaving .route-transition-overlay__texture {
+  animation: routeTransitionTextureIn 1200ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.route-transition-overlay.is-arriving .route-transition-overlay__texture {
+  animation: routeTransitionTextureOut 900ms ease forwards;
+}
+
+.route-transition-overlay__frame {
+  border-top: 1px solid rgba(232, 222, 208, 0.16);
+  border-bottom: 1px solid rgba(123, 76, 67, 0.16);
+  transform: scaleX(0.74);
+  opacity: 0;
+}
+
+.route-transition-overlay.is-leaving .route-transition-overlay__frame {
+  animation: routeTransitionFrameIn 820ms 160ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes routeTransitionCover {
+  0% {
+    clip-path: inset(50% 0 50% 0);
+    opacity: 0;
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+}
+
+@keyframes routeTransitionReveal {
+  0% {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+  100% {
+    clip-path: inset(0 0 100% 0);
+    opacity: 0;
+  }
+}
+
+@keyframes routeTransitionTextureIn {
+  0% {
+    transform: scale(1.12) translate3d(0, 18px, 0);
+  }
+  100% {
+    transform: scale(1.02) translate3d(0, 0, 0);
+  }
+}
+
+@keyframes routeTransitionTextureOut {
+  0% {
+    opacity: 0.52;
+    transform: scale(1.02);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.12);
+  }
+}
+
+@keyframes routeTransitionFrameIn {
+  0% {
+    opacity: 0;
+    transform: scaleX(0.74);
+  }
+  100% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
 .home-journey-page {
   --type-ivory: #e8dfd4;
   --type-ivory-soft: rgba(232, 223, 212, 0.72);
