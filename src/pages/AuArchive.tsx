@@ -94,6 +94,7 @@ const auEntries = [
 },
 
 
+
 ] satisfies AuEntry[];
 
 const translations = {
@@ -146,16 +147,15 @@ export default function AuArchive() {
   const [openAuMenuId, setOpenAuMenuId] = useState<string | null>(null);
   const [copiedAuId, setCopiedAuId] = useState<string | null>(null);
   const t = translations[language] || translations.en;
-  const visibleAuEntries = sharedAuId
-    ? auEntries.filter((entry) => {
+  const activeAuEntry = sharedAuId
+    ? auEntries.find((entry) => {
       const sharedValue = sharedAuId.toLowerCase();
       return entry.id.toLowerCase() === sharedValue || entry.code.toLowerCase() === sharedValue;
     })
     : selectedAuId
-      ? auEntries.filter((entry) => entry.id === selectedAuId)
-      : [];
-  const showWelcome = !sharedAuId && !selectedAuId;
-  const selectedAuIndex = selectedAuId ? auEntries.findIndex((entry) => entry.id === selectedAuId) : -1;
+      ? auEntries.find((entry) => entry.id === selectedAuId)
+      : null;
+  const showWelcome = !sharedAuId && !activeAuEntry;
 
   const getAuShareUrl = (entry: AuEntry) => {
     const url = new URL("/au", window.location.origin);
@@ -237,29 +237,25 @@ export default function AuArchive() {
 
       {!showWelcome && !sharedAuId ? (
         <nav className="au-archive__index portal-fade-up portal-fade-up--choices" aria-label={t.jumpLabel}>
-          {auEntries.map((entry, entryIndex) => {
-            const coverImage = entry.commissions.find((commission) => commission.image)?.image;
+          <div className="au-archive__index-track">
+            {auEntries.map((entry) => {
+              const coverImage = entry.commissions.find((commission) => commission.image)?.image;
 
-            return (
-              <button
-                key={entry.id}
-                type="button"
-                className={`au-archive__index-link ${selectedAuId === entry.id ? "is-active" : ""}`}
-                style={{
-                  ["--au-offset" as string]: selectedAuIndex >= 0 ? `${entryIndex - selectedAuIndex}` : "0",
-                  ["--au-offset-x" as string]: selectedAuIndex >= 0
-                    ? `calc(${entryIndex - selectedAuIndex} * clamp(7rem, 13vw, 10.75rem))`
-                    : "0px",
-                } as CSSProperties}
-                onClick={() => openAuEntry(entry)}
-              >
-                <span className="au-archive__index-thumb" aria-hidden="true">
-                  {coverImage ? <img src={coverImage} alt="" loading="lazy" /> : <span>{entry.code}</span>}
-                </span>
-                <span className="au-archive__index-name">{entry.shortTitle}</span>
-              </button>
-            );
-          })}
+              return (
+                <button
+                  key={entry.id}
+                  type="button"
+                  className={`au-archive__index-link ${selectedAuId === entry.id ? "is-active" : ""}`}
+                  onClick={() => openAuEntry(entry)}
+                >
+                  <span className="au-archive__index-thumb" aria-hidden="true">
+                    {coverImage ? <img src={coverImage} alt="" loading="lazy" /> : <span>{entry.code}</span>}
+                  </span>
+                  <span className="au-archive__index-name">{entry.shortTitle}</span>
+                </button>
+              );
+            })}
+          </div>
         </nav>
       ) : null}
 
@@ -274,31 +270,31 @@ export default function AuArchive() {
             </div>
           ) : null}
 
-          {visibleAuEntries.map((entry, entryIndex) => (
-            <article key={entry.id} id={entry.id} className="au-card au-card--stagger">
+          {activeAuEntry ? (
+            <article key={activeAuEntry.id} id={activeAuEntry.id} className="au-card au-card--stagger">
             <div className="au-card__actions">
               <button
                 type="button"
                 className="au-card__action-trigger"
-                aria-label={`Open actions for ${entry.title}`}
-                aria-expanded={openAuMenuId === entry.id}
-                onClick={() => setOpenAuMenuId((current) => (current === entry.id ? null : entry.id))}
+                aria-label={`Open actions for ${activeAuEntry.title}`}
+                aria-expanded={openAuMenuId === activeAuEntry.id}
+                onClick={() => setOpenAuMenuId((current) => (current === activeAuEntry.id ? null : activeAuEntry.id))}
               >
                 ⋮
               </button>
-              {openAuMenuId === entry.id ? (
+              {openAuMenuId === activeAuEntry.id ? (
                 <div className="au-card__action-menu">
-                  <button type="button" onClick={() => copyAuShareUrl(entry)}>
+                  <button type="button" onClick={() => copyAuShareUrl(activeAuEntry)}>
                     {t.copyLink}
                   </button>
                 </div>
               ) : null}
             </div>
             <div className="au-card__header">
-              <p className="au-card__code">{entry.code}</p>
+              <p className="au-card__code">{activeAuEntry.code}</p>
               <div className="au-card__heading-copy">
-                <h2 className="au-card__title">{entry.title}</h2>
-                <p className="au-card__premise">{entry.premise}</p>
+                <h2 className="au-card__title">{activeAuEntry.title}</h2>
+                <p className="au-card__premise">{activeAuEntry.premise}</p>
               </div>
             </div>
 
@@ -306,12 +302,12 @@ export default function AuArchive() {
               <div className="au-card__text">
                 <div className="au-card__meta-block">
                   <p className="au-card__label">{t.settingLabel}</p>
-                  <p className="au-card__setting">{entry.setting}</p>
+                  <p className="au-card__setting">{activeAuEntry.setting}</p>
                 </div>
 
                 <div className="au-card__meta-block">
                   <p className="au-card__label">{t.backgroundLabel}</p>
-                  {entry.background.map((paragraph) => (
+                  {activeAuEntry.background.map((paragraph) => (
                     <p key={paragraph} className="au-card__paragraph">{paragraph}</p>
                   ))}
                 </div>
@@ -319,7 +315,7 @@ export default function AuArchive() {
                 <div className="au-card__meta-block">
                   <p className="au-card__label">{t.motifLabel}</p>
                   <div className="au-card__motifs">
-                    {entry.motifs.map((motif) => (
+                    {activeAuEntry.motifs.map((motif) => (
                       <span key={motif}>{motif}</span>
                     ))}
                   </div>
@@ -330,17 +326,17 @@ export default function AuArchive() {
                 <p className="au-card__label">{t.commissionLabel}</p>
                 <div
                   className={`au-photoboard ${
-                    entry.commissions.length <= 1
+                    activeAuEntry.commissions.length <= 1
                       ? "is-single"
-                      : entry.commissions.length === 2
+                      : activeAuEntry.commissions.length === 2
                         ? "is-duo"
                         : "is-multi"
                   }`}
                 >
-                  {entry.commissions.map((commission, commissionIndex) => {
+                  {activeAuEntry.commissions.map((commission, commissionIndex) => {
                     const orientation = commission.orientation ?? "portrait";
-                    const rotationSeed = `${entry.id}-${commission.title}`;
-                    const artistTagDirection = (entryIndex + commissionIndex) % 2 === 0 ? "is-right" : "is-left";
+                    const rotationSeed = `${activeAuEntry.id}-${commission.title}`;
+                    const artistTagDirection = commissionIndex % 2 === 0 ? "is-right" : "is-left";
 
                     return (
                       <figure
@@ -348,7 +344,7 @@ export default function AuArchive() {
                         className={`au-polaroid au-polaroid--${orientation} ${commission.image ? "" : "is-empty"}`}
                         style={{
                           transform: `rotate(${getRotation(rotationSeed)}deg)`,
-                          ["--pin-offset" as string]: `${((entryIndex + commissionIndex) % 5) * 5 - 10}px`,
+                          ["--pin-offset" as string]: `${(commissionIndex % 5) * 5 - 10}px`,
                         } as CSSProperties}
                       >
                         <span className="au-polaroid__pin" aria-hidden="true" />
@@ -357,7 +353,7 @@ export default function AuArchive() {
                         ) : null}
                         <div className="au-polaroid__image">
                           {commission.image ? (
-                            <img src={commission.image} alt={`${entry.title}: ${commission.title}`} loading="lazy" />
+                            <img src={commission.image} alt={`${activeAuEntry.title}: ${commission.title}`} loading="lazy" />
                           ) : (
                             <span>{t.empty}</span>
                           )}
@@ -372,11 +368,11 @@ export default function AuArchive() {
                 </div>
               </div>
             </div>
-            {copiedAuId === entry.id ? (
+            {copiedAuId === activeAuEntry.id ? (
               <p className="au-card__copy-state">{t.copied}</p>
             ) : null}
             </article>
-          ))}
+          ) : null}
         </section>
       ) : null}
 
