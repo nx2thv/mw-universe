@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import UniversalTopBar from "../components/UniversalTopBar";
 import { useLanguage } from "../LanguageContext";
 import { resolveBriefUrl } from "../lib/briefLinks";
+import { runRouteTransition } from "../lib/routeTransitions";
 import { supabase } from "../lib/supabaseClients";
 import { normalizeCharacter } from "../data/commissionIdeas";
 
@@ -184,7 +185,7 @@ export default function BriefLoadingPage() {
     setErrorMessage(null);
 
     if (isInternalPath(href)) {
-      window.location.assign(href);
+      runRouteTransition(href);
       return;
     }
 
@@ -214,7 +215,7 @@ export default function BriefLoadingPage() {
     const openingUrl = new URL("/brief-opening", window.location.origin);
     openingUrl.searchParams.set("brief", href);
     openingUrl.searchParams.set("expiresIn", String(expiresIn));
-    window.location.assign(openingUrl.toString());
+    runRouteTransition(openingUrl.toString());
   };
 
   return (

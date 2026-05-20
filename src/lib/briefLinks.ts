@@ -1,4 +1,5 @@
 import { supabase, supabaseUrl } from "./supabaseClients";
+import { runRouteTransition } from "./routeTransitions";
 
 type StorageRef = {
   bucket: string;
@@ -106,12 +107,5 @@ export async function openBriefDocument(
     loadingUrl.searchParams.set("character", options.character);
   }
 
-  const popup = window.open(loadingUrl.toString(), "_blank");
-
-  if (popup) {
-    popup.opener = null;
-    return;
-  }
-
-  window.location.assign(loadingUrl.toString());
+  runRouteTransition(loadingUrl.toString());
 }

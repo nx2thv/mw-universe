@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "../LanguageContext";
+import { runRouteTransition } from "../lib/routeTransitions";
 
 const languages = [
   { code: "en" as const, label: "English" },
@@ -70,7 +71,18 @@ export default function UniversalTopBar({
       </div>
 
       {linkToHome ? (
-        <Link to="/" className="home-journey-heading site-topbar-title-link" aria-label="Go to home">
+        <Link
+          to="/"
+          className="home-journey-heading site-topbar-title-link"
+          aria-label="Go to home"
+          onClick={(event) => {
+            if (event.defaultPrevented) return;
+            if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+
+            event.preventDefault();
+            runRouteTransition("/");
+          }}
+        >
           <h1 className="home-journey-title">{resolvedTitle}</h1>
         </Link>
       ) : (

@@ -17,6 +17,7 @@ import AuArchive from "../pages/AuArchive";
 import Footer from "../components/Footer";
 import BriefLoadingPage from "../pages/BriefLoadingPage";
 import BriefOpeningPage from "../pages/BriefOpeningPage";
+import type { RouteTransitionTone } from "../lib/routeTransitions";
 
 function ScrollToTop() {
     const { pathname } = useLocation();
@@ -28,7 +29,6 @@ function ScrollToTop() {
     return null;
 }
 
-type RouteTransitionTone = "archive";
 type RouteTransitionPhase = "leaving" | "arriving";
 type RouteTransitionDetail = {
     to: string;
@@ -41,7 +41,16 @@ type ActiveRouteTransition = Required<RouteTransitionDetail> & {
 
 const ROUTE_TRANSITION_NAV_DELAY_MS = 920;
 const ROUTE_TRANSITION_TOTAL_MS = 1880;
-const ROUTE_TRANSITION_PATHS = new Set(["/", "/marcus", "/william", "/story", "/au"]);
+const ROUTE_TRANSITION_PATHS = new Set([
+    "/",
+    "/ideas",
+    "/marcus",
+    "/william",
+    "/story",
+    "/au",
+    "/brief-loading",
+    "/brief-opening",
+]);
 
 function normalizeTransitionPath(pathname: string) {
     return pathname.replace(/\/+$/, "") || "/";
@@ -163,12 +172,13 @@ function RouteTransitionOverlay({
 }
 
 function AppLayout() {
-    const { pathname } = useLocation();
+    const location = useLocation();
+    const { pathname } = location;
     const navigate = useNavigate();
     const [activeTransition, setActiveTransition] = useState<ActiveRouteTransition | null>(null);
     const transitionTimeoutsRef = useRef<number[]>([]);
     const activeTransitionRef = useRef<ActiveRouteTransition | null>(null);
-    const pathnameRef = useRef(pathname);
+    const routeLocationRef = useRef(location);
     const pendingTraversalPathnameRef = useRef<string | null>(null);
     const isBriefLoadingRoute = pathname === "/brief-loading";
     const isBriefOpeningRoute = pathname === "/brief-opening";
@@ -186,8 +196,8 @@ function AppLayout() {
         isAuRoute;
 
     useEffect(() => {
-        pathnameRef.current = pathname;
-    }, [pathname]);
+        routeLocationRef.current = location;
+    }, [location]);
 
     useEffect(() => {
         activeTransitionRef.current = activeTransition;
@@ -232,7 +242,15 @@ function AppLayout() {
         };
 
         const startLeavingTransition = ({ to, tone = "archive" }: RouteTransitionDetail) => {
-            if (!to || to === pathnameRef.current) return false;
+            if (!to) return false;
+
+            const targetUrl = new URL(to, window.location.origin);
+            const currentLocation = routeLocationRef.current;
+            if (
+                targetUrl.pathname === currentLocation.pathname &&
+                targetUrl.search === currentLocation.search &&
+                targetUrl.hash === currentLocation.hash
+            ) return false;
 
             clearTransitionTimeouts();
 
@@ -254,7 +272,7 @@ function AppLayout() {
             const { to, tone = "archive" } =
                 (event as CustomEvent<RouteTransitionDetail>).detail ?? {};
 
-            if (!to || to === pathnameRef.current) return;
+            if (!to) return;
 
             if (!startLeavingTransition({ to, tone })) {
                 navigate(to);
@@ -295,7 +313,11 @@ function AppLayout() {
             const url = new URL(link.href, window.location.origin);
             if (url.origin !== window.location.origin) return;
             if (!ROUTE_TRANSITION_PATHS.has(url.pathname)) return;
-            if (url.pathname === pathnameRef.current) return;
+            if (
+                url.pathname === routeLocationRef.current.pathname &&
+                url.search === routeLocationRef.current.search &&
+                url.hash === routeLocationRef.current.hash
+            ) return;
 
             event.preventDefault();
             window.dispatchEvent(new CustomEvent<RouteTransitionDetail>("oc:route-transition", {
