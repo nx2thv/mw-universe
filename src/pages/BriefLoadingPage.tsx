@@ -215,6 +215,14 @@ export default function BriefLoadingPage() {
     const openingUrl = new URL("/brief-opening", window.location.origin);
     openingUrl.searchParams.set("brief", href);
     openingUrl.searchParams.set("expiresIn", String(expiresIn));
+
+    const popup = window.open(openingUrl.toString(), "_blank");
+    if (popup) {
+      popup.opener = null;
+      setOpeningCommissionHref(null);
+      return;
+    }
+
     runRouteTransition(openingUrl.toString());
   };
 
