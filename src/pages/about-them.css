@@ -1268,7 +1268,7 @@ body:has(.au-archive) {
   scroll-behavior: smooth;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  padding: calc(env(safe-area-inset-top, 0px) + 3.1rem) 0 calc(env(safe-area-inset-bottom, 0px) + 7rem);
+  padding: calc(env(safe-area-inset-top, 0px) + 3.1rem) 0 calc(env(safe-area-inset-bottom, 0px) + 0.75rem);
   background:
     radial-gradient(circle at 42% -10%, rgba(216, 210, 200, 0.08) 0%, transparent 42%),
     linear-gradient(180deg, rgba(42, 42, 47, 0.32) 0%, rgba(15, 15, 16, 0) 34%);
@@ -2812,7 +2812,7 @@ body:has(.au-archive) {
 .about-story__moment-card {
   --moment-tilt: 0deg;
   position: relative;
-  background: linear-gradient(162deg, rgba(216, 210, 200, 0.96), rgba(185, 175, 162, 0.9));
+  background: linear-gradient(162deg, rgb(216, 210, 200), rgba(185, 175, 162, 0.99));
   border: 1px solid rgba(216, 210, 200, 0.24);
   box-shadow: 0 14px 32px rgba(0, 0, 0, 0.42);
   padding: 0.7rem 0.7rem 0.85rem;
@@ -3114,9 +3114,9 @@ body:has(.au-archive) {
   display: flex;
   width: max-content;
   align-items: center;
-  gap: 0;
+  gap: 0.9em;
   font-family: "IBM Plex Mono", "Cutive Mono", monospace;
-  font-size: clamp(0.68rem, 1vw, 0.92rem);
+  font-size: clamp(1rem, 1.5vw, 2rem);
   font-weight: 700;
   line-height: 1;
   letter-spacing: 0.28em;
@@ -3131,6 +3131,17 @@ body:has(.au-archive) {
 .about-story__memory-marquee-track span {
   flex: 0 0 auto;
   white-space: nowrap;
+}
+
+.about-story__page-credit {
+  width: min(100%, 1180px);
+  box-sizing: border-box;
+  margin: clamp(2.2rem, 6vw, 4rem) auto 0;
+  padding: 0 1.5rem;
+}
+
+.about-story__page-credit .page-credit {
+  margin-top: 0;
 }
 
 .about-story__memory-note {
@@ -3849,10 +3860,15 @@ body:has(.au-archive) {
   }
 
   .about-story__paper {
-    padding: calc(env(safe-area-inset-top, 0px) + 3rem) 0 3.5rem;
+    padding: calc(env(safe-area-inset-top, 0px) + 3rem) 0 calc(env(safe-area-inset-bottom, 0px) + 0.75rem);
   }
 
   .about-story__editorial {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .about-story__page-credit {
     padding-left: 1rem;
     padding-right: 1rem;
   }
@@ -3908,13 +3924,13 @@ body:has(.au-archive) {
     --tear-edge-bottom: 5.2rem;
     margin-top: 3.4rem;
     margin-bottom: 3.1rem;
-    padding-top: 3.2rem;
-    padding-bottom: 3.8rem;
+    padding-top: 3.8rem;
+    padding-bottom: 4.4rem;
   }
 
   .about-story__archive-tear-paper {
     width: 100%;
-    min-height: 38rem;
+    min-height: 46rem;
     transform: rotate(-1.1deg);
   }
 
@@ -3924,90 +3940,91 @@ body:has(.au-archive) {
 
   .about-story__archive-object--camera {
     --camera-x: -8.5rem;
-    --camera-y: 2.4rem;
+    --camera-y: 0.8rem;
     right: -1.1rem;
     top: auto;
-    bottom: 6.8rem;
+    bottom: 8rem;
     width: 8.6rem;
-    opacity: 0.28;
+    opacity: 0.58;
   }
 
   .about-story__archive-object--kiss {
-    --kiss-x: 0rem;
-    --kiss-y: 0rem;
+    --kiss-x: 1rem;
+    --kiss-y: 6rem;
     right: 2.2rem;
-    top: 6.6rem;
+    top: 5.4rem;
     width: 6.4rem;
-    opacity: 0.22;
+    opacity: 0.48;
   }
 
   .about-story__archive-object--dogtag {
-    --dogtag-x: 0rem;
-    --dogtag-y: 0rem;
-    left: 5rem;
-    bottom: 6.4rem;
+    --dogtag-x: -1rem;
+    --dogtag-y: 11rem;
+    left: 2rem;
+    bottom: 14rem;
     width: 9.8rem;
-    opacity: 0.32;
+    opacity: 0.86;
   }
 
   .about-story__archive-object--receipt {
     --receipt-x: 0rem;
     --receipt-y: 0rem;
     left: 2.3rem;
-    top: 8.2rem;
+    top: 8.9rem;
     width: 9.2rem;
-    opacity: 0.14;
+    opacity: 0.66;
   }
 
   .about-story__archive-object--animal {
     --animal-x: 0rem;
     --animal-y: 0rem;
-    left: -7.2rem;
-    top: 12.4rem;
-    width: 24rem;
-    opacity: 0.42;
+    left: -5rem;
+    top: 14.2rem;
+    width: 21rem;
+    opacity: 0.38;
     transform: rotateX(30deg) rotateZ(8deg);
   }
 
   .about-story__archive-william {
-    right: 0.85rem;
-    top: 5.9rem;
+    right: 0.7rem;
+    top: 8.8rem;
     max-width: 82vw;
     font-size: clamp(2.45rem, 10vw, 4.9rem);
   }
 
   .about-story__archive-marcus {
-    left: 8rem;
-    bottom: 8.35rem;
+    left: 3rem;
+    bottom: 4rem;
     font-size: 0.68rem;
     letter-spacing: 0.16em;
   }
 
   .about-story__archive-leo {
-    left: 4.8rem;
-    top: 7.1rem;
+    left: 1.2rem;
+    top: 6.2rem;
     font-size: clamp(1rem, 2vw, 3.9rem);
     letter-spacing: 0.15em;
   }
 
   .about-story__archive-note {
-    top: 50%;
-    width: min(82vw, 22rem);
+    top: 49%;
+    width: min(78vw, 22rem);
     font-size: 0.94rem;
     line-height: 1.42;
-    transform: translate(-50%, -48%) rotate(0.2deg);
+    color: rgba(39, 31, 25, 0.72);
+    transform: translate(-50%, -50%) rotate(0.2deg);
   }
 
   .about-story__archive-tear-script {
     left: 1rem;
-    top: 11.4rem;
+    top: 10.4rem;
     font-size: clamp(2.85rem, 13vw, 4.1rem);
     opacity: 0.75;
   }
 
   .about-story__archive-tear-stamp {
     right: 1.1rem;
-    bottom: 2.2rem;
+    bottom: 2.6rem;
     font-size: 0.55rem;
     letter-spacing: 0.16em;
   }
@@ -4015,10 +4032,11 @@ body:has(.au-archive) {
   .about-story__archive-tear-label {
     left: auto;
     right: 1rem;
-    bottom: 5rem;
+    bottom: 6.2rem;
     max-width: 8.8em;
     font-size: clamp(1.88rem, 9.5vw, 2.7rem);
     line-height: 0.82;
+    color: rgba(59, 41, 31, 0.66);
   }
 
   .about-story__cover-interlude {
