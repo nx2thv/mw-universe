@@ -7,6 +7,8 @@ import timelineImg2 from "../../assets/timelineImg2.jpeg";
 import timelineImg3 from "../../assets/timelineImg3.jpeeg.png";
 import timelineImg4 from "../../assets/littleMomentImage2.jpeg";
 import timelineImg5 from "../../assets/timelineImg4.jpeg";
+import timelineImg6 from "../../assets/timelineImage5.jpeg";
+
 import dividerCamera from "../../assets/camera.png";
 import dividerDogtag from "../../assets/dogtag.png";
 import dividerKissmark from "../../assets/kissmark.png";
@@ -14,14 +16,13 @@ import dividerReceipt from "../../assets/receipt.png";
 import dividerAnimal from "../../assets/dogprint.png";
 
 import littleMomentImage1 from "../../assets/littleMomentImage1.jpeg";
-import littleMomentImage2 from "../../assets/littleMomentImage2.jpeg";
-import littleMomentImage3 from "../../assets/littleMomentImage3.jpeg";
-import littleMomentImage4 from "../../assets/littleMomentImage4.jpeg";
-import littleMomentImage5 from "../../assets/littleMomentImage5.jpeg";
-import littleMomentImage6 from "../../assets/littleMomentImage6.jpeg";
-import littleMomentImage7 from "../../assets/littleMomentImage7.jpeg";
-import littleMomentImage8 from "../../assets/littleMomentImage8.jpeg";
-import littleMomentImage9 from "../../assets/littleMomentImage9.jpeg";
+import littleMomentImage2 from "../../assets/littleMomentImage3.jpeg";
+import littleMomentImage3 from "../../assets/littleMomentImage4.jpeg";
+import littleMomentImage4 from "../../assets/littleMomentImage5.jpeg";
+import littleMomentImage5 from "../../assets/littleMomentImage6.jpeg";
+import littleMomentImage6 from "../../assets/littleMomentImage7.jpeg";
+import littleMomentImage7 from "../../assets/littleMomentImage8.jpeg";
+import littleMomentImage8 from "../../assets/littleMomentImage9.jpeg";
 
 import nycStamp from "../../assets/nycstamp.jpeg";
 
@@ -36,8 +37,10 @@ const timelineMedia: TimelineMedia[] = [
   { image: timelineImg2, credit: "(A): Tinh Tú" },
   { image: timelineImg3, credit: "(A): Tinh Tú" },
   { image: timelineImg4, credit: "(A): Peen Nut", tone: "black-white" },
+  { image: timelineImg5, credit: "(A): Tinh Tú" },
+  { image: timelineImg6, credit: "(A): Tinh Tú" },
 ];
-const littleMomentImages = [littleMomentImage1, littleMomentImage2, littleMomentImage3, littleMomentImage4, littleMomentImage5, littleMomentImage6, littleMomentImage7, littleMomentImage8, littleMomentImage9];
+const littleMomentImages = [littleMomentImage1, littleMomentImage2, littleMomentImage3, littleMomentImage4, littleMomentImage5, littleMomentImage6, littleMomentImage7, littleMomentImage8];
 
 type PolaroidOrientation = "portrait" | "landscape" | "square";
 
@@ -391,7 +394,6 @@ const translations = {
       { label: "Origin", value: "Westchester / New York" },
       { label: "Current file", value: "Cartier-Hayes home record" },
     ],
-    timelineTitle: "Chronology of Us",
     timelineMark: {
       script: "Circa Summer",
       year: "2005",
@@ -431,13 +433,18 @@ const translations = {
       },
       {
         id: "story-beat-distance",
-        era: "Distance Years",
-        range: "Ages 11-20",
+        era: "Goodbye",
+        range: "Ages 11-18",
         title: "The Last Bit of Childhood",
         bodyPreview:
-          "After high school, Marcus left for military service. Coming home meant short reunions, then long stretches apart.\n\n" +
-          "In those gaps, William grew up fast. By the time Marcus returned for good, their bond no longer felt like childhood.",
-        mediaIndex: 1,
+          "After high school, Marcus left for military service. Their final goodbye came with a hug, too many tears, and one very serious parting gift.\n\n" +
+          "William handed him Mr. Grey, his favourite seal plushie, with the solemn belief that Mr. Grey would protect Marcus in his place. If William couldn’t go with him, then the seal would.",
+
+        bodyFull:
+          "Mr. Grey was more than a gift. He was the end of childhood folded into something soft. To eleven-year-old William, that plushie was a whole world: comfort, company, safety, everything small enough to hold when the world felt too big.\n\n" +
+          "And when Marcus had to leave, William gave that world to him.\n\n" +
+          "Marcus promised he would take care of Mr. Grey. Promised he would bring him home in one piece at the end of deployment. Then he left with his duffel, his orders, his responsibilities, and William’s entire childhood tucked carefully under one arm.",
+        mediaIndex: 5,
       },
       {
         id: "story-beat-dating",
@@ -446,7 +453,7 @@ const translations = {
         title: "Brooklyn Years",
         bodyPreview:
           "They finally started dating after Marcus spent far too long wrestling with his own moral codes and William worked far too hard to prove he knew what he was choosing.\n\n" +
-          "After William finished high school and Marcus graduated from the NYPD Academy, they moved into New York together. Their families offered to help with rent. They refused, because pride and love had apparently formed a joint illness.",
+          "After William finished high school and Marcus graduated from the NYPD Academy, they moved into New York together. Their families offered to help with rent. They refused, because pride and love had apparently formed a joint illness (´～｀ヾ)",
         bodyFull:
           "Their first Brooklyn apartment was tiny, loud, and barely functional. The bedroom hardly fit a mattress, the walls blocked nothing, and William named one of the rats 'Gucci.' They had no money, no real furniture, and each other.\n\n" +
           "Marcus worked long precinct shifts while William juggled Parsons, modeling, travel, and the darker side of being seen too much. Addiction, disordered eating, stalkers — all of it caught up eventually.\n\n" +
@@ -474,12 +481,12 @@ const translations = {
         title: "Proposal, Wedding, Home",
         bodyPreview:
           "Marcus proposed on their eighth anniversary. By then, they finally had enough to choose a home together: a three-storey brownstone on Perry Street in the West Village. They moved in first. A year later, they got married.\n\n" +
-          "Above everything else, though, they found each other again. Not as the tiny blond warlord and the emotionally weak brute from next door. Not as exhausted boyfriends fighting rent, distance, work, and their own terrible coping mechanisms. But as husbands.",
+          "Marriage did not calm them down. It simply gave their chaos a permanent address.",
         bodyFull:
-          "Marriage, quite frankly, did nothing to reduce the chaos. If anything, legal husbandhood only gave them better funding and fewer excuses. Their newlywed era included a honeymoon through Bali and Vietnam, William showing up to Marcus’ birthday dinner in an inflatable seal costume, and Marcus flying William to Lake Como for his twenty-eighth birthday in a move that was romantic, excessive, and suspiciously close to kidnapping. Several further incidents occured. Legal counsel has advised, with great concern, against listing them all here.\n\n" +
+          "Their newlywed era included a honeymoon through Bali and Vietnam, William showing up to Marcus’ birthday dinner in an inflatable seal costume, and Marcus flying William to Lake Como for his twenty-eighth birthday in a move that was romantic, excessive, and suspiciously close to kidnapping. Several further incidents occurred. Legal counsel has advised, with great concern, against listing them all here.\n\n" +
           "Somewhere in the middle of all that, a grey cat wandered into their kitchen at the worst possible time, was immediately adopted, and became Banana.\n\n" +
           "William also officially retired from full-time modeling at 27 and took the offer to work at Chanel as their Head Designer.\n\n" +
-          "With a house. A cat. Too many keys. And a life that kept getting louder because they finally had room for all of it.",
+          "Above everything else, though, they found each other again. Not as the tiny blond warlord and the emotionally weak brute from next door. Not as exhausted boyfriends fighting rent, distance, work, and their own terrible coping mechanisms. But as husbands. With a house. A cat. Too many keys. And a life that kept getting louder because they finally had room for all of it.",
         mediaIndex: 2,
       },
       {
@@ -488,8 +495,14 @@ const translations = {
         range: "Ages 28-35+",
         title: "A Loud House, Still In Love",
         bodyPreview:
-          "At 34, when Marcus was offered a higher position in NYPD, something more suit-and-tie and press conferences rather than hands-on field engagement, Marcus was torn. Then, unexpectedly, he got a recruitment letter from Delta, the most elite force of the U.S., and with much encouragement and pep talks from William and their families, Marcus finally accepted the offer.\n\n" +
-          "",
+          "At thirty-four, Marcus stood between two futures: a higher NYPD position built on suits, press conferences, and distance from the field, or a recruitment letter from Delta that pulls him straight back toward the work he knows best.\n\n" +
+          "With William and their families behind him, he chose Delta. Around the same chapter of their lives, the brownstone grew louder: they adopted Leo, then Cloud, and somehow became an entire household.",
+
+        bodyFull:
+          "Marcus is now a Delta operator. William remains Chanel’s Head Designer while also teaching at Parsons. Their house is loud, chaotic, and suspiciously functional for a place where nothing ever seems to be where it belongs.\n\n" +
+          "Deployment is hard. Marcus leaves when duty calls, and William stays behind to keep the world turning: school runs, homework, fittings, lectures, pets, groceries, packed lunches, bedtime routines, and all the invisible work that makes the brownstone feel alive.\n\n" +
+          "He becomes the system of the house, not because Marcus is absent from it, but because Marcus needs somewhere worth coming home to.\n\n" +
+          "Together, they build a life so full it can barely stay quiet. Love, laughter, noise, fear, duty, routine — all of it lives under the same roof. Without one another, there is no brownstone. Not like this.",
         mediaType: "letters",
       }
     ] satisfies StoryBeat[],
@@ -503,7 +516,6 @@ const translations = {
       { label: "Khởi điểm", value: "Westchester / New York" },
       { label: "Hồ sơ hiện tại", value: "Cartier-Hayes home record" },
     ],
-    timelineTitle: "Chronology of Us",
     timelineMark: {
       script: "Circa Summer",
       year: "2005",
@@ -529,44 +541,84 @@ const translations = {
     timeline: [
       {
         id: "story-beat-neighbors",
-        era: "Tuổi thơ",
-        range: "8-15 tuổi",
-        title: "Gặp nhau ở nhà kế bên",
+        era: "Gặp Mặt",
+        range: "Ages 8-15",
+        title: "Tree & Button",
         bodyPreview:
-          "Họ gặp nhau ở Westchester khi gia đình Marcus chuyển đến ngay sát nhà Cartier. Marcus 15 tuổi, William 8 tuổi.\n\n" +
-          "William coi Marcus là bạn thân ngay từ ngày đầu. Marcus giả vờ khó hiểu nhưng luôn là người bảo vệ William.",
+          "Họ gặp nhau lần đầu ở khu dân cư yên tĩnh tại Westchester khi gia đình Marcus chuyển tới kế bên nhà Cartier. Marcus lúc này 15 tuổi; William thì mới 8.\n\n" +
+          "William tuyên bố dường như là ngay tức thì rằng họ bây giờ chính thức là bạn thân. Marcus có vẻ hơi hoảng hốt trước tuyên bố đột ngột này. Thế nào mà cuối cùng anh vẫn dành những năm tiếp theo làm người bạn thân to lớn, kiêm vệ sĩ của cu cậu tóc vàng.",
+        bodyFull:
+          "Trong khi đó, William thì chỉ vô cùng vui vẻ khi cuối cùng cậu nhóc cũng có người bạn đủ cao lớn để với tay lấy đồ trên kệ cao.\n\n" +
+          "Cu cậu cũng đặt cho Marcus biệt danh là 'Tree'. Xong, cậu còn đòi Marcus cũng phải đặt biệt danh cho cậu, vì đó là điều bạn thân làm mà ᕕ( ᐛ )ᕗ. Cuối cùng Marcus, vốn đã bối rối, vụng về, và rõ ràng là chẳng có cách đối phó với trẻ em, đã đặt nickname cho William là 'Button.' William siêu thích cái tên đó. Còn Marcus sẽ sớm hối hận vì đã chiều theo cậu nhóc quá nhiều.",
         mediaIndex: 0,
       },
       {
         id: "story-beat-distance",
-        era: "Những năm xa nhau",
-        range: "15-20 tuổi",
-        title: "Khoảng cách và chờ đợi",
+        era: "tạm biệt",
+        range: "Ages 11-20",
+        title: "Chương Cuối Cùng của Tuổi Thơ",
         bodyPreview:
-          "Sau trung học, Marcus đi nghĩa vụ và thường xuyên xa nhà. Họ chỉ có những lần gặp ngắn rồi lại chia tay.\n\n" +
-          "Chính những khoảng trống đó khiến cảm xúc của cả hai thay đổi theo cách không thể quay lại như cũ.",
-        mediaIndex: 1,
+          "Hết cấp 3, Marcus nhập ngũ. Khoảnh khắc cuối cùng của cả hai bao gồm một cái ôm thật chặt, quá nhiều nước mắt cùng một món quà William rất nghiêm túc giao cho Marcus.\n\n" +
+          "Cu cậu gửi cho người bạn thân to lớn con thú bông hải cẩu của cậu, Mr. Grey. William tin rằng nếu cậu không thể đi cùng để bảo vệ Marcus, vậy thì Mr. Grey sẽ làm nhiệm vụ cao cả đó thay cho cậu.",
+        bodyFull:
+          "Con hải cẩu có thể chỉ là một món đồ chơi bình thường trong mắt người lớn. Nhưng đối với William, một đứa trẻ mon men mới 11 tuổi, thì Mr. Grey là cả thế giới. Chú hải cẩu bông đã luôn bảo vệ cậu mỗi tối khỏi con quái vật dưới gầm giường, cũng là tri kỉ bầu bạn cùng William khi cậu lảm nhảm về những chuyện nhỏ nhặt, và ti tỉ thứ khác biến Mr. Grey thành một phần không thể thiếu bên William.\n\n" +
+          "Nhưng khi Marcus phải rời đi, William đã trao cả thế giới đó cho Marcus\n\n" +
+          "Marcus nhận con thú bông với lời hứa chắc nịch rằng anh sẽ chăm sóc nó kĩ lưỡng và đem nó về toàn vẹn sau 2 năm. Rồi anh rời đi, mang theo đó là hành lý, trách nhiệm và cả quãng tuổi thơ mơ mộng của William dưới gót chân.",
+        mediaIndex: 5,
       },
       {
         id: "story-beat-dating",
-        era: "Bắt đầu yêu",
-        range: "17-24 tuổi",
-        title: "Chọn nhau một cách rõ ràng",
+        era: "Hẹn Hò",
+        range: "Ages 17-24",
+        title: "Brooklyn Years",
         bodyPreview:
-          "Sau một thời gian giằng co, họ chính thức hẹn hò và cùng chuyển đến Brooklyn để tự xây dựng cuộc sống.\n\n" +
-          "William theo đuổi thời trang, Marcus vào NYPD. Dù áp lực lớn, họ vẫn chọn nhau mỗi ngày.",
+          "Cả hai chỉ bắt đầu yêu nhau sau khi Marus dành quá nhiều thời gian đắn đo suy nghĩ, còn William thì nỗ lực hết sức để chứng minh rằng cậu hoàn toàn ý thức được lựa chọn của bản thân dù vẫn còn rất trẻ.\n\n" +
+          "Sau khi William tốt nghiệp cấp 3 và Marcus tốt nghiệp Học Viện Cảnh Sát New York (NYPD), họ quyết định chuyển đến thành phố New York sống cùng nhau. Dẫu cho gia đình cả hai đã ngỏ lời giúp đỡ với tiền thuê nhà (vì ai cũng biết giá nhà ở NYC khốc liệt cỡ nào), nhưng họ từ chối. Chắc lòng tự trọng và tình yêu đã làm họ mắc căn bệnh hoang tưởng (´～｀ヾ)",
+        bodyFull:
+          "Căn hộ họ thuê ở Brooklyn khi đó vừa nhỏ, vừa ồn ào, lại còn thiếu tiện nghi. Phòng ngủ thì chỉ đủ to để lót tấm nệm, còn chẳng vừa nổi nửa cái khung giường, mà nếu phòng có to hơn thì họ cũng chẳng có đủ tiền để mua nó. Trong nhà còn có một con chuột đuổi mãi không đi, nên William đã đặt tên cho nó là 'Gucci.' Cách âm thì rõ là quá xa xỉ, nên ai cãi nhau ở nhà nào họ đều hóng được hết, thôi thì cũng coi như trong họa có phúc. Thật sự thì lúc này họ chẳng có tiền, cũng chẳng có đồ đạc gì thực sự, nhưng họ có nhau.\n\n" +
+          "Marcus làm việc ngày đêm ở sở cảnh sát, trong khi đó William thì vừa học, vừa bay qua lại giữa các thành phố để diễn show. Mặt tối của ánh hào quang cũng nhanh chóng nuốt chửng lấy cậu vào khoảng thời gian này. Nghiện ngập, rối loạn ăn uống, những kẻ quái gỡ theo đuôi là chuyện thường đối với cậu, hoặc có lẽ William đã quá mệt mỏi để quan tâm.\n\n" +
+          "Chuyện gì đến cũng đến, William phải nhập viện vì một trong những kẻ quái gỡ đó. Marcus lúc này mới nhận ra bạn trai mình đã trải qua những gì trong khoảng thời gian cả hai quá bận rộn với công việc và quên đi mất cách quan tâm nhau. Kẻ theo đuôi kia bị Marcus tống vào tù. Còn William cuối cùng cũng chấp nhận rằng bản thân mình đã kiệt quệ và quyết định dành thời gian tịnh dưỡng ở nhà. Từ ấy, họ dần học cách cân bằng giữa công việc và đời tư.",
+        mediaIndex: 1,
+      },
+      {
+        id: "story-beat-brooklyn",
+        era: "Xây Dựng",
+        range: "Ages 23-30",
+        title: "Quen Thuộc",
+        bodyPreview:
+          "Sau khi Marcus lên báo nhờ việc bắt gọn kẻ theo đuôi William, tên tuổi của anh nhanh chóng được các cấp trên để mắt đến. Khi 30, anh đã được thăng chức làm Đội trưởng Đơn vị Khẩn cấp (ESU).\n\n" +
+          "William thì bước vào giai đoạn mà cậu nhàn nhã ở nhà làm nội trợ bán thời gian. Tất nhiên là cậu vẫn đi diễn, thời trang đối với William là tất cả, nhưng cậu không bán mạng làm việc như trước nữa.",
+        bodyFull:
+          "Họ dành nhiều thời gian hơn để đi khắp nơi cùng nhau. NYC gần như là quen mặt cả hai: từ rooftop bars, raves, dạo phố lúc 2 giờ sáng để tìm đồ ăn khuya, tới những buổi xem phim ở nhà khi họ xem thì ít mà chê thì nhiều. William cũng ra một quyết định khá táo bạo là xăm họ Marcus lên người mình. Cậu cũng dần công khai Marcus với mạng xã hội và tất nhiên ai cũng rất vui mừng cho cậu.\n\n" +
+          "Trong mấy năm này, William cũng được mời làm người mẫu nam đầu tiên cho Victoria’s Secret. Marcus dành ra phải quá nửa thời gian để cằn nhằn và than phiền về mấy bộ đồ diễn. Nửa còn lại thì ảnh đứng đó vừa nhìn bạn trai mình vừa cảm ơn bản thân của kiếp trước đã tích đủ phước để được ban ân huệ này.\n\n" +
+          "Sự nghiệp phất lên như diều gặp gió nên William cũng chiều chuộng Marcus bằng con Hellcat mới tinh. Con xe tượng trưng cho lời cảm ơn thầm lặng của cậu gửi tặng Marcus vì anh đã vực William dậy khỏi vực sâu. Nó cũng là cảnh báo cho việc Marcus sắp trở thành tài xế không công.",
+        mediaIndex: 3,
+      },
+      {
+        id: "story-beat-vows",
+        era: "Một Nhà",
+        range: "Ages 25-32",
+        title: "Yes, I Do",
+        bodyPreview:
+          "Marcus proposed on their eighth anniversary. By then, they finally had enough to choose a home together: a three-storey brownstone on Perry Street in the West Village. They moved in first. A year later, they got married.\n\n" +
+          "Above everything else, though, they found each other again. Not as the tiny blond warlord and the emotionally weak brute from next door. Not as exhausted boyfriends fighting rent, distance, work, and their own terrible coping mechanisms. But as husbands.",
+        bodyFull:
+          "Marriage, quite frankly, did nothing to reduce the chaos. If anything, legal husbandhood only gave them better funding and fewer excuses. Their newlywed era included a honeymoon through Bali and Vietnam, William showing up to Marcus’ birthday dinner in an inflatable seal costume, and Marcus flying William to Lake Como for his twenty-eighth birthday in a move that was romantic, excessive, and suspiciously close to kidnapping. Several further incidents occured. Legal counsel has advised, with great concern, against listing them all here.\n\n" +
+          "Somewhere in the middle of all that, a grey cat wandered into their kitchen at the worst possible time, was immediately adopted, and became Banana.\n\n" +
+          "William also officially retired from full-time modeling at 27 and took the offer to work at Chanel as their Head Designer.\n\n" +
+          "With a house. A cat. Too many keys. And a life that kept getting louder because they finally had room for all of it.",
         mediaIndex: 2,
       },
       {
         id: "story-beat-now",
-        era: "Hiện tại",
-        range: "28-36+",
-        title: "Ngôi nhà ồn ào nhưng hạnh phúc",
+        era: "Living The Life",
+        range: "Ages 28-35+",
+        title: "A Loud House, Still In Love",
         bodyPreview:
-          "Gia đình của họ lớn dần với Leo, Banana và Cloud. Ngôi nhà luôn ồn ào, nhiều tiếng cười và rất nhiều yêu thương.\n\n" +
-          "Những lần deployment vẫn là phần khó nhất, nhưng mỗi lần trở về lại khiến họ chắc chắn hơn về cuộc sống đã chọn.",
+          "At 34, when Marcus was offered a higher position in NYPD, something more suit-and-tie and press conferences rather than hands-on field engagement, Marcus was torn. Then, unexpectedly, he got a recruitment letter from Delta, the most elite force of the U.S., and with much encouragement and pep talks from William and their families, Marcus finally accepted the offer.\n\n" +
+          "",
         mediaType: "letters",
-      },
+      }
     ] satisfies StoryBeat[],
     letters: storyLettersVi,
   },

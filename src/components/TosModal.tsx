@@ -17,8 +17,8 @@ export default function TosModal({ onAccept }: TosModalProps) {
 
     const tos = {
         en: {
-            header: "Terms of Service",
-            cta: "I understand",
+            header: "Archive Terms",
+            cta: "Enter Archive",
             sections: [
                 {
                     heading: "Overview",
@@ -86,8 +86,8 @@ export default function TosModal({ onAccept }: TosModalProps) {
         },
 
         vi: {
-            header: "Điều khoản sử dụng",
-            cta: "Mình hiểu rồi",
+            header: "Điều Khoản Kho Lưu Trữ",
+            cta: "Tiếp tục",
             sections: [
                 {
                     heading: "Tổng quan",
@@ -169,8 +169,22 @@ export default function TosModal({ onAccept }: TosModalProps) {
                     <h2 className="tos-header">{content.header}</h2>
 
                     <div className="tos-lang">
-                        <button type="button" onClick={() => setLang("en")}>EN</button>
-                        <button type="button" onClick={() => setLang("vi")}>VI</button>
+                        <button
+                            type="button"
+                            className={`tos-lang-button ${lang === "en" ? "is-active" : ""}`}
+                            aria-pressed={lang === "en"}
+                            onClick={() => setLang("en")}
+                        >
+                            EN
+                        </button>
+                        <button
+                            type="button"
+                            className={`tos-lang-button ${lang === "vi" ? "is-active" : ""}`}
+                            aria-pressed={lang === "vi"}
+                            onClick={() => setLang("vi")}
+                        >
+                            VI
+                        </button>
                     </div>
                 </div>
 
@@ -193,7 +207,7 @@ export default function TosModal({ onAccept }: TosModalProps) {
                     <button
                         type="button"
                         onClick={onAccept}
-                        className="w-full rounded-xl bg-white text-[#0b1220] py-3 text-xs md:text-sm uppercase tracking-[0.18em] font-semibold hover:bg-white/90 transition"
+                        className="tos-accept"
                     >
                         {content.cta}
                     </button>
