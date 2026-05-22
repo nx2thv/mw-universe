@@ -55,6 +55,7 @@ export default function WilliamBriefPage() {
   const { language } = useLanguage();
   const [visibleSections, setVisibleSections] = useState<Record<number, boolean>>({});
   const [activeAnchor, setActiveAnchor] = useState("basic-info");
+  const [chapterOpen, setChapterOpen] = useState(false);
   const [selectedGalleryImage, setSelectedGalleryImage] =
     useState<GalleryLightboxImage | null>(null);
 
@@ -308,18 +309,18 @@ export default function WilliamBriefPage() {
   }));
   const chapterLabelsByLang: Record<"en" | "vi", Record<string, string>> = {
     en: {
-      "basic info": "A Snapshot",
-      face: "B Face",
-      "hair and stuffs": "C Hair & Acc",
-      silhouette: "D Build",
+      "basic info": "A. Snapshot",
+      face: "B. Face",
+      "hair and stuffs": "C. Hair & Acc",
+      silhouette: "D. Build",
       tatts: "E Ink",
     },
     vi: {
-      "basic info": "A Tổng quan",
-      face: "B Gương mặt",
-      "hair and stuffs": "C Tóc & phụ kiện",
-      silhouette: "D Dáng",
-      tatts: "E Hình xăm",
+      "basic info": "A. Tổng quan",
+      face: "B. Gương mặt",
+      "hair and stuffs": "C. Tóc & phụ kiện",
+      silhouette: "D. Dáng người",
+      tatts: "E. Hình xăm",
     },
   };
   const chapterLabels = chapterLabelsByLang[language] || chapterLabelsByLang.en;
@@ -333,6 +334,8 @@ export default function WilliamBriefPage() {
       label: "F Gallery",
     },
   ];
+  const activeChapterLabel =
+    chapterItems.find((item) => item.anchor === activeAnchor)?.label ?? chapterItems[0]?.label ?? "Chapter";
 
   const sectionImageIds: Record<string, string[]> = {
     "basic info": ["palette"],
@@ -444,6 +447,42 @@ export default function WilliamBriefPage() {
       pageClassName="william-brief-page"
       bodyClassName="william-brief-body scroll-smooth"
     >
+      <div className="brief-chapter-mobile-jump-wrap" onMouseLeave={() => setChapterOpen(false)}>
+        <button
+          type="button"
+          className="home-journey-chapter-trigger"
+          aria-haspopup="listbox"
+          aria-expanded={chapterOpen}
+          onClick={() => setChapterOpen((open) => !open)}
+        >
+          <span className="home-journey-chapter-trigger-kicker">Chapter</span>
+          <span className="home-journey-chapter-trigger-current">{activeChapterLabel}</span>
+          <span className="home-journey-chapter-trigger-caret" aria-hidden="true">
+            {chapterOpen ? "−" : "+"}
+          </span>
+        </button>
+        <div className={`home-journey-chapter-menu ${chapterOpen ? "open" : ""}`} role="listbox">
+          {chapterItems.map((item, index) => (
+            <button
+              key={item.anchor}
+              type="button"
+              role="option"
+              aria-selected={activeAnchor === item.anchor}
+              className={`home-journey-chapter-option ${activeAnchor === item.anchor ? "is-active" : ""}`}
+              onClick={() => {
+                handleChapterJump(item.anchor);
+                setChapterOpen(false);
+              }}
+            >
+              <span className="home-journey-chapter-option-index" aria-hidden="true">
+                {String(index).padStart(2, "0")}
+              </span>
+              <span>{item.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
       <section className="border-t border-neutral-200 min-h-[120vh] flex flex-col items-center justify-center px-4">
         <div className="max-w-2xl mx-auto text-center">
           <p className="william-intro-name mt-2 uppercase tracking-[0.2em]">
@@ -808,18 +847,6 @@ export default function WilliamBriefPage() {
         </div>
         <PageCredit tone="on-dark" />
       </div>
-      <nav className="brief-chapter-bottom brief-chapter-bottom--light" aria-label="William quick jump">
-        {chapterItems.map((item) => (
-          <button
-            key={item.anchor}
-            type="button"
-            onClick={() => handleChapterJump(item.anchor)}
-            className={`brief-chapter-bottom-item ${activeAnchor === item.anchor ? "is-active" : ""}`}
-          >
-            {item.label}
-          </button>
-        ))}
-      </nav>
     </HeroScrollPage>
   );
 }

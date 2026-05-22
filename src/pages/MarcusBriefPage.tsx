@@ -49,6 +49,7 @@ export default function MarcusBriefPage() {
   const { language } = useLanguage();
   const [visibleSections, setVisibleSections] = useState<Record<number, boolean>>({});
   const [activeAnchor, setActiveAnchor] = useState("basic-info");
+  const [chapterOpen, setChapterOpen] = useState(false);
   const [isBasicInfoMediaVisible, setIsBasicInfoMediaVisible] = useState(false);
   const [selectedGalleryImage, setSelectedGalleryImage] =
     useState<GalleryLightboxImage | null>(null);
@@ -289,17 +290,17 @@ export default function MarcusBriefPage() {
   }));
   const chapterLabelsByLang: Record<"en" | "vi", Record<string, string>> = {
     en: {
-      "basic info": "A Snapshot",
-      face: "B Face",
-      "hair and stuffs": "C Hair & Acc",
-      "dilf coded": "D Build",
-      tatts: "E Ink",
+      "basic info": "A. Snapshot",
+      face: "B. Face",
+      "hair and stuffs": "C. Hair & Acc",
+      "dilf coded": "D. Build",
+      tatts: "E. Ink",
     },
     vi: {
-      "basic info": "A Tổng quan",
-      face: "B Gương mặt",
-      "hair and stuffs": "C Tóc & phụ kiện",
-      "dilf coded": "D Dáng",
+      "basic info": "A. Tổng quan",
+      face: "B. Gương mặt",
+      "hair and stuffs": "C. Tóc & phụ kiện",
+      "dilf coded": "D. Dáng người",
       tatts: "E Hình xăm",
     },
   };
@@ -314,6 +315,8 @@ export default function MarcusBriefPage() {
       label: "F Gallery",
     },
   ];
+  const activeChapterLabel =
+    chapterItems.find((item) => item.anchor === activeAnchor)?.label ?? chapterItems[0]?.label ?? "Chapter";
 
   // images per section – rows / strips
   const sectionImageIds: Record<string, string[]> = {
@@ -430,6 +433,41 @@ export default function MarcusBriefPage() {
       pageClassName="marcus-brief-page"
       bodyClassName="marcus-brief-body scroll-smooth"
     >
+      <div className="brief-chapter-mobile-jump-wrap" onMouseLeave={() => setChapterOpen(false)}>
+        <button
+          type="button"
+          className="home-journey-chapter-trigger"
+          aria-haspopup="listbox"
+          aria-expanded={chapterOpen}
+          onClick={() => setChapterOpen((open) => !open)}
+        >
+          <span className="home-journey-chapter-trigger-kicker">Chapter</span>
+          <span className="home-journey-chapter-trigger-current">{activeChapterLabel}</span>
+          <span className="home-journey-chapter-trigger-caret" aria-hidden="true">
+            {chapterOpen ? "−" : "+"}
+          </span>
+        </button>
+        <div className={`home-journey-chapter-menu ${chapterOpen ? "open" : ""}`} role="listbox">
+          {chapterItems.map((item, index) => (
+            <button
+              key={item.anchor}
+              type="button"
+              role="option"
+              aria-selected={activeAnchor === item.anchor}
+              className={`home-journey-chapter-option ${activeAnchor === item.anchor ? "is-active" : ""}`}
+              onClick={() => {
+                handleChapterJump(item.anchor);
+                setChapterOpen(false);
+              }}
+            >
+              <span className="home-journey-chapter-option-index" aria-hidden="true">
+                {String(index).padStart(2, "0")}
+              </span>
+              <span>{item.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
 
       <section className="marcus-intro min-h-[120vh] flex flex-col items-center justify-center px-4">
         <div className="marcus-intro-panel max-w-2xl mx-auto text-center">
@@ -783,18 +821,6 @@ export default function MarcusBriefPage() {
         </div>
         <PageCredit tone="on-dark" />
       </div>
-      <nav className="brief-chapter-bottom brief-chapter-bottom--dark" aria-label="Marcus quick jump">
-        {chapterItems.map((item) => (
-          <button
-            key={item.anchor}
-            type="button"
-            onClick={() => handleChapterJump(item.anchor)}
-            className={`brief-chapter-bottom-item ${activeAnchor === item.anchor ? "is-active" : ""}`}
-          >
-            {item.label}
-          </button>
-        ))}
-      </nav>
     </HeroScrollPage>
   );
 }

@@ -672,10 +672,39 @@ export default function TheirStory() {
   const [visibleTimelineIds, setVisibleTimelineIds] = useState<string[]>([]);
   const [openTimelineIds, setOpenTimelineIds] = useState<string[]>([]);
   const [visibleStaggerIds, setVisibleStaggerIds] = useState<string[]>([]);
+  const [activeChapterId, setActiveChapterId] = useState("story-hero");
+  const [chapterOpen, setChapterOpen] = useState(false);
   const [nsfwPromptId, setNsfwPromptId] = useState<string | null>(null);
   const [revealedNsfwIds, setRevealedNsfwIds] = useState<string[]>([]);
   const t = translations[language] || translations.en;
   const timelineEntries = t.timeline;
+  const storyChapterItems = useMemo(
+    () => [
+      {
+        id: "story-hero",
+        label: language === "vi" ? "Mở hồ sơ" : "Opening File",
+      },
+      {
+        id: "story-timeline",
+        label: language === "vi" ? "Dòng thời gian" : "Timeline",
+      },
+      {
+        id: "story-archive",
+        label: "West Village",
+      },
+      {
+        id: "story-public-sightings",
+        label: language === "vi" ? "Public Sightings" : "Public Sightings",
+      },
+      {
+        id: "story-moments",
+        label: language === "vi" ? "Khoảnh khắc" : "Moments",
+      },
+    ],
+    [language]
+  );
+  const activeChapterLabel =
+    storyChapterItems.find((item) => item.id === activeChapterId)?.label ?? storyChapterItems[0]?.label ?? "Chapter";
 
   const toggleTimelineEntry = (entryId: string) => {
     setOpenTimelineIds((current) =>
@@ -765,7 +794,10 @@ export default function TheirStory() {
         entries.forEach((entry) => {
           if (!entry.isIntersecting) return;
           const staggerId = (entry.target as HTMLElement).dataset.staggerId;
-          if (staggerId) idsToAdd.push(staggerId);
+          if (staggerId) {
+            idsToAdd.push(staggerId);
+            if (staggerId.startsWith("moment-")) idsToAdd.push("heading-moments");
+          }
         });
         if (idsToAdd.length === 0) return;
         setVisibleStaggerIds((current) => {
@@ -787,6 +819,46 @@ export default function TheirStory() {
       observer.disconnect();
     };
   }, [timelineEntries, wallPage, t.letters]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const scrollRoot = document.querySelector<HTMLElement>(".about-story__paper");
+    if (!scrollRoot) return;
+
+    const chapterTargets = storyChapterItems
+      .map((item) => document.getElementById(item.id))
+      .filter((element): element is HTMLElement => Boolean(element));
+    if (chapterTargets.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (!visible) return;
+        setActiveChapterId(visible.target.id);
+      },
+      {
+        root: scrollRoot,
+        threshold: [0.18, 0.32, 0.5],
+        rootMargin: "-18% 0px -48% 0px",
+      }
+    );
+
+    chapterTargets.forEach((target) => observer.observe(target));
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [storyChapterItems]);
+
+  const handleChapterJump = (chapterId: string) => {
+    const target = document.getElementById(chapterId);
+    if (!target) return;
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+    setActiveChapterId(chapterId);
+  };
 
   const orderedFragments = useMemo(
     () =>
@@ -950,9 +1022,45 @@ export default function TheirStory() {
 
   return (
     <main className="about-story relative min-h-screen overflow-hidden">
+      <div className="about-story__chapter-jump" onMouseLeave={() => setChapterOpen(false)}>
+        <button
+          type="button"
+          className="home-journey-chapter-trigger"
+          aria-haspopup="listbox"
+          aria-expanded={chapterOpen}
+          onClick={() => setChapterOpen((open) => !open)}
+        >
+          <span className="home-journey-chapter-trigger-kicker">Chapter</span>
+          <span className="home-journey-chapter-trigger-current">{activeChapterLabel}</span>
+          <span className="home-journey-chapter-trigger-caret" aria-hidden="true">
+            {chapterOpen ? "−" : "+"}
+          </span>
+        </button>
+        <div className={`home-journey-chapter-menu ${chapterOpen ? "open" : ""}`} role="listbox">
+          {storyChapterItems.map((item, index) => (
+            <button
+              key={item.id}
+              type="button"
+              role="option"
+              aria-selected={activeChapterId === item.id}
+              className={`home-journey-chapter-option ${activeChapterId === item.id ? "is-active" : ""}`}
+              onClick={() => {
+                handleChapterJump(item.id);
+                setChapterOpen(false);
+              }}
+            >
+              <span className="home-journey-chapter-option-index" aria-hidden="true">
+                {String(index).padStart(2, "0")}
+              </span>
+              <span>{item.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
       <div className="about-story__layout">
         <section className="about-story__paper">
           <section
+            id="story-hero"
             className={`about-story__hero ${visibleStaggerIds.includes("hero-intro") ? "is-visible" : ""}`}
             data-stagger-id="hero-intro"
             style={{ "--stagger-index": "0" } as CSSProperties}
@@ -1076,6 +1184,7 @@ export default function TheirStory() {
           </section>
 
           <section
+            id="story-archive"
             className={`about-story__archive-tear ${visibleStaggerIds.includes("archive-tear") ? "is-visible" : ""}`}
             data-stagger-id="archive-tear"
             style={{ "--stagger-index": "0" } as CSSProperties}
@@ -1142,6 +1251,7 @@ export default function TheirStory() {
           </section>
 
           <section
+            id="story-public-sightings"
             className={`about-story__cover-interlude ${visibleStaggerIds.includes("cover-interlude") ? "is-visible" : ""}`}
             data-stagger-id="cover-interlude"
             style={{ "--stagger-index": "1" } as CSSProperties}
