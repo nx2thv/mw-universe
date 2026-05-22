@@ -69,7 +69,7 @@ export default function BriefLoadingPage() {
     ? {
       language: "Ngôn ngữ",
       heading: "Tổng Hợp",
-      subheading: "những điều artist cần biết trước khi vẽ comm",
+      subheading: "những refs artist cần biết trước khi vẽ comm",
       cardBackground: "Bối cảnh",
       cardCommission: "Commission brief",
       cardCharacter: "Nhân vật",

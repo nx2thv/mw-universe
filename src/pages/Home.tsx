@@ -273,7 +273,7 @@ export default function Home() {
           story: "New York",
           au: "Xuyên thời gian",
           storyCta: "Thế giới chính",
-          auCta: "AU phụ",
+          auCta: "Vũ trụ song song",
         },
         briefs: {
           heading: "Ý Tưởng",

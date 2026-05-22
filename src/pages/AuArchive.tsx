@@ -2,6 +2,7 @@ import "./about-them.css";
 import { useState, type CSSProperties } from "react";
 import { useLanguage } from "../LanguageContext";
 import PageCredit from "../components/PageCredit";
+import auBackgroundVideo from "../../assets/au1-background-small.m4v?url";
 
 import commissionBoard1 from "../../assets/loop3.jpeg";
 
@@ -66,7 +67,7 @@ const auEntries: AuEntry[] = [
     ],
     motifs: ["domestic slow burn", "suburban setting", "idiots being in love"],
     commissions: [
-      { title: "The Captain & The Spare", artist: "maxiine", image: commissionBoard1, orientation: "landscape", note: "formal portrait" },
+      { title: "Jazz Club", artist: "maxiine", image: commissionBoard1, orientation: "landscape", note: "First Official Date Night" },
     ],
   },
 
@@ -100,9 +101,10 @@ const auEntries: AuEntry[] = [
 
 const translations = {
   en: {
-    title: "AU Archive",
+    titleLabel: "rorrim world",
     intro:
-      "A living archive for timelines that bend away from New York but keep the same center: Marcus, William, and the pressure each world puts on them.",
+      "\"...mirror symmetry implies that the masses and couplings of the particles in the mirror sector are exactly the same as the corresponding ones in the ordinary sector... it is an exact, unbroken symmetry of the theory.\"",
+    citation: "R. Foot, 2004",
     jumpLabel: "Jump to an AU",
     backgroundLabel: "Background",
     settingLabel: "Setting",
@@ -115,9 +117,10 @@ const translations = {
     copied: "Copied",
   },
   vi: {
-    title: "Vũ Trụ AU",
+    titleLabel: "rorrim world",
     intro:
-      "Kho lưu trữ cho những timeline rẽ khỏi New York nhưng vẫn giữ cùng một trọng tâm: Marcus, William, và cách từng thế giới thử thách họ.",
+      "\"...lý thuyết đối xứng gương cho rằng mọi hạt tồn tại trong thế giới phản chiếu đều mang cùng một khối lượng và bản chất như phiên bản của chúng ở thế giới thông thường... một sự đối xứng hoàn hảo không thể phá vỡ.\"",
+    citation: "R. Foot, 2004",
     jumpLabel: "Đi tới AU",
     backgroundLabel: "Bối cảnh",
     settingLabel: "Không gian",
@@ -213,9 +216,27 @@ export default function AuArchive() {
 
       {showWelcome ? (
         <section className="au-archive__welcome" aria-labelledby="au-archive-title">
+          <video
+            className="au-archive__background-video"
+            src={auBackgroundVideo}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            disablePictureInPicture
+            data-credit="Background video by Colin Jones"
+            aria-hidden="true"
+          />
           <div className="au-archive__hero">
-            <h1 id="au-archive-title" className="au-archive__title portal-fade-up">{t.title}</h1>
-            <p className="au-archive__intro portal-fade-up portal-fade-up--subheading">{t.intro}</p>
+            <h1 id="au-archive-title" className="au-archive__title portal-fade-up" aria-label={t.titleLabel}>
+              <span className="au-archive__title-reflection-word">rorri<span className="au-archive__title-accent">m</span></span>
+              <span className="au-archive__title-world"><span className="au-archive__title-accent">w</span>orld</span>
+            </h1>
+            <div className="au-archive__intro-wrap portal-fade-up portal-fade-up--subheading">
+              <p className="au-archive__intro">{t.intro}</p>
+              <p className="au-archive__citation">{t.citation}</p>
+            </div>
           </div>
 
           <nav className="au-archive__index portal-fade-up portal-fade-up--choices" aria-label={t.jumpLabel}>
@@ -266,7 +287,7 @@ export default function AuArchive() {
       ) : null}
 
       {!showWelcome ? (
-        <section className="au-archive__shelf portal-fade-up portal-fade-up--choices" aria-label={t.title}>
+        <section className="au-archive__shelf portal-fade-up portal-fade-up--choices" aria-label={t.titleLabel}>
           {activeAuEntry ? (
             <article key={activeAuEntry.id} id={activeAuEntry.id} className="au-card au-card--stagger">
             <div className="au-card__actions">
