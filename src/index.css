@@ -1151,10 +1151,12 @@ body {
 .home-journey-ideas-filter select {
   box-sizing: border-box;
   width: 100%;
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  background: rgba(10, 10, 10, 0.72);
+  border: 1px solid rgba(214, 200, 181, 0.22);
+  background:
+    linear-gradient(180deg, rgba(232, 223, 212, 0.035), rgba(128, 106, 80, 0.025)),
+    rgba(12, 10, 9, 0.66);
   backdrop-filter: blur(8px);
-  color: rgba(236, 241, 248, 0.9);
+  color: rgba(232, 223, 212, 0.86);
   padding: 0.45rem 0.55rem;
   font-family: "IBM Plex Mono", monospace;
   font-size: 0.62rem;
@@ -1165,14 +1167,17 @@ body {
 
 .home-journey-ideas-filter select:hover,
 .home-journey-ideas-filter select:focus-visible {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.12);
+  color: rgba(246, 239, 230, 0.98);
+  border-color: rgba(214, 200, 181, 0.42);
+  background:
+    linear-gradient(180deg, rgba(232, 223, 212, 0.07), rgba(128, 106, 80, 0.045)),
+    rgba(16, 13, 11, 0.76);
   outline: none;
 }
 
 .home-journey-ideas-filter select option {
-  background: rgba(10, 10, 10, 0.9);
-  color: rgba(236, 241, 248, 0.9);
+  background: rgba(12, 10, 9, 0.96);
+  color: rgba(232, 223, 212, 0.9);
 }
 
 .home-journey-ideas-grid {
@@ -3182,6 +3187,18 @@ section[data-section-index] {
   background: rgba(200, 188, 170, 0.44);
 }
 
+.marcus-brief-page .brief-chapter-layout--dark .brief-chapter-rail-item {
+  color: rgba(153, 172, 192, 0.82);
+}
+
+.marcus-brief-page .brief-chapter-layout--dark .brief-chapter-rail-item.is-active {
+  color: rgba(231, 238, 245, 0.98);
+}
+
+.marcus-brief-page .brief-chapter-layout--dark .brief-chapter-rail::after {
+  background: rgba(110, 124, 139, 0.48);
+}
+
 .brief-chapter-layout--light .brief-chapter-rail-item {
   color: rgba(214, 188, 156, 0.86);
 }
@@ -4213,6 +4230,16 @@ section[data-section-index] {
 
 .brief-portal-page .home-journey-text--briefs::before {
   display: none;
+}
+
+.brief-portal-page-credit {
+  position: fixed;
+  z-index: 8;
+  left: 50%;
+  bottom: max(0.01rem, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  width: max-content;
+  pointer-events: none;
 }
 
 .brief-portal-idea-meta {

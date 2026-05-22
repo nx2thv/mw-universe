@@ -6,6 +6,7 @@ import { resolveBriefUrl } from "../lib/briefLinks";
 import { runRouteTransition } from "../lib/routeTransitions";
 import { supabase } from "../lib/supabaseClients";
 import { normalizeCharacter } from "../data/commissionIdeas";
+import PageCredit from "../components/PageCredit";
 
 type CharacterParam = "william" | "marcus" | "couple";
 type ResolvedContextLink = {
@@ -67,25 +68,25 @@ export default function BriefLoadingPage() {
   const t = language === "vi"
     ? {
       language: "Ngôn ngữ",
-      heading: "R",
-      subheading: "Bạn tham",
-      cardBackground: "Background brief",
+      heading: "Tổng Hợp",
+      subheading: "những điều artist cần biết trước khi vẽ comm",
+      cardBackground: "Bối cảnh",
       cardCommission: "Commission brief",
       cardCharacter: "Nhân vật",
-      openCommission: "Open commission brief →",
+      openCommission: "Mở brief của cms →",
       openingLabel: "Opening...",
       noBrief: "Missing brief reference.",
       openError: "Could not open this brief right now.",
       william: "William →",
       marcus: "Marcus →",
-      mainUniverse: "Main universe →",
+      mainUniverse: "Vũ trụ chính →",
       au: "AU →",
     }
     : {
       language: "Language",
-      heading: "Before You Open The Brief",
-      subheading: "Grab the key references first, then jump into the commission brief.",
-      cardBackground: "Background",
+      heading: "Combination",
+      subheading: "of refs artist need to know before drawing the commission",
+      cardBackground: "Context",
       cardCommission: "Commission brief",
       cardCharacter: "Character(s)",
       openCommission: "Open commission brief →",
@@ -348,6 +349,7 @@ export default function BriefLoadingPage() {
           </div>
         </section>
       </div>
+      <PageCredit tone="on-dark" className="brief-portal-page-credit page-credit--bottom" />
     </main>
   );
 }
