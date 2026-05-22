@@ -1,5 +1,6 @@
 // src/pages/MyCurrentIdeasPage.tsx
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   type CommissionIdea,
   normalizeCharacter,
@@ -48,6 +49,8 @@ const translations = {
       "To claim a brief, message me with the ID (e.g., WM-01).\n Once confirmed, your name will appear beside the entry.",
     noResults: "No ideas match these filters yet. Try changing them.",
     openBrief: "Open full brief →",
+    sharedView: "Viewing one copied idea card",
+    clearSharedView: "Show all ideas",
     filters: {
       character: "Character",
       status: "Status",
@@ -77,6 +80,8 @@ const translations = {
     noResults:
       "Chưa có ý tưởng nào khớp với bộ lọc này. Thử chọn lại cái khác nha.",
     openBrief: "Mở file mô tả →",
+    sharedView: "Đang xem một card được copy",
+    clearSharedView: "Xem tất cả",
     filters: {
       character: "Nhân vật",
       status: "status",
@@ -107,10 +112,17 @@ function useT() {
   return translations[lang] || translations.en;
 }
 
+function getIdeaCardElementId(ideaId: string) {
+  return `idea-${ideaId.replace(/[^a-zA-Z0-9_-]/g, "-")}`;
+}
+
 /* Page */
 
 export default function MyCurrentIdeasPage() {
   const t = useT();
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const sharedIdeaId = searchParams.get("idea")?.trim() || null;
 
   const [characterFilter, setCharacterFilter] = useState<CharacterType | "all">("all");
   const [statusFilter, setStatusFilter] = useState<StatusType>("not-started");
@@ -129,7 +141,24 @@ export default function MyCurrentIdeasPage() {
     [ideas, characterFilter, statusFilter, nsfwFilter]
   );
 
+  const visibleIdeas = useMemo(
+    () => (sharedIdeaId ? ideas.filter((idea) => idea.id === sharedIdeaId) : filteredIdeas),
+    [filteredIdeas, ideas, sharedIdeaId]
+  );
+
+  const clearSharedIdea = () => {
+    const nextParams = new URLSearchParams(searchParams);
+    nextParams.delete("idea");
+    window.history.replaceState(null, "", `${window.location.pathname}${nextParams.toString() ? `?${nextParams}` : ""}`);
+    setSearchParams(nextParams, { replace: true });
+  };
+
   useEffect(() => {
+    if (sharedIdeaId) {
+      navigate(`/?idea=${encodeURIComponent(sharedIdeaId)}#briefs`, { replace: true });
+      return;
+    }
+
     async function fetchIdeas() {
       const { data, error } = await supabase
         .from("commission_ideas")
@@ -158,7 +187,16 @@ export default function MyCurrentIdeasPage() {
     }
 
     fetchIdeas();
-  }, []);
+  }, [navigate, sharedIdeaId]);
+
+  useEffect(() => {
+    if (loading || !sharedIdeaId) return;
+
+    window.requestAnimationFrame(() => {
+      const target = document.getElementById(getIdeaCardElementId(sharedIdeaId));
+      target?.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+  }, [loading, sharedIdeaId, visibleIdeas.length]);
 
   return (
     <main className="about-portal relative min-h-screen overflow-hidden text-slate-100">
@@ -215,6 +253,15 @@ export default function MyCurrentIdeasPage() {
           setNsfwFilter={setNsfwFilter}
         />
 
+        {sharedIdeaId ? (
+          <div className="ideas-shared-bar" role="status">
+            <span>{t.sharedView}</span>
+            <button type="button" onClick={clearSharedIdea}>
+              {t.clearSharedView}
+            </button>
+          </div>
+        ) : null}
+
         <section className="mt-6 grid gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
           {loading && (
             <div className="col-span-full flex flex-col items-center justify-center py-10 opacity-90">
@@ -224,15 +271,15 @@ export default function MyCurrentIdeasPage() {
             </div>
           )}
 
-          {!loading && filteredIdeas.length === 0 && (
+          {!loading && visibleIdeas.length === 0 && (
             <p className="no-result text-sm opacity-60 col-span-full">
               {t.noResults}
             </p>
           )}
 
           {!loading &&
-            filteredIdeas.map((idea) => (
-              <IdeaCard key={idea.id} idea={idea} />
+            visibleIdeas.map((idea) => (
+              <IdeaCard key={idea.id} idea={idea} isShared={idea.id === sharedIdeaId} />
             ))}
         </section>
       </div>
@@ -336,7 +383,7 @@ function FilterDropdown({
 
 /* Idea card */
 
-function IdeaCard({ idea }: { idea: CommissionIdea }) {
+function IdeaCard({ idea, isShared = false }: { idea: CommissionIdea; isShared?: boolean }) {
   const t = useT();
   const f = t.filters;
 
@@ -363,7 +410,10 @@ function IdeaCard({ idea }: { idea: CommissionIdea }) {
   };
 
   return (
-    <article className="group card flex idea-card flex-col text-center">
+    <article
+      id={getIdeaCardElementId(idea.id)}
+      className={`group card flex idea-card flex-col text-center${isShared ? " idea-card--shared" : ""}`}
+    >
       <div className="mb-3">
         {/* ID */}
         <p className="idea-id text-[10px] uppercase tracking-[0.28em]">

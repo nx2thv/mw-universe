@@ -67,8 +67,8 @@ export default function BriefLoadingPage() {
   const t = language === "vi"
     ? {
       language: "Ngôn ngữ",
-      heading: "Before You Open The Brief",
-      subheading: "Chọn tài liệu nền nhanh trước khi vào commission brief.",
+      heading: "R",
+      subheading: "Bạn tham",
       cardBackground: "Background brief",
       cardCommission: "Commission brief",
       cardCharacter: "Nhân vật",

@@ -104,7 +104,12 @@ function getStoredSection() {
 
 function getSharedIdeaId() {
   if (typeof window === "undefined") return null;
-  return new URLSearchParams(window.location.search).get("idea");
+  const ideaId = new URLSearchParams(window.location.search).get("idea")?.trim();
+  return ideaId ? ideaId.toUpperCase() : null;
+}
+
+function getIdeaCardElementId(ideaId: string) {
+  return `idea-${ideaId.replace(/[^a-zA-Z0-9_-]/g, "-")}`;
 }
 
 export default function Home() {
@@ -311,7 +316,7 @@ export default function Home() {
   );
   const visibleIdeas = useMemo(() => {
     if (!sharedIdeaId) return filteredIdeas;
-    return ideas.filter((idea) => idea.id === sharedIdeaId);
+    return ideas.filter((idea) => idea.id.toUpperCase() === sharedIdeaId.toUpperCase());
   }, [filteredIdeas, ideas, sharedIdeaId]);
 
   const getCharacterLabel = (character?: CharacterType | null) => {
@@ -738,7 +743,7 @@ export default function Home() {
                     ? visibleIdeas.map((idea) => {
                       const statusLabel = getStatusLabel(idea);
                       return (
-                        <article key={idea.id} className="home-journey-idea-card">
+                        <article key={idea.id} id={getIdeaCardElementId(idea.id)} className="home-journey-idea-card">
                           <div className="home-journey-idea-actions">
                             <button
                               type="button"

@@ -2453,6 +2453,42 @@ section[data-section-index] {
   letter-spacing: 1px;
 }
 
+.ideas-shared-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.25rem;
+  padding: 0.78rem 0.95rem;
+  border: 1px solid rgba(170, 193, 209, 0.2);
+  background: rgba(255, 255, 255, 0.045);
+  color: rgba(223, 229, 236, 0.82);
+  font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.ideas-shared-bar button {
+  border: 0;
+  border-bottom: 1px solid currentColor;
+  padding: 0;
+  background: transparent;
+  color: rgba(170, 193, 209, 0.92);
+  font: inherit;
+  cursor: pointer;
+}
+
+.idea-card {
+  scroll-margin-block: 6rem;
+}
+
+.idea-card--shared {
+  border-color: rgba(170, 193, 209, 0.42);
+  background: rgba(170, 193, 209, 0.06);
+  box-shadow: 0 22px 64px rgba(0, 0, 0, 0.28), 0 0 0 1px rgba(170, 193, 209, 0.08);
+}
+
 .card {
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.08);

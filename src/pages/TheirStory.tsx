@@ -305,7 +305,7 @@ const loreFragments: LoreFragment[] = [
     title: "Bedtime 💤",
     titleVi: "💤",
     excerpt: "William sleeps UGLY ASL, but Marcus never fails to find it adorable smh",
-    excerptVi: "em W ngủ siêu xấu nhưng anh M lúc nào cx thấy cuti =)))))))))",
+    excerptVi: "em W ngủ siêu xấu nhưng thg ck ẻm lúc nào cx khen cuti =)))))))))",
     ageRange: "27-34",
     image: littleMomentImages[3],
     artist: "Tinh Tú",
@@ -340,7 +340,7 @@ const loreFragments: LoreFragment[] = [
     title: "post-deployment",
     titleVi: "post-deployment",
     excerpt: "What they do after each deployment. Not suitable for public broadcasting |▽//)ゝ",
-    excerptVi: "thứ hai ảnh làm sau mỗi lần Marcus trở về sau nhiệm vụ. tui 0 dám để công khai |▽//)ゝ",
+    excerptVi: "thứ hai ảnh làm sau mỗi lần Marcus trở về từ nhiệm vụ. tui 0 dám để công khai |▽//)ゝ",
     ageRange: "29-37",
     image: littleMomentImages[6],
     artist: "Đếm Ngược Hai Tháng",
@@ -427,8 +427,8 @@ const translations = {
     eyebrow: "Main Universe Archive",
     heroTitle: "#cartiercaughthayes",
     heroMeta: [
-      { label: "Origin", value: "Westchester, NY" },
-      { label : "Present", value: "West Village, NYC" },
+      { label: "FROM", value: "WESTCHESTER, NY" },
+      { label: "TO", value: "WEST VILLAGE, NYC" },
     ],
     timelineMark: {
       script: "Circa Summer",
@@ -547,8 +547,8 @@ const translations = {
     heroIntro:
       "",
     heroMeta: [
-      { label: "Khởi điểm", value: "Westchester / New York" },
-      { label: "Hồ sơ hiện tại", value: "Cartier-Hayes home record" },
+      { label: "TỪ", value: "WESTCHESTER, NY" },
+      { label: "ĐẾN", value: "WEST VILLAGE, NYC" },
     ],
     timelineMark: {
       script: "Circa Summer",
@@ -682,11 +682,11 @@ export default function TheirStory() {
     () => [
       {
         id: "story-hero",
-        label: language === "vi" ? "Mở hồ sơ" : "Opening File",
+        label: language === "vi" ? "Mở Đầu" : "Starting Point",
       },
       {
         id: "story-timeline",
-        label: language === "vi" ? "Dòng thời gian" : "Timeline",
+        label: language === "vi" ? "Timeline" : "Timeline",
       },
       {
         id: "story-archive",
@@ -694,11 +694,11 @@ export default function TheirStory() {
       },
       {
         id: "story-public-sightings",
-        label: language === "vi" ? "Public Sightings" : "Public Sightings",
+        label: language === "vi" ? "MAGAZINE" : "MAGAZINE",
       },
       {
         id: "story-moments",
-        label: language === "vi" ? "Khoảnh khắc" : "Moments",
+        label: language === "vi" ? "Kho Ảnh" : "Gallery",
       },
     ],
     [language]
@@ -831,25 +831,27 @@ export default function TheirStory() {
       .filter((element): element is HTMLElement => Boolean(element));
     if (chapterTargets.length === 0) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (!visible) return;
-        setActiveChapterId(visible.target.id);
-      },
-      {
-        root: scrollRoot,
-        threshold: [0.18, 0.32, 0.5],
-        rootMargin: "-18% 0px -48% 0px",
-      }
-    );
+    const updateActiveChapter = () => {
+      const rootTop = scrollRoot.getBoundingClientRect().top;
+      const triggerOffset = scrollRoot.clientHeight * 0.24;
+      const activeTarget =
+        chapterTargets
+          .map((target) => ({
+            id: target.id,
+            offset: target.getBoundingClientRect().top - rootTop - triggerOffset,
+          }))
+          .filter((item) => item.offset <= 0)
+          .sort((a, b) => b.offset - a.offset)[0] ?? { id: chapterTargets[0].id };
+      setActiveChapterId((current) => (current === activeTarget.id ? current : activeTarget.id));
+    };
 
-    chapterTargets.forEach((target) => observer.observe(target));
+    updateActiveChapter();
+    scrollRoot.addEventListener("scroll", updateActiveChapter, { passive: true });
+    window.addEventListener("resize", updateActiveChapter);
 
     return () => {
-      observer.disconnect();
+      scrollRoot.removeEventListener("scroll", updateActiveChapter);
+      window.removeEventListener("resize", updateActiveChapter);
     };
   }, [storyChapterItems]);
 
@@ -1074,6 +1076,7 @@ export default function TheirStory() {
             </div>
             <figure className="about-story__hero-figure">
               <img src={heroImg} alt="Close crop of Marcus and William's eyes" />
+              <figcaption className="about-story__hero-credit">Artwork: Lee Phanh</figcaption>
             </figure>
             <dl className="about-story__hero-meta">
               {t.heroMeta.map((item) => (
