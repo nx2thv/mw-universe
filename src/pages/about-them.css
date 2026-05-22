@@ -209,7 +209,7 @@ body:has(.au-archive) {
 .au-archive--welcome .au-archive__credit {
   position: fixed;
   left: 50%;
-  bottom: max(1rem, env(safe-area-inset-bottom));
+  bottom: max(0.01rem, env(safe-area-inset-bottom));
   width: min(42rem, calc(100% - 2rem));
   padding: 0;
   transform: translateX(-50%);
@@ -218,7 +218,7 @@ body:has(.au-archive) {
 .au-archive:not(.au-archive--welcome) .au-archive__credit {
   position: fixed;
   left: 50%;
-  bottom: max(0.55rem, env(safe-area-inset-bottom));
+  bottom: max(0.01rem, env(safe-area-inset-bottom));
   width: min(42rem, calc(100% - 2rem));
   padding: 0;
   transform: translateX(-50%);
@@ -1063,15 +1063,8 @@ body:has(.au-archive) {
   }
 
   .au-archive:not(.au-archive--welcome) .au-archive__credit {
-    bottom: max(0.35rem, env(safe-area-inset-bottom));
+    bottom: max(0.01rem, env(safe-area-inset-bottom));
     width: min(24rem, calc(100% - 1.4rem));
-  }
-
-  .au-archive:not(.au-archive--welcome) .page-credit {
-    font-size: 0.48rem;
-    letter-spacing: 0.16em;
-    line-height: 1.35;
-    max-width: 100%;
   }
 
   .au-archive:not(.au-archive--welcome) .page-credit::before {
@@ -1268,7 +1261,7 @@ body:has(.au-archive) {
   scroll-behavior: smooth;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  padding: calc(env(safe-area-inset-top, 0px) + 3.1rem) 0 calc(env(safe-area-inset-bottom, 0px) + 0.75rem);
+  padding: calc(env(safe-area-inset-top, 0px) + 3.1rem) 0 calc(env(safe-area-inset-bottom, 0px) + 0.01rem);
   background:
     radial-gradient(circle at 42% -10%, rgba(216, 210, 200, 0.08) 0%, transparent 42%),
     linear-gradient(180deg, rgba(42, 42, 47, 0.32) 0%, rgba(15, 15, 16, 0) 34%);
@@ -3136,7 +3129,7 @@ body:has(.au-archive) {
 .about-story__page-credit {
   width: min(100%, 1180px);
   box-sizing: border-box;
-  margin: clamp(2.2rem, 6vw, 4rem) auto 0;
+  margin: clamp(3rem, 6vw, 4rem) auto 0;
   padding: 0 1.5rem;
 }
 
@@ -3860,7 +3853,7 @@ body:has(.au-archive) {
   }
 
   .about-story__paper {
-    padding: calc(env(safe-area-inset-top, 0px) + 3rem) 0 calc(env(safe-area-inset-bottom, 0px) + 0.75rem);
+    padding: calc(env(safe-area-inset-top, 0px) + 3rem) 0 calc(env(safe-area-inset-bottom, 0px) + 0.01rem);
   }
 
   .about-story__editorial {

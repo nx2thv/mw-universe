@@ -25,6 +25,7 @@ import littleMomentImage6 from "../../assets/littleMomentImage7.jpeg";
 import littleMomentImage7 from "../../assets/littleMomentImage8.jpeg";
 import littleMomentImage8 from "../../assets/littleMomentImage9.jpeg";
 import littleMomentImage9 from "../../assets/themStory2.jpeg";
+import littleMomentImage10 from "../../assets/littleMomentImage10.jpeg";
 
 import nycStamp from "../../assets/nycstamp.jpeg";
 
@@ -42,7 +43,7 @@ const timelineMedia: TimelineMedia[] = [
   { image: timelineImg5, credit: "(A): Tinh Tú" },
   { image: timelineImg6, credit: "(A): Tinh Tú" },
 ];
-const littleMomentImages = [littleMomentImage1, littleMomentImage2, littleMomentImage3, littleMomentImage4, littleMomentImage5, littleMomentImage6, littleMomentImage7, littleMomentImage8, littleMomentImage9];
+const littleMomentImages = [littleMomentImage1, littleMomentImage2, littleMomentImage3, littleMomentImage4, littleMomentImage5, littleMomentImage6, littleMomentImage7, littleMomentImage8, littleMomentImage9, littleMomentImage10];
 
 type PolaroidOrientation = "portrait" | "landscape" | "square";
 
@@ -267,7 +268,7 @@ const loreFragments: LoreFragment[] = [
     id: "frag-01",
     title: "#obsessed",
     titleVi: "#obsessed",
-    excerpt: "William stole Marcus' old patrol shirt. Marcus, once again, forgot how to behave.",
+    excerpt: "william stole his husband's shirt",
     excerptVi: "ẻm bận áo cũ của ảnh",
     ageRange: "26-33",
     image: littleMomentImages[0],
@@ -279,7 +280,7 @@ const loreFragments: LoreFragment[] = [
     id: "frag-02",
     title: "#nha_trang",
     titleVi: "#nha_trang",
-    excerpt: "their honeymoon in Vietnam. Because of work, they had to postpone this until a year after the wedding.",
+    excerpt: "that one time they went on a honeymoon in Nha Trang, and it took them a whole year after the wedding to finally go",
     excerptVi: "cái nì i tuần trăng mật ở Nha Trang, cưới dc 1 năm ùi mới đi",
     ageRange: "27-34",
     image: littleMomentImages[1],
@@ -289,9 +290,9 @@ const loreFragments: LoreFragment[] = [
   },
   {
     id: "frag-03",
-    title: "New Year!",
+    title: "HPNY!!",
     titleVi: "HPNY!!",
-    excerpt: "They had leftover Christmas wrapping paper and, unfortunately for everyone, free will.",
+    excerpt: "they had some leftover Christmas wrapping paper sooooo",
     excerptVi: "Còn dư cuộn wrap quà giáng sinh nên... ừm",
     ageRange: "28-35",
     image: littleMomentImages[2],
@@ -303,7 +304,7 @@ const loreFragments: LoreFragment[] = [
     id: "frag-04",
     title: "Bedtime 💤",
     titleVi: "💤",
-    excerpt: "William always sleeps like he's losing a fight in his dreams. Somehow, Marcus still finds this cute after YEARS.",
+    excerpt: "William sleeps UGLY ASL, but Marcus never fails to find it adorable smh",
     excerptVi: "em W ngủ siêu xấu nhưng anh M lúc nào cx thấy cuti =)))))))))",
     ageRange: "27-34",
     image: littleMomentImages[3],
@@ -313,9 +314,9 @@ const loreFragments: LoreFragment[] = [
   {
     id: "frag-05",
     title: "New Tattoo",
-    titleVi: "bố m chất",
-    excerpt: "William got bored and tattooed Marcus' last name above his ass. Marcus was thanking God for a month straight.",
-    excerptVi: "William buồn chán nên xăm họ của Marcus ngay phía trên mông. Marcus đã cảm ơn Chúa suốt nguyên một tháng.",
+    titleVi: "@Hayes",
+    excerpt: "new tattoo alert (^^ゞ",
+    excerptVi: "em W xăm họ anh M (^^ゞ",
     ageRange: "23-30",
     image: littleMomentImages[4],
     artist: "Jeong Han Wook",
@@ -324,10 +325,10 @@ const loreFragments: LoreFragment[] = [
   },
   {
     id: "frag-06",
-    title: "Shopping Day",
-    titleVi: "Ngày Đi Mua Sắm",
-    excerpt: "Marcus knew this shopping trip would cost him 2 hours, 10 bags, and the last of his patience. He still went.",
-    excerptVi: "Marcus biết chuyến mua sắm này sẽ ngốn của anh 2 tiếng, 10 cái túi, và chút kiên nhẫn cuối cùng còn sót lại. Anh vẫn đi.",
+    title: "shopping(?)",
+    titleVi: "i sốp ping",
+    excerpt: "Marcus was, once again, doing unpaid bodyguard work",
+    excerptVi: "nhìn là biết tự nguyện đi theo chứ k hề bị ép",
     ageRange: "20-27",
     image: littleMomentImages[5],
     artist: "Triệu Ann",
@@ -336,10 +337,10 @@ const loreFragments: LoreFragment[] = [
   },
   {
     id: "frag-07",
-    title: "Post Deployment Routine",
-    titleVi: "Nghi Thức Sau Triển Khai",
+    title: "post-deployment",
+    titleVi: "post-deployment",
     excerpt: "What they do after each deployment. Not suitable for public broadcasting |▽//)ゝ",
-    excerptVi: "Việc họ làm sau mỗi lần Marcus trở về từ nhiệm vụ. Không phù hợp để phát sóng công khai |▽//)ゝ",
+    excerptVi: "thứ hai ảnh làm sau mỗi lần Marcus trở về sau nhiệm vụ. tui 0 dám để công khai |▽//)ゝ",
     ageRange: "29-37",
     image: littleMomentImages[6],
     artist: "Đếm Ngược Hai Tháng",
@@ -349,9 +350,9 @@ const loreFragments: LoreFragment[] = [
   {
     id: "frag-08",
     title: "Wedding Portrait",
-    titleVi: "Ảnh Cưới",
+    titleVi: "Ưedding Portrait",
     excerpt: "A small glimpse of the wedding photoshoot",
-    excerptVi: "Một lát cắt nhỏ từ buổi chụp ảnh cưới của họ.",
+    excerptVi: "cms đám cưới đầu tiên của mí ảnh",
     ageRange: "26-33",
     image: littleMomentImages[7],
     artist: "Việt Quất",
@@ -360,13 +361,25 @@ const loreFragments: LoreFragment[] = [
   },
   {
     id: "frag-09",
-    title: "Gift ",
-    titleVi: "Thx Tùng",
-    excerpt: "gift from ",
-    excerptVi: "Một lát cắt nhỏ từ buổi chụp ảnh cưới của họ.",
+    title: "s/o to NTT",
+    titleVi: "s/o to NTT",
+    excerpt: "gift from arttrade ♡ॢ₍⸍⸌̣ʷ̣̫⸍̣⸌₎",
+    excerptVi: "Sếp Tùng tặng 2 gã gay ♡ॢ₍⸍⸌̣ʷ̣̫⸍̣⸌₎",
     ageRange: "30-37",
     image: littleMomentImages[8],
     artist: "Việt Quất",
+    tag_direction: "left",
+    polaroid_orientation: "portrait",
+  },
+  {
+    id: "frag-10",
+    title: "s/o Tinh Tú",
+    titleVi: "s/o Tinh Tú",
+    excerpt: "gift from arttrade and cms <丶｀∀´>",
+    excerptVi: "vk iu Tinh Tú tặng tui!! <丶｀∀´>",
+    ageRange: "30-37",
+    image: littleMomentImages[9],
+    artist: "Tinh Tú",
     tag_direction: "left",
     polaroid_orientation: "portrait",
   },

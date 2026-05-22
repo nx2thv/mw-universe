@@ -2049,6 +2049,7 @@ footer p {
   text-transform: uppercase;
   line-height: 1.7;
   max-width: min(42rem, 92vw);
+  white-space: nowrap;
 }
 
 .page-credit::before {
@@ -2077,6 +2078,22 @@ footer p {
 
 .page-credit--bottom {
   margin-top: 0 !important;
+}
+
+@media (max-width: 640px) {
+  .page-credit {
+    font-size: 0.48rem;
+    letter-spacing: 0.1em;
+    line-height: 1.45;
+    max-width: calc(100vw - 1rem);
+  }
+}
+
+@media (max-width: 380px) {
+  .page-credit {
+    font-size: 0.44rem;
+    letter-spacing: 0.06em;
+  }
 }
 
 .character-name {

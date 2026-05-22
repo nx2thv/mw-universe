@@ -774,9 +774,6 @@ export default function MarcusBriefPage() {
                   </button>
                 </div>
               </section>
-
-              <PageCredit tone="on-dark" className="mt-10" />
-
               <GalleryLightbox
                 image={selectedGalleryImage}
                 onClose={() => setSelectedGalleryImage(null)}
@@ -784,6 +781,7 @@ export default function MarcusBriefPage() {
             </div>
           </div>
         </div>
+        <PageCredit tone="on-dark" />
       </div>
       <nav className="brief-chapter-bottom brief-chapter-bottom--dark" aria-label="Marcus quick jump">
         {chapterItems.map((item) => (

@@ -800,15 +800,13 @@ export default function WilliamBriefPage() {
                 </button>
               </div>
             </section>
-
-            <PageCredit tone="on-light" className="mt-10" />
-
             <GalleryLightbox
               image={selectedGalleryImage}
               onClose={() => setSelectedGalleryImage(null)}
             />
           </div>
         </div>
+        <PageCredit tone="on-dark" />
       </div>
       <nav className="brief-chapter-bottom brief-chapter-bottom--light" aria-label="William quick jump">
         {chapterItems.map((item) => (
