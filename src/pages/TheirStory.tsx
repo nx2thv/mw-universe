@@ -660,7 +660,7 @@ export default function TheirStory() {
     () => [
       {
         id: "story-hero",
-        label: language === "vi" ? "Mở Đầu" : "Starting Point",
+        label: language === "vi" ? "Mở Đầu" : "Intro",
       },
       {
         id: "story-timeline",

@@ -3403,7 +3403,7 @@ body:has(.au-archive) {
   display: flex;
   width: max-content;
   align-items: center;
-  gap: 0.9em;
+  gap: 0.09em;
   font-family: "IBM Plex Mono", "Cutive Mono", monospace;
   font-size: clamp(1rem, 1.5vw, 2rem);
   font-weight: 700;
@@ -4177,15 +4177,15 @@ body:has(.au-archive) {
   }
 
   .about-story__hero {
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding-left: 0;
+    padding-right: 0;
   }
 
   .about-story__hero-title {
-    max-width: calc(100vw - 2rem);
+    max-width: calc(100vw - 0.3rem);
     justify-self: stretch;
-    text-align: left;
-    font-size: 1rem !important;
+    text-align: right;
+    font-size: 2.5rem !important;
     line-height: 0.95;
     overflow-wrap: anywhere;
     word-break: break-word;
@@ -4193,13 +4193,14 @@ body:has(.au-archive) {
   }
 
   .about-story__hero-figure {
-    justify-self: center;
-    width: min(88vw, 20rem);
+    width: 100%;
     min-height: clamp(8rem, 40vw, 10.5rem);
   }
 
   .about-story__hero-meta {
     grid-template-columns: 1fr;
+    padding-left: 0.3rem;
+    padding-right: 1rem;
   }
 
   .about-story__editorial--memories .about-story__section-heading {
@@ -4211,7 +4212,7 @@ body:has(.au-archive) {
   }
 
   .about-story__wall-pagination {
-    padding-right: 1rem;
+    padding-right: 1.5rem;
   }
 
   .about-story__memory-heading-title {
