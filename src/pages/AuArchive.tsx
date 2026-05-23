@@ -4,6 +4,8 @@ import { useLanguage } from "../LanguageContext";
 import PageCredit from "../components/PageCredit";
 import auBackgroundVideo from "../../assets/au1-background-small.m4v?url";
 
+import auSelector1 from "../../assets/auSelector1.jpeg";
+
 import commissionBoard1 from "../../assets/loop3.jpeg";
 
 type DustSpec = {
@@ -32,7 +34,9 @@ type AuEntry = {
   indexImage?: string;
   premise: string;
   setting: string;
+  settingVi?: string;
   background: string[];
+  backgroundVi?: string[];
   motifs: string[];
   commissions: CommissionSlot[];
 };
@@ -57,8 +61,10 @@ const auEntries: AuEntry[] = [
     code: "AU-001",
     title: "The Quiet Husband",
     shortTitle: "Contract",
+    indexImage: auSelector1,
     premise: "p/s: it's just them being in love with extra legal complications.",
     setting: "A quiet two-storey house in a\nsuburban neighbourhood just outside the city.",
+    settingVi: "Một căn nhà hai tầng yên tĩnh ở\nkhu ngoại ô ngay bên ngoài thành phố.",
     background: [
       "Marcus officially divorced the army at 37 and bought a quiet house to retire in. Allegedly.",
       "The day he returned home, his mother threw a welcome-back party and hired a local bakery for dessert service. William worked there with Chef Remy. He was 27. Marcus got hooked immediately and kept coming back for desserts despite barely liking sweets.",
@@ -69,37 +75,21 @@ const auEntries: AuEntry[] = [
       "Then he started taking William to jazz bars because the blond mentioned liking jazz once.",
       "This AU is basically one big idiot who could not speak upon his feelings, and another idiot who convinced himself that the big idiot didn't like him while Vivian was the one who suffered the most as she wrote them.",
     ],
+    backgroundVi: [
+      "Marcus chính thức \"chia tay\" với quân đội ở tuổi 37 rồi mua một căn nhà yên tĩnh để ngỉ hưu. Ít nhất là anh tự nói vậy.",
+      "Ngày anh về nhà, mẹ anh tổ chức tiệc mừng và thuê một tiệm bánh địa phương để phụ trách phần tráng miệng. William làm ở đó cùng bếp trưởng Remy. Lúc ấy em 27 tuổi. Marcus dính em ngay từ lần gặp đầu mặt, rồi cứ quay lại mua bánh liên tục dù bản thân anh vốn chẳng mê đồ ngọt.",
+      "Một đêm, William lỡ ngủ quên khi lò nướng còn bật. Tiệm bánh bốc cháy. Marcus tới đúng lúc, lao vào kéo em ra ngoài.",
+      "Cửa tiệm cháy rụi hoàn toàn. William ngập chìm trong cảm giác tội lỗi, một mực khăng khăng sẽ kiếm đủ tiền để trả cho bếp trưởng Remy xây tiệm mới dù ông đã nói rằng em không cần phải làm thế. Marcus, khi đó đã yêu dở sống dở chết và cũng rất ngốc, liền đề nghị một cuộc hôn nhân hợp đồng.",
+      "William sẽ giúp việc trong nhà. Marcus sẽ trả món nợ đó.",
+      "\"Hợp đồng thôi,\" anh nói.",
+      "Rồi anh bắt đầu dẫn William đi nghe nhạc jazz chỉ vì có lần em thuận miệng bảo mình thích jazz.",
+      "Nói ngắn gọn thì AU này về cơ bản là câu chuyện của một gã khổng lồ không biết mở miệng nói thích người ta, và một cậu tóc vàng khác cũng ngốc không kém khi tự thuyết phục bản thân rằng tên khổng lồ kia chắc chắn không thích mình. Người chịu khổ nhiều nhất thì chỉ có Vivian thôi vì phải ngồi viết hai đứa ngốc này.",
+    ],
     motifs: ["domestic slow burn", "suburban setting", "idiots being in love"],
     commissions: [
       { title: "Jazz Club", artist: "maxiine", image: commissionBoard1, orientation: "landscape", note: "First Official Date Night" },
     ],
   },
-
-  {
-    id: "au2",
-    code: "AU-002",
-    title: "Your AU Title",
-    shortTitle: "Short Name",
-    premise: "One-line vibe or joke/premise.",
-    setting: "Where this AU takes place.",
-    background: [
-      "Paragraph one.",
-      "Paragraph two.",
-      "Paragraph three.",
-    ],
-    motifs: ["motif one", "motif two", "motif three"],
-    commissions: [
-      {
-        title: "Commission title",
-        artist: "artist name",
-        image: commissionBoard1,
-        orientation: "landscape",
-        note: "optional note",
-      },
-    ],
-  },
-
-
 
 ];
 
@@ -138,11 +128,6 @@ const translations = {
   },
 } as const;
 
-const getRotation = (seed: string) => {
-  const value = Array.from(seed).reduce((sum, character) => sum + character.charCodeAt(0), 0);
-  return ((value % 9) - 4) * 0.5;
-};
-
 function getSharedAuId() {
   if (typeof window === "undefined") return null;
   return new URLSearchParams(window.location.search).get("au");
@@ -171,6 +156,8 @@ export default function AuArchive() {
     : selectedAuId
       ? auEntries.find((entry) => entry.id === selectedAuId)
       : null;
+  const activeSetting = language === "vi" ? activeAuEntry?.settingVi ?? activeAuEntry?.setting : activeAuEntry?.setting;
+  const activeBackground = language === "vi" ? activeAuEntry?.backgroundVi ?? activeAuEntry?.background : activeAuEntry?.background;
   const gatedAuEntry = gatedAuId
     ? auEntries.find((entry) => {
       const gatedValue = gatedAuId.toLowerCase();
@@ -315,25 +302,23 @@ export default function AuArchive() {
 
       {!showWelcome ? (
         <nav className="au-archive__index portal-fade-up portal-fade-up--choices" aria-label={t.jumpLabel}>
-          <div className="au-archive__index-track">
-            {auEntries.map((entry) => {
-              const coverImage = entry.indexImage ?? entry.commissions.find((commission) => commission.image)?.image;
+          {auEntries.map((entry) => {
+            const coverImage = entry.indexImage ?? entry.commissions.find((commission) => commission.image)?.image;
 
-              return (
-                <button
-                  key={entry.id}
-                  type="button"
-                  className={`au-archive__index-link ${activeAuEntry?.id === entry.id ? "is-active" : ""}`}
-                  onClick={() => openAuEntry(entry)}
-                >
-                  <span className="au-archive__index-thumb" aria-hidden="true">
-                    {coverImage ? <img src={coverImage} alt="" loading="lazy" /> : <span>{entry.code}</span>}
-                  </span>
-                  <span className="au-archive__index-name">{entry.shortTitle}</span>
-                </button>
-              );
-            })}
-          </div>
+            return (
+              <button
+                key={entry.id}
+                type="button"
+                className={`au-archive__index-link ${activeAuEntry?.id === entry.id ? "is-active" : ""}`}
+                onClick={() => openAuEntry(entry)}
+              >
+                <span className="au-archive__index-thumb" aria-hidden="true">
+                  {coverImage ? <img src={coverImage} alt="" loading="lazy" /> : <span>{entry.code}</span>}
+                </span>
+                <span className="au-archive__index-name">{entry.shortTitle}</span>
+              </button>
+            );
+          })}
         </nav>
       ) : null}
 
@@ -384,12 +369,12 @@ export default function AuArchive() {
                       </div>
                     </div>
                     <p className="au-card__label">{t.settingLabel}</p>
-                    <p className="au-card__setting">{activeAuEntry.setting}</p>
+                    <p className="au-card__setting">{activeSetting}</p>
                   </div>
 
                   <div className="au-card__meta-block">
                     <p className="au-card__label">{t.backgroundLabel}</p>
-                    {activeAuEntry.background.map((paragraph) => (
+                    {activeBackground?.map((paragraph) => (
                       <p key={paragraph} className="au-card__paragraph">{paragraph}</p>
                     ))}
                   </div>
@@ -407,7 +392,6 @@ export default function AuArchive() {
                   >
                     {activeAuEntry.commissions.map((commission, commissionIndex) => {
                       const orientation = commission.orientation ?? "portrait";
-                      const rotationSeed = `${activeAuEntry.id}-${commission.title}`;
                       const artistTagDirection = commissionIndex % 2 === 0 ? "is-right" : "is-left";
 
                       return (
@@ -415,7 +399,6 @@ export default function AuArchive() {
                           key={commission.title}
                           className={`au-polaroid au-polaroid--${orientation} ${commission.image ? "" : "is-empty"}`}
                           style={{
-                            transform: `rotate(${getRotation(rotationSeed)}deg)`,
                             ["--pin-offset" as string]: `${(commissionIndex % 5) * 5 - 10}px`,
                           } as CSSProperties}
                         >
