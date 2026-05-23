@@ -4172,13 +4172,30 @@ body:has(.au-archive) {
     padding-right: 1rem;
   }
 
+  .about-story__chapter-jump {
+    right: calc(env(safe-area-inset-right, 0px) + 1.65rem);
+  }
+
   .about-story__hero {
     padding-left: 1rem;
     padding-right: 1rem;
   }
 
   .about-story__hero-title {
-    font-size: clamp(2.2rem, 12vw, 3.25rem);
+    max-width: calc(100vw - 2rem);
+    justify-self: stretch;
+    text-align: left;
+    font-size: 1rem !important;
+    line-height: 0.95;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    text-wrap: wrap;
+  }
+
+  .about-story__hero-figure {
+    justify-self: center;
+    width: min(88vw, 20rem);
+    min-height: clamp(8rem, 40vw, 10.5rem);
   }
 
   .about-story__hero-meta {
@@ -4191,6 +4208,10 @@ body:has(.au-archive) {
     top: auto;
     margin-bottom: 0.4rem;
     pointer-events: none;
+  }
+
+  .about-story__wall-pagination {
+    padding-right: 1rem;
   }
 
   .about-story__memory-heading-title {
