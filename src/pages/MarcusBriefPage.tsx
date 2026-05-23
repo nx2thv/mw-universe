@@ -14,6 +14,7 @@ import marcusDogTags from "../../assets/marcusDogTags.jpeg";
 import marcusEyesAndBrows from "../../assets/marcusEyesAndBrows.jpeg";
 import marcusHair1 from "../../assets/marcusHair1.jpeg";
 import marcusHair2 from "../../assets/marcusHair2.jpeg";
+import marcusHair3 from "../../assets/marcusHair3.jpeg";
 import marcusNose from "../../assets/marcusNose.jpeg";
 import marcusLipScar from "../../assets/marcusLipScar.jpeg";
 import marcusBrowScar from "../../assets/marcusBrowScar.jpeg";
@@ -290,18 +291,18 @@ export default function MarcusBriefPage() {
   }));
   const chapterLabelsByLang: Record<"en" | "vi", Record<string, string>> = {
     en: {
-      "basic info": "A. Snapshot",
-      face: "B. Face",
-      "hair and stuffs": "C. Hair & Acc",
-      "dilf coded": "D. Build",
-      tatts: "E. Ink",
+      "basic info": "Snapshot",
+      face: "Face",
+      "hair and stuffs": "Hair & Acc",
+      "dilf coded": "Build",
+      tatts: "Ink",
     },
     vi: {
-      "basic info": "A. Tổng quan",
-      face: "B. Gương mặt",
-      "hair and stuffs": "C. Tóc & phụ kiện",
-      "dilf coded": "D. Dáng người",
-      tatts: "E Hình xăm",
+      "basic info": "Tổng quan",
+      face: "Gương mặt",
+      "hair and stuffs": "Tóc & phụ kiện",
+      "dilf coded": "Dáng người",
+      tatts: "Hình xăm",
     },
   };
   const chapterLabels = chapterLabelsByLang[language] || chapterLabelsByLang.en;
@@ -322,7 +323,7 @@ export default function MarcusBriefPage() {
   const sectionImageIds: Record<string, string[]> = {
     "basic info": ["palette"],
     face: ["eyesBrows", "nose", "lipScar", "browScar", "jawScar"],
-    "hair and stuffs": ["hair1", "hair2", "beard", "weddingRing", "dogtags"],
+    "hair and stuffs": ["hair1", "hair2", "hair3", "beard", "weddingRing", "dogtags"],
     "dilf coded": ["hands", "biceps1", "biceps2", "back", "thighs", "body"],
     tatts: ["tattoo", "tattoo2", "tattoo3"],
   };
@@ -337,6 +338,7 @@ export default function MarcusBriefPage() {
     jawScar: marcusJawScar,
     hair1: marcusHair1,
     hair2: marcusHair2,
+    hair3: marcusHair3,
     beard: marcusBeard,
     weddingRing: marcusWeddingRing,
     dogtags: marcusDogTags,
@@ -389,8 +391,9 @@ export default function MarcusBriefPage() {
       jawScar: "Sẹo chạy dọc\nlên từ quai hàm bên trái",
 
       // HAIR / BEARD / ACCESSORIES
-      hair1: "Tóc (chỉn chu)",
-      hair2: "Tóc (lúc rối)",
+      hair1: "Có thể để phần tóc mái gọn nnay",
+      hair2: "Hoặc cho vài cọng lòa xòa nnay",
+      hair3: "Tóc (lúc rối, k chải chuốt)",
       beard: "Râu",
       weddingRing: "Nhẫn cưới",
       dogtags: "Dây chuyền",

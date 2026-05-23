@@ -309,18 +309,18 @@ export default function WilliamBriefPage() {
   }));
   const chapterLabelsByLang: Record<"en" | "vi", Record<string, string>> = {
     en: {
-      "basic info": "A. Snapshot",
-      face: "B. Face",
-      "hair and stuffs": "C. Hair & Acc",
-      silhouette: "D. Build",
-      tatts: "E Ink",
+      "basic info": "Snapshot",
+      face: "Face",
+      "hair and stuffs": "Hair & Acc",
+      silhouette: "Build",
+      tatts: "Ink",
     },
     vi: {
-      "basic info": "A. Tổng quan",
-      face: "B. Gương mặt",
-      "hair and stuffs": "C. Tóc & phụ kiện",
-      silhouette: "D. Dáng người",
-      tatts: "E. Hình xăm",
+      "basic info": "Tổng quan",
+      face: "Gương mặt",
+      "hair and stuffs": "Tóc & phụ kiện",
+      silhouette: "Dáng người",
+      tatts: "Hình xăm",
     },
   };
   const chapterLabels = chapterLabelsByLang[language] || chapterLabelsByLang.en;

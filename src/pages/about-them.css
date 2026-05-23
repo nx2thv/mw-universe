@@ -4159,7 +4159,7 @@ body:has(.au-archive) {
   }
 
   .about-story__paper {
-    padding: calc(env(safe-area-inset-top, 0px) + 3rem) 0 calc(env(safe-area-inset-bottom, 0px) + 6.25rem);
+    padding: calc(env(safe-area-inset-top, 0px) + 3rem) 0 calc(env(safe-area-inset-bottom, 0px) + 5.25rem);
   }
 
   .about-story__editorial {
@@ -4168,17 +4168,16 @@ body:has(.au-archive) {
   }
 
   .about-story__page-credit {
-    --story-credit-mobile-bottom: 0.01rem;
-    position: fixed;
+    --story-credit-mobile-lift: -2.8rem;
+    position: relative;
     z-index: 240;
-    left: 0;
-    right: 0;
-    bottom: calc(env(safe-area-inset-bottom, 0px) + var(--story-credit-mobile-bottom));
+    bottom: auto;
     width: 100%;
-    margin: 0;
+    margin: clamp(3rem, 6vw, 4rem) auto 0;
     padding-left: 1rem;
     padding-right: 1rem;
     pointer-events: none;
+    transform: translateY(calc(var(--story-credit-mobile-lift) * -1));
   }
 
   .about-story__page-credit .page-credit {
