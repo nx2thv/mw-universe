@@ -4261,13 +4261,15 @@ body:has(.au-archive) {
   }
 
   .about-story__archive-object--camera {
-    --camera-x: -8.5rem;
-    --camera-y: 0.8rem;
+    --camera-bottom: 8rem;
+    --camera-x: -7.5rem;
+    --camera-y: 2.5rem;
     right: -1.1rem;
     top: auto;
-    bottom: 8rem;
+    bottom: calc(var(--camera-bottom) - var(--camera-y));
     width: 8.6rem;
     opacity: 0.58;
+    transform: translateX(var(--camera-x)) rotate(8deg);
   }
 
   .about-story__archive-object--kiss {

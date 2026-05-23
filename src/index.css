@@ -857,6 +857,11 @@ body {
   position: absolute;
   inset: 0;
   z-index: 2;
+  -webkit-transform: translateZ(0.35px);
+  transform: translateZ(0.35px);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  will-change: transform;
   background:
     repeating-radial-gradient(
       circle at calc(var(--film-hole-step) / 2) calc(var(--film-rail-size) / 2),
@@ -900,6 +905,7 @@ body {
   display: block;
   object-fit: cover;
   transform: translateZ(0.1px) scale(1.02);
+  -webkit-transform: translateZ(0.1px) scale(1.02);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   will-change: transform;
@@ -4432,6 +4438,148 @@ section[data-section-index] {
 
   .ideas-intro p {
     font-size: 1.125rem;
+  }
+}
+
+@media (max-width: 767px) {
+  body:has(.brief-portal-page) {
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  .brief-portal-page {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100svh;
+    height: 100dvh;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  .brief-portal-page .home-journey-stage {
+    height: 100%;
+    min-height: 100%;
+    overflow: hidden;
+  }
+
+  .brief-portal-page .home-journey-section {
+    height: 100%;
+    min-height: 100%;
+    overflow: hidden;
+    padding: clamp(3.6rem, 9svh, 4.5rem) clamp(0.35rem, 1.6vw, 0.7rem) calc(0.72rem + env(safe-area-inset-bottom));
+  }
+
+  .brief-portal-page .home-journey-text--briefs {
+    height: 100%;
+    min-height: 0;
+  }
+
+  .brief-portal-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    margin-top: 0;
+    padding-bottom: 0;
+  }
+
+  .brief-portal-idea-meta {
+    margin-top: 0;
+    font-size: 0.46rem;
+    line-height: 1.25;
+  }
+
+  .brief-portal-page .home-journey-section-title {
+    margin-top: 0.12rem;
+    font-size: clamp(1.86rem, 11vw, 2.9rem);
+    line-height: 0.9;
+  }
+
+  .brief-portal-page .home-journey-copy {
+    margin-top: 0.38rem;
+    font-size: clamp(0.66rem, 2.8vw, 0.78rem);
+    line-height: 1.35;
+  }
+
+  .brief-portal-grid {
+    --brief-portal-card-height: clamp(10.4rem, 20svh, 12.6rem);
+    --brief-portal-grid-offset: 0.9rem;
+    --brief-portal-lower-title-offset: clamp(0.9rem, 2.2svh, 1.25rem);
+    flex: 0 0 auto;
+    height: auto;
+    min-height: 0;
+    margin-top: calc(clamp(0.7rem, 1.8svh, 1rem) + var(--brief-portal-grid-offset));
+    grid-template-rows: repeat(3, var(--brief-portal-card-height));
+    gap: clamp(0.42rem, 1.2svh, 0.72rem);
+    align-items: stretch;
+    align-content: stretch;
+  }
+
+  .brief-portal-grid.is-solo {
+    grid-template-rows: repeat(2, var(--brief-portal-card-height));
+  }
+
+  .brief-portal-card {
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+    padding: clamp(1.05rem, 2.9svh, 1.45rem) clamp(0.88rem, 4vw, 1.2rem) clamp(0.78rem, 2.2svh, 1.05rem);
+    gap: clamp(0.42rem, 1.2svh, 0.64rem);
+  }
+
+  .brief-portal-card-kicker {
+    top: 0.56rem;
+    right: 0.62rem;
+    font-size: 0.46rem;
+  }
+
+  .brief-portal-card-title {
+    align-self: center;
+    margin-top: 0;
+    font-size: clamp(1rem, 4.4vw, 1.18rem);
+    line-height: 1.12;
+    max-width: calc(100% - 2rem);
+    text-align: center;
+  }
+
+  .brief-portal-card:not(:first-child) .brief-portal-card-title {
+    transform: translateY(var(--brief-portal-lower-title-offset));
+  }
+
+  .brief-portal-card-comment {
+    display: -webkit-box;
+    margin-top: -0.12rem;
+    max-width: none;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    font-size: clamp(0.58rem, 2.45vw, 0.68rem);
+    line-height: 1.32;
+  }
+
+  .brief-portal-link-row {
+    margin-top: auto;
+    gap: 0.34rem;
+    padding-top: 0;
+  }
+
+  .brief-portal-link {
+    font-size: clamp(0.48rem, 2.15vw, 0.56rem);
+    line-height: 1.15;
+    letter-spacing: 0.09em;
+    padding: 0.18rem 0;
+  }
+
+  .brief-portal-link-static {
+    letter-spacing: 0.09em;
+    padding-left: 0;
+  }
+
+  .brief-portal-error {
+    margin-top: 0.42rem;
+    font-size: 0.48rem;
   }
 }
 
