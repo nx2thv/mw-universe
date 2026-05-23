@@ -337,12 +337,17 @@ body:has(.au-archive) {
 }
 
 .au-archive__eyebrow,
-.au-card__code,
 .au-card__label,
 .au-archive__index-link,
 .au-polaroid figcaption small {
-  font-family: "IBM Plex Mono", monospace;
+  font-family: "Rokkitt", monospace;
   letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.au-card__code {
+  font-family: "Montserrat", monospace;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
 }
 
@@ -598,6 +603,11 @@ body:has(.au-archive) {
   scrollbar-width: none;
 }
 
+.au-archive__welcome .au-archive__index.is-gated {
+  height: clamp(6.8rem, 10vw, 8.1rem);
+  padding-top: 0;
+}
+
 .au-archive__welcome .au-archive__index::-webkit-scrollbar {
   display: none;
 }
@@ -618,6 +628,31 @@ body:has(.au-archive) {
 .au-archive__welcome .au-archive__index-link {
   position: relative;
   z-index: 1;
+}
+
+.au-archive__gate-prompt {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  z-index: 1;
+  margin: 0;
+  color: rgba(229, 221, 209, 0.78);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: clamp(0.58rem, 0.85vw, 0.72rem);
+  letter-spacing: 0.14em;
+  line-height: 1.15;
+  text-transform: uppercase;
+  transform: translateX(-50%);
+  white-space: pre-line;
+  text-align: center;
+}
+
+.au-archive__welcome .au-archive__index.is-gated::before {
+  top: calc(1.8rem + (clamp(3.3rem, 7vw, 4.35rem) / 2));
+}
+
+.au-archive__welcome .au-archive__index.is-gated .au-archive__index-link {
+  margin-top: 1.8rem;
 }
 
 .au-archive__shelf {
@@ -803,7 +838,7 @@ body:has(.au-archive) {
   max-width: 42rem;
   margin: clamp(0.65rem, 1.4vw, 1rem) auto 0;
   color: var(--au-muted);
-  font-family: "Cormorant Garamond", serif;
+  font-family: "Alegreya", serif;
   font-size: clamp(1.16rem, 1.8vw, 1.48rem);
   font-style: italic;
   line-height: 1.18;
@@ -871,9 +906,17 @@ body:has(.au-archive) {
 .au-card__paragraph {
   margin: 0;
   color: var(--au-muted);
-  font-family: "Cormorant Garamond", serif;
+  font-family: "Alegreya", serif;
   font-size: clamp(1rem, 1.25vw, 1.18rem);
   line-height: 1.38;
+}
+
+.au-card__setting {
+  white-space: pre-line;
+}
+
+.au-card__paragraph {
+  text-align: left;
 }
 
 .au-card__setting {
@@ -893,8 +936,8 @@ body:has(.au-archive) {
   background: rgba(190, 174, 150, 0.07);
   color: rgba(247, 239, 226, 0.78);
   padding: 0.4rem 0.56rem;
-  font-family: "IBM Plex Mono", monospace;
-  font-size: 0.68rem;
+  font-family: "Rokkitt", monospace;
+  font-size: 0.9rem;
 }
 
 .au-card__board-wrap {
@@ -2395,7 +2438,7 @@ body:has(.au-archive) {
 
 .about-story__news-section {
   margin: 0;
-  font-family: var(--story-label-font);
+  font-family: "Courier Prime", "Courier New", monospace;
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.11em;
@@ -2406,8 +2449,8 @@ body:has(.au-archive) {
 .about-story__news-copy h3 {
   margin: 0;
   max-width: 8.6em;
-  font-family: "Source Sans 3", sans-serif;
-  font-size: clamp(2.45rem, 4.5vw, 5rem);
+  font-family: "Rokkitt", sans-serif;
+  font-size: clamp(2.45rem, 4vw, 5rem);
   font-weight: 900;
   line-height: 0.88;
   letter-spacing: -0.035em;
@@ -2417,7 +2460,7 @@ body:has(.au-archive) {
 .about-story__news-subhead {
   margin: 0.25rem 0 0;
   max-width: 28rem;
-  font-family: "Source Sans 3", sans-serif;
+  font-family: "Alegreya", sans-serif;
   font-size: clamp(1.05rem, 1.4vw, 1.45rem);
   font-weight: 820;
   line-height: 1.05;
@@ -2541,6 +2584,7 @@ body:has(.au-archive) {
   transform-origin: left top;
   pointer-events: none;
   user-select: none;
+  margin-top: -0.4em;
 }
 
 .about-story__memory-heading-title span {
@@ -2967,7 +3011,8 @@ body:has(.au-archive) {
   }
 
   .about-story__memory-heading-title {
-    font-size: clamp(7.4rem, 12vw, 10.2rem);
+    font-size: clamp(10.4rem, 12vw, 10.2rem);
+    margin-top: 0.4em;
     line-height: 0.72;
     transform: none;
   }
@@ -3266,13 +3311,14 @@ body:has(.au-archive) {
   padding: 0.6rem 0.2rem 0;
 }
 
-.about-story__moment-title {
+.about-story__moment-excerpt {
   margin: 0;
-  font-family: var(--story-title-font);
-  font-size: 1.42rem;
-  font-weight: 520;
+  font-family: "Oooh Baby", cursive;
+  font-size: 1.3rem;
   line-height: 0.98;
+  padding-top: 1rem;
   color: var(--story-paper-ink);
+  white-space: pre-line;
 }
 
 .about-story__moment-card .about-story__memory-tone {
@@ -3687,7 +3733,7 @@ body:has(.au-archive) {
 }
 
 .about-story__envelope-name.is-recipient {
-  font-family: "Courier Prime", serif;
+  font-family: "Rokkitt", monospace;
   text-transform: none;
   letter-spacing: 0.02em;
   font-size: 1rem;
@@ -4169,7 +4215,8 @@ body:has(.au-archive) {
   }
 
   .about-story__memory-heading-title {
-    font-size: clamp(6.4rem, 17vw, 8.8rem);
+    font-size: clamp(8.4rem, 17vw, 8.8rem);
+    margin-top: 0.4em;
     line-height: 0.72;
     transform: none;
   }
@@ -4468,7 +4515,7 @@ body:has(.au-archive) {
   }
 
   .about-story__envelope-name.is-recipient {
-    font-size: 1.58rem;
+    font-size: 1rem;
   }
 
   .about-story__envelope-line {

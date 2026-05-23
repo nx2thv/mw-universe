@@ -49,8 +49,6 @@ type PolaroidOrientation = "portrait" | "landscape" | "square";
 
 type LoreFragment = {
   id: string;
-  title: string;
-  titleVi?: string;
   excerpt: string;
   excerptVi?: string;
   ageRange: string;
@@ -266,8 +264,6 @@ const storyLettersVi = [
 const loreFragments: LoreFragment[] = [
   {
     id: "frag-01",
-    title: "#obsessed",
-    titleVi: "#obsessed",
     excerpt: "william stole his husband's shirt",
     excerptVi: "ẻm bận áo cũ của ảnh",
     ageRange: "26-33",
@@ -278,10 +274,8 @@ const loreFragments: LoreFragment[] = [
   },
   {
     id: "frag-02",
-    title: "#nha_trang",
-    titleVi: "#nha_trang",
-    excerpt: "that one time they went on a honeymoon in Nha Trang, and it took them a whole year after the wedding to finally go",
-    excerptVi: "cái nì i tuần trăng mật ở Nha Trang, cưới dc 1 năm ùi mới đi",
+    excerpt: "#nhatrang\n\nthat one time they went on a honeymoon in VN, and it took them a whole year after the wedding to finally go",
+    excerptVi: "#nhatrang\n\ncái nì i tuần trăng mật ở VN, cưới dc 1 năm ùi mới đi",
     ageRange: "27-34",
     image: littleMomentImages[1],
     artist: "Tinh Tú",
@@ -290,8 +284,6 @@ const loreFragments: LoreFragment[] = [
   },
   {
     id: "frag-03",
-    title: "HPNY!!",
-    titleVi: "HPNY!!",
     excerpt: "they had some leftover Christmas wrapping paper sooooo",
     excerptVi: "Còn dư cuộn wrap quà giáng sinh nên... ừm",
     ageRange: "28-35",
@@ -302,8 +294,6 @@ const loreFragments: LoreFragment[] = [
   },
   {
     id: "frag-04",
-    title: "Bedtime 💤",
-    titleVi: "💤",
     excerpt: "William sleeps UGLY ASL, but Marcus never fails to find it adorable smh",
     excerptVi: "em W ngủ siêu xấu nhưng thg ck ẻm lúc nào cx khen cuti =)))))))))",
     ageRange: "27-34",
@@ -313,10 +303,8 @@ const loreFragments: LoreFragment[] = [
   },
   {
     id: "frag-05",
-    title: "New Tattoo",
-    titleVi: "@Hayes",
-    excerpt: "new tattoo alert (^^ゞ",
-    excerptVi: "em W xăm họ anh M (^^ゞ",
+    excerpt: "new tattoo alert (^^ゞ\n\n@hayes",
+    excerptVi: "em W xăm họ anh M (^^ゞ\n\n@hayes",
     ageRange: "23-30",
     image: littleMomentImages[4],
     artist: "Jeong Han Wook",
@@ -325,8 +313,6 @@ const loreFragments: LoreFragment[] = [
   },
   {
     id: "frag-06",
-    title: "shopping(?)",
-    titleVi: "i sốp ping",
     excerpt: "Marcus was, once again, doing unpaid bodyguard work",
     excerptVi: "nhìn là biết tự nguyện đi theo chứ k hề bị ép",
     ageRange: "20-27",
@@ -337,8 +323,6 @@ const loreFragments: LoreFragment[] = [
   },
   {
     id: "frag-07",
-    title: "post-deployment",
-    titleVi: "post-deployment",
     excerpt: "What they do after each deployment. Not suitable for public broadcasting |▽//)ゝ",
     excerptVi: "thứ hai ảnh làm sau mỗi lần Marcus trở về từ nhiệm vụ. tui 0 dám để công khai |▽//)ゝ",
     ageRange: "29-37",
@@ -349,8 +333,6 @@ const loreFragments: LoreFragment[] = [
   },
   {
     id: "frag-08",
-    title: "Wedding Portrait",
-    titleVi: "Ưedding Portrait",
     excerpt: "A small glimpse of the wedding photoshoot",
     excerptVi: "cms đám cưới đầu tiên của mí ảnh",
     ageRange: "26-33",
@@ -361,20 +343,16 @@ const loreFragments: LoreFragment[] = [
   },
   {
     id: "frag-09",
-    title: "s/o to NTT",
-    titleVi: "s/o to NTT",
     excerpt: "gift from arttrade ♡ॢ₍⸍⸌̣ʷ̣̫⸍̣⸌₎",
     excerptVi: "Sếp Tùng tặng 2 gã gay ♡ॢ₍⸍⸌̣ʷ̣̫⸍̣⸌₎",
     ageRange: "30-37",
     image: littleMomentImages[8],
-    artist: "Việt Quất",
-    tag_direction: "left",
+    artist: "Đếm Ngược Hai Tháng",
+    tag_direction: "right",
     polaroid_orientation: "portrait",
   },
   {
     id: "frag-10",
-    title: "s/o Tinh Tú",
-    titleVi: "s/o Tinh Tú",
     excerpt: "gift from arttrade and cms <丶｀∀´>",
     excerptVi: "vk iu Tinh Tú tặng tui!! <丶｀∀´>",
     ageRange: "30-37",
@@ -515,7 +493,7 @@ const translations = {
         range: "Ages 25-32",
         title: "'Yes, I Do'",
         bodyPreview:
-          "Marcus proposed on their eighth anniversary. By then, they finally had enough to choose a home together: a three-storey brownstone on Perry Street in the West Village. They moved in first. A year later, they got married.\n\n" +
+          "Marcus proposed on their eighth anniversary. By then, they finally had enough to choose a home together: a three-storey brownstone on Perry Street in the West Village. They moved in first. A year later, they got married. Their wedding hashtag was #cartiercaughtHayes. Iconic behaviour.\n\n" +
           "Marriage did not calm them down. It simply gave their chaos a permanent address.",
         bodyFull:
           "First came Banana: a grey British Shorthair who wandered in through the back door while they were doing something deeply inappropriate in the kitchen. Marcus wanted him out. William wanted him kept. The winner should be obvious. ヽ║ ˘ _ ˘ ║ノ Banana became their first child before anyone had time to file an objection.\n\n" +
@@ -634,7 +612,7 @@ const translations = {
         range: "Ages 25-32",
         title: "'Em Đồng Ý'",
         bodyPreview:
-          "Marcus cầu hôn vào dịp kỉ niệm 8 năm yêu nhau. Chỉ đến tận bấy giờ, họ mới có đủ điều kiện để chọn một ngôi nhà: một căn browstone ba tầng ở phố Perry thuộc West Village. Họ chuyển vào đó trước. Một năm sau thì chính thức làm đám cưới.\n\n" +
+          "Marcus cầu hôn vào dịp kỉ niệm 8 năm yêu nhau. Chỉ đến tận bấy giờ, họ mới có đủ điều kiện để chọn một ngôi nhà: một căn browstone ba tầng ở phố Perry thuộc West Village. Họ chuyển vào đó trước. Một năm sau thì chính thức làm đám cưới. Hashtag đám cưới của họ là #cartiercaughthayes. Iconic.\n\n" +
           "Người ta bảo cưới nhau sẽ làm tình yêu bớt cuồng nhiệt lại. Đáng tiếc thay, đó không phải là trường hợp của 2 con người này.",
         bodyFull:
           "Đầu tiên là họ đã nhận nuôi một con mèo Anh lông xám khi họ đang xoxo trong bếp thì nó đi vào từ cửa sau. Marcus đòi đuổi nó đi. William thì đòi giữ nó lại. Đoán coi ai thắng ヽ║ ˘ _ ˘ ║ノ. Con mèo được đặt tên là Banana, nó là đứa con đầu tiên của họ\n\n" +
@@ -1322,7 +1300,6 @@ export default function TheirStory() {
                     <div className="about-story__moments-wall" aria-live="polite">
                       {wallFragments.map((fragment, index) => {
                         const staggerId = `moment-${activeWallPage}-${fragment.id}`;
-                        const fragmentTitle = language === "vi" ? fragment.titleVi ?? fragment.title : fragment.title;
                         const fragmentExcerpt = language === "vi" ? fragment.excerptVi ?? fragment.excerpt : fragment.excerpt;
                         return (
                           <article
@@ -1347,7 +1324,7 @@ export default function TheirStory() {
                             <figure
                               className={`about-story__moment-photo about-story__moment-photo--${getFragmentOrientation(fragment)} ${fragment.is_nsfw ? "is-nsfw" : ""} ${fragment.is_nsfw && revealedNsfwIds.includes(fragment.id) ? "is-revealed" : ""}`}
                             >
-                              <img src={fragment.image} alt={`${fragmentTitle} visual`} />
+                              <img src={fragment.image} alt={`${fragmentExcerpt} visual`} />
                               {fragment.is_nsfw && !revealedNsfwIds.includes(fragment.id) && nsfwPromptId !== fragment.id ? (
                                 <button
                                   type="button"
@@ -1386,8 +1363,7 @@ export default function TheirStory() {
                             </figure>
                             <div className="about-story__moment-caption">
                               <p className="about-story__memory-tone">{language === "vi" ? "Tuổi" : "Age"} {fragment.ageRange}</p>
-                              <h3 className="about-story__moment-title">{fragmentTitle}</h3>
-                              <p className="about-story__card-body">{fragmentExcerpt}</p>
+                              <p className="about-story__moment-excerpt">{fragmentExcerpt}</p>
                             </div>
                           </article>
                         );

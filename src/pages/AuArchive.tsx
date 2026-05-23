@@ -1,5 +1,5 @@
 import "./about-them.css";
-import { useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { useLanguage } from "../LanguageContext";
 import PageCredit from "../components/PageCredit";
 import auBackgroundVideo from "../../assets/au1-background-small.m4v?url";
@@ -47,6 +47,10 @@ const dustSpecs: DustSpec[] = [
   { left: "88%", top: "34%", size: "2px", duration: "19s", delay: "-6s", driftX: "10px", driftY: "-20px" },
 ];
 
+const AU_ENTRY_TRANSITION_NAV_DELAY_MS = 920;
+const AU_ENTRY_TRANSITION_TOTAL_MS = 1880;
+type AuEntryTransitionPhase = "leaving" | "arriving";
+
 const auEntries: AuEntry[] = [
   {
     id: "au1",
@@ -54,7 +58,7 @@ const auEntries: AuEntry[] = [
     title: "The Quiet Husband",
     shortTitle: "Contract",
     premise: "p/s: it's just them being in love with extra legal complications.",
-    setting: "A quiet two-storey house in a suburban neighbourhood just outside the city.",
+    setting: "A quiet two-storey house in a\nsuburban neighbourhood just outside the city.",
     background: [
       "Marcus officially divorced the army at 37 and bought a quiet house to retire in. Allegedly.",
       "The day he returned home, his mother threw a welcome-back party and hired a local bakery for dessert service. William worked there with Chef Remy. He was 27. Marcus got hooked immediately and kept coming back for desserts despite barely liking sweets.",
@@ -72,28 +76,28 @@ const auEntries: AuEntry[] = [
   },
 
   {
-  id: "au2",
-  code: "AU-002",
-  title: "Your AU Title",
-  shortTitle: "Short Name",
-  premise: "One-line vibe or joke/premise.",
-  setting: "Where this AU takes place.",
-  background: [
-    "Paragraph one.",
-    "Paragraph two.",
-    "Paragraph three.",
-  ],
-  motifs: ["motif one", "motif two", "motif three"],
-  commissions: [
-    {
-      title: "Commission title",
-      artist: "artist name",
-      image: commissionBoard1,
-      orientation: "landscape",
-      note: "optional note",
-    },
-  ],
-},
+    id: "au2",
+    code: "AU-002",
+    title: "Your AU Title",
+    shortTitle: "Short Name",
+    premise: "One-line vibe or joke/premise.",
+    setting: "Where this AU takes place.",
+    background: [
+      "Paragraph one.",
+      "Paragraph two.",
+      "Paragraph three.",
+    ],
+    motifs: ["motif one", "motif two", "motif three"],
+    commissions: [
+      {
+        title: "Commission title",
+        artist: "artist name",
+        image: commissionBoard1,
+        orientation: "landscape",
+        note: "optional note",
+      },
+    ],
+  },
 
 
 
@@ -108,11 +112,11 @@ const translations = {
     jumpLabel: "Jump to an AU",
     backgroundLabel: "Background",
     settingLabel: "Setting",
-    motifLabel: "Motifs",
     commissionLabel: "Commission Board",
     empty: "not here yet...",
     sharedView: "Showing linked AU",
     clearSharedView: "Show all AUs",
+    gatePrompt: "Would you like to see\nthem in another universe?",
     copyLink: "Copy AU link",
     copied: "Copied",
   },
@@ -124,11 +128,11 @@ const translations = {
     jumpLabel: "Đi tới AU",
     backgroundLabel: "Bối cảnh",
     settingLabel: "Không gian",
-    motifLabel: "Motif",
     commissionLabel: "Bảng Commission",
     empty: "not here yet...",
     sharedView: "Đang xem AU được gửi",
     clearSharedView: "Xem tất cả AU",
+    gatePrompt: "Xem họ ở vũ\ntrụ khác nhé?",
     copyLink: "Sao chép link AU",
     copied: "Đã sao chép",
   },
@@ -144,12 +148,20 @@ function getSharedAuId() {
   return new URLSearchParams(window.location.search).get("au");
 }
 
+function getGatedAuId() {
+  if (typeof window === "undefined") return null;
+  return new URLSearchParams(window.location.search).get("gate");
+}
+
 export default function AuArchive() {
   const { language } = useLanguage();
   const [sharedAuId, setSharedAuId] = useState<string | null>(getSharedAuId);
+  const [gatedAuId, setGatedAuId] = useState<string | null>(getGatedAuId);
   const [selectedAuId, setSelectedAuId] = useState<string | null>(null);
   const [openAuMenuId, setOpenAuMenuId] = useState<string | null>(null);
   const [copiedAuId, setCopiedAuId] = useState<string | null>(null);
+  const [entryTransitionPhase, setEntryTransitionPhase] = useState<AuEntryTransitionPhase | null>(null);
+  const entryTransitionTimeoutsRef = useRef<number[]>([]);
   const t = translations[language] || translations.en;
   const activeAuEntry = sharedAuId
     ? auEntries.find((entry) => {
@@ -159,11 +171,24 @@ export default function AuArchive() {
     : selectedAuId
       ? auEntries.find((entry) => entry.id === selectedAuId)
       : null;
+  const gatedAuEntry = gatedAuId
+    ? auEntries.find((entry) => {
+      const gatedValue = gatedAuId.toLowerCase();
+      return entry.id.toLowerCase() === gatedValue || entry.code.toLowerCase() === gatedValue;
+    })
+    : null;
+  const welcomeEntries = gatedAuEntry ? [gatedAuEntry] : auEntries;
   const showWelcome = !sharedAuId && !activeAuEntry;
+
+  useEffect(() => {
+    return () => {
+      entryTransitionTimeoutsRef.current.forEach((timeoutId) => window.clearTimeout(timeoutId));
+    };
+  }, []);
 
   const getAuShareUrl = (entry: AuEntry) => {
     const url = new URL("/au", window.location.origin);
-    url.searchParams.set("au", entry.code);
+    url.searchParams.set("gate", entry.code);
     return url.toString();
   };
 
@@ -180,14 +205,45 @@ export default function AuArchive() {
     }
   };
 
-  const openAuEntry = (entry: AuEntry) => {
+  const applyOpenAuEntry = (entry: AuEntry) => {
     if (sharedAuId) {
       window.history.replaceState(null, "", "/au");
       setSharedAuId(null);
     }
+    if (gatedAuId) {
+      window.history.replaceState(null, "", "/au");
+      setGatedAuId(null);
+    }
     setSelectedAuId(entry.id);
     setOpenAuMenuId(null);
     setCopiedAuId(null);
+  };
+
+  const openAuEntry = (entry: AuEntry) => {
+    if (activeAuEntry?.id === entry.id || entryTransitionPhase) return;
+
+    if (!showWelcome) {
+      applyOpenAuEntry(entry);
+      return;
+    }
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      applyOpenAuEntry(entry);
+      return;
+    }
+
+    entryTransitionTimeoutsRef.current.forEach((timeoutId) => window.clearTimeout(timeoutId));
+    setEntryTransitionPhase("leaving");
+
+    entryTransitionTimeoutsRef.current = [
+      window.setTimeout(() => {
+        applyOpenAuEntry(entry);
+        setEntryTransitionPhase("arriving");
+      }, AU_ENTRY_TRANSITION_NAV_DELAY_MS),
+      window.setTimeout(() => {
+        setEntryTransitionPhase(null);
+      }, AU_ENTRY_TRANSITION_TOTAL_MS),
+    ];
   };
 
   return (
@@ -239,12 +295,13 @@ export default function AuArchive() {
             </div>
           </div>
 
-          <nav className="au-archive__index portal-fade-up portal-fade-up--choices" aria-label={t.jumpLabel}>
-            {auEntries.map((entry) => {
+          <nav className={`au-archive__index portal-fade-up portal-fade-up--choices ${gatedAuEntry ? "is-gated" : ""}`} aria-label={t.jumpLabel}>
+            {gatedAuEntry ? <p className="au-archive__gate-prompt">{t.gatePrompt}</p> : null}
+            {welcomeEntries.map((entry) => {
               const coverImage = entry.indexImage ?? entry.commissions.find((commission) => commission.image)?.image;
 
               return (
-                <button key={entry.id} type="button" className="au-archive__index-link" onClick={() => openAuEntry(entry)}>
+                <button key={entry.id} type="button" className={`au-archive__index-link ${gatedAuEntry?.id === entry.id ? "is-active" : ""}`} onClick={() => openAuEntry(entry)}>
                   <span className="au-archive__index-thumb" aria-hidden="true">
                     {coverImage ? <img src={coverImage} alt="" loading="lazy" /> : <span>{entry.code}</span>}
                   </span>
@@ -290,105 +347,102 @@ export default function AuArchive() {
         <section className="au-archive__shelf portal-fade-up portal-fade-up--choices" aria-label={t.titleLabel}>
           {activeAuEntry ? (
             <article key={activeAuEntry.id} id={activeAuEntry.id} className="au-card au-card--stagger">
-            <div className="au-card__actions">
-              <button
-                type="button"
-                className="au-card__action-trigger"
-                aria-label={`Open actions for ${activeAuEntry.title}`}
-                aria-expanded={openAuMenuId === activeAuEntry.id}
-                onClick={() => setOpenAuMenuId((current) => (current === activeAuEntry.id ? null : activeAuEntry.id))}
-              >
-                ⋮
-              </button>
-              {openAuMenuId === activeAuEntry.id ? (
-                <div className="au-card__action-menu">
-                  <button type="button" onClick={() => copyAuShareUrl(activeAuEntry)}>
-                    {t.copyLink}
-                  </button>
-                </div>
-              ) : null}
-            </div>
-            <div className="au-card__header">
-              <p className="au-card__code">{activeAuEntry.code}</p>
-              <div className="au-card__heading-copy">
-                <h2 className="au-card__title">{activeAuEntry.title}</h2>
-                <p className="au-card__premise">{activeAuEntry.premise}</p>
+              <div className="au-card__actions">
+                <button
+                  type="button"
+                  className="au-card__action-trigger"
+                  aria-label={`Open actions for ${activeAuEntry.title}`}
+                  aria-expanded={openAuMenuId === activeAuEntry.id}
+                  onClick={() => setOpenAuMenuId((current) => (current === activeAuEntry.id ? null : activeAuEntry.id))}
+                >
+                  ⋮
+                </button>
+                {openAuMenuId === activeAuEntry.id ? (
+                  <div className="au-card__action-menu">
+                    <button type="button" onClick={() => copyAuShareUrl(activeAuEntry)}>
+                      {t.copyLink}
+                    </button>
+                  </div>
+                ) : null}
               </div>
-            </div>
-
-            <div className="au-card__body">
-              <div className="au-card__text">
-                <div className="au-card__meta-block">
-                  <p className="au-card__label">{t.settingLabel}</p>
-                  <p className="au-card__setting">{activeAuEntry.setting}</p>
+              <div className="au-card__header">
+                <p className="au-card__code">{activeAuEntry.code}</p>
+                <div className="au-card__heading-copy">
+                  <h2 className="au-card__title">{activeAuEntry.title}</h2>
+                  <p className="au-card__premise">{activeAuEntry.premise}</p>
                 </div>
+              </div>
 
-                <div className="au-card__meta-block">
-                  <p className="au-card__label">{t.backgroundLabel}</p>
-                  {activeAuEntry.background.map((paragraph) => (
-                    <p key={paragraph} className="au-card__paragraph">{paragraph}</p>
-                  ))}
-                </div>
+              <div className="au-card__body">
+                <div className="au-card__text">
+                  <div className="au-card__meta-block">
+                    <div className="au-card__meta-block">
+                      <div className="au-card__motifs">
+                        {activeAuEntry.motifs.map((motif) => (
+                          <span key={motif}>{motif}</span>
+                        ))}
+                      </div>
+                    </div>
+                    <p className="au-card__label">{t.settingLabel}</p>
+                    <p className="au-card__setting">{activeAuEntry.setting}</p>
+                  </div>
 
-                <div className="au-card__meta-block">
-                  <p className="au-card__label">{t.motifLabel}</p>
-                  <div className="au-card__motifs">
-                    {activeAuEntry.motifs.map((motif) => (
-                      <span key={motif}>{motif}</span>
+                  <div className="au-card__meta-block">
+                    <p className="au-card__label">{t.backgroundLabel}</p>
+                    {activeAuEntry.background.map((paragraph) => (
+                      <p key={paragraph} className="au-card__paragraph">{paragraph}</p>
                     ))}
                   </div>
                 </div>
-              </div>
 
-              <div className="au-card__board-wrap">
-                <p className="au-card__label">{t.commissionLabel}</p>
-                <div
-                  className={`au-photoboard ${
-                    activeAuEntry.commissions.length <= 1
-                      ? "is-single"
-                      : activeAuEntry.commissions.length === 2
-                        ? "is-duo"
-                        : "is-multi"
-                  }`}
-                >
-                  {activeAuEntry.commissions.map((commission, commissionIndex) => {
-                    const orientation = commission.orientation ?? "portrait";
-                    const rotationSeed = `${activeAuEntry.id}-${commission.title}`;
-                    const artistTagDirection = commissionIndex % 2 === 0 ? "is-right" : "is-left";
+                <div className="au-card__board-wrap">
+                  <p className="au-card__label">{t.commissionLabel}</p>
+                  <div
+                    className={`au-photoboard ${activeAuEntry.commissions.length <= 1
+                        ? "is-single"
+                        : activeAuEntry.commissions.length === 2
+                          ? "is-duo"
+                          : "is-multi"
+                      }`}
+                  >
+                    {activeAuEntry.commissions.map((commission, commissionIndex) => {
+                      const orientation = commission.orientation ?? "portrait";
+                      const rotationSeed = `${activeAuEntry.id}-${commission.title}`;
+                      const artistTagDirection = commissionIndex % 2 === 0 ? "is-right" : "is-left";
 
-                    return (
-                      <figure
-                        key={commission.title}
-                        className={`au-polaroid au-polaroid--${orientation} ${commission.image ? "" : "is-empty"}`}
-                        style={{
-                          transform: `rotate(${getRotation(rotationSeed)}deg)`,
-                          ["--pin-offset" as string]: `${(commissionIndex % 5) * 5 - 10}px`,
-                        } as CSSProperties}
-                      >
-                        <span className="au-polaroid__pin" aria-hidden="true" />
-                        {commission.artist ? (
-                          <span className={`about-story__artist-tag ${artistTagDirection}`}>{`(A) ${commission.artist}`}</span>
-                        ) : null}
-                        <div className="au-polaroid__image">
-                          {commission.image ? (
-                            <img src={commission.image} alt={`${activeAuEntry.title}: ${commission.title}`} loading="lazy" />
-                          ) : (
-                            <span>{t.empty}</span>
-                          )}
-                        </div>
-                        <figcaption>
-                          <span>{commission.title}</span>
-                          {commission.note ? <small>{commission.note}</small> : !commission.artist ? <small>{t.empty}</small> : null}
-                        </figcaption>
-                      </figure>
-                    );
-                  })}
+                      return (
+                        <figure
+                          key={commission.title}
+                          className={`au-polaroid au-polaroid--${orientation} ${commission.image ? "" : "is-empty"}`}
+                          style={{
+                            transform: `rotate(${getRotation(rotationSeed)}deg)`,
+                            ["--pin-offset" as string]: `${(commissionIndex % 5) * 5 - 10}px`,
+                          } as CSSProperties}
+                        >
+                          <span className="au-polaroid__pin" aria-hidden="true" />
+                          {commission.artist ? (
+                            <span className={`about-story__artist-tag ${artistTagDirection}`}>{`(A) ${commission.artist}`}</span>
+                          ) : null}
+                          <div className="au-polaroid__image">
+                            {commission.image ? (
+                              <img src={commission.image} alt={`${activeAuEntry.title}: ${commission.title}`} loading="lazy" />
+                            ) : (
+                              <span>{t.empty}</span>
+                            )}
+                          </div>
+                          <figcaption>
+                            <span>{commission.title}</span>
+                            {commission.note ? <small>{commission.note}</small> : !commission.artist ? <small>{t.empty}</small> : null}
+                          </figcaption>
+                        </figure>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
-            </div>
-            {copiedAuId === activeAuEntry.id ? (
-              <p className="au-card__copy-state">{t.copied}</p>
-            ) : null}
+              {copiedAuId === activeAuEntry.id ? (
+                <p className="au-card__copy-state">{t.copied}</p>
+              ) : null}
             </article>
           ) : null}
         </section>
@@ -397,6 +451,21 @@ export default function AuArchive() {
       <div className="au-archive__credit">
         <PageCredit tone="on-dark" className="page-credit--bottom" />
       </div>
+
+      {entryTransitionPhase ? (
+        <div
+          className={`route-transition-overlay route-transition-overlay--archive is-${entryTransitionPhase}`}
+          aria-hidden="true"
+          onAnimationEnd={(event) => {
+            if (event.currentTarget !== event.target) return;
+            if (entryTransitionPhase !== "arriving") return;
+            setEntryTransitionPhase(null);
+          }}
+        >
+          <div className="route-transition-overlay__texture" />
+          <div className="route-transition-overlay__frame" />
+        </div>
+      ) : null}
     </main>
   );
 }
