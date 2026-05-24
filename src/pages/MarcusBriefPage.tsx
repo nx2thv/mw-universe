@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import marcusBriefPage from "../../assets/marcus-pattern.jpeg";
 import FloatingSoundtrackBar from "../components/FloatingSoundtrackBar";
 import HeroScrollPage from "../components/HeroScrollPage";
@@ -7,6 +7,7 @@ import GalleryLightbox, {
 } from "../components/GalleryLightbox";
 import PageCredit from "../components/PageCredit";
 import { useLanguage } from "../LanguageContext";
+import { getGalleryItems } from "../lib/galleryItems";
 
 import marcusBeard from "../../assets/marcusBeard.jpeg";
 import marcusThighs from "../../assets/marcusThighs.jpeg";
@@ -25,11 +26,11 @@ import marcusBiceps2 from "../../assets/marcusBiceps2.jpeg";
 import marcusBack from "../../assets/marcusBack.jpeg";
 import marcusBody from "../../assets/marcusBody.jpeg";
 import marcusGallery1 from "../../assets/marcusGallery1.jpeg";
-import marcusGallery2 from "../../assets/marcusGallery2.jpeg";
-import marcusGallery3 from "../../assets/marcusGallery3.jpeg";
+import marcusGallery2 from "../../assets/optimized/marcusGallery2.webp";
+import marcusGallery3 from "../../assets/optimized/marcusGallery3.webp";
 import marcusColourPalette from "../../assets/marcusColourPalette.jpeg";
 import marcusWeddingRing from "../../assets/marcusWeddingRing.jpeg";
-import marcusTattoo from "../../assets/marcusTattoo.jpeg";
+import marcusTattoo from "../../assets/optimized/marcusTattoo.webp";
 import marcusID from "../../assets/MarcusHayes.jpeg";
 import marcusTattoo2 from "../../assets/marcusTattoo2.jpeg";
 import marcusTattoo3 from "../../assets/marcusTattoo3.jpeg";
@@ -54,8 +55,12 @@ export default function MarcusBriefPage() {
   const [isBasicInfoMediaVisible, setIsBasicInfoMediaVisible] = useState(false);
   const [selectedGalleryImage, setSelectedGalleryImage] =
     useState<GalleryLightboxImage | null>(null);
+  const [supabaseMarcusGallery, setSupabaseMarcusGallery] = useState<
+    { id: string; src: string; label: string }[]
+  >([]);
 
   // STRIP REFS FOR HORIZONTAL SCROLL
+  const basicInfoStripRef = useRef<HTMLDivElement | null>(null);
   const faceStripRef = useRef<HTMLDivElement | null>(null);
   const hairStripRef = useRef<HTMLDivElement | null>(null);
   const bodyStripRef = useRef<HTMLDivElement | null>(null);
@@ -139,6 +144,41 @@ export default function MarcusBriefPage() {
       observer.disconnect();
       mediaObserver.disconnect();
       galleryObserver.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function fetchSupabaseMarcusGallery() {
+      try {
+        const rows = await getGalleryItems("marcus_gallery");
+        if (!isMounted) return;
+        setSupabaseMarcusGallery(
+          rows.map((row) => {
+            const artistBase = row.artistCredit.trim().length > 0
+              ? row.artistCredit.trim()
+              : "Unknown";
+            const label = artistBase.startsWith("(A)")
+              ? artistBase
+              : `(A): ${artistBase}`;
+
+            return {
+              id: `supabase-${row.id}`,
+              src: row.src,
+              label,
+            };
+          }),
+        );
+      } catch (error) {
+        console.error("Failed to load Marcus gallery items from Supabase.", error);
+      }
+    }
+
+    fetchSupabaseMarcusGallery();
+
+    return () => {
+      isMounted = false;
     };
   }, []);
 
@@ -367,8 +407,9 @@ export default function MarcusBriefPage() {
       jawScar: "Left jawline scar",
 
       // HAIR / BEARD / ACCESSORIES
-      hair1: "Hair ref 1 (Slicked back)",
-      hair2: "Hair ref 2 (A bit tousled)",
+      hair1: "Hair can be slicked back like this",
+      hair2: "Or with some strands falling",
+      hair3: "Messy, unstyle hair",
       beard: "Beard",
       weddingRing: "Wedding ring",
       dogtags: "Dog tags",
@@ -411,12 +452,16 @@ export default function MarcusBriefPage() {
   // pick the right labels for current language
   const imageLabels = imageLabelsByLang[language] || imageLabelsByLang.en;
 
-  const marcusSoloGallery: { src: string; label: string }[] = [
-    { src: marcusID, label: "(A): Ha Vee" },
-    { src: marcusGallery3, label: "(A): Tì Khi" },
-    { src: marcusGallery2, label: "(A): Thy An" },
-    { src: marcusGallery1, label: "(A): Cẩm Đíc Nhót" },
+  const localMarcusSoloGallery: { id: string; src: string; label: string }[] = [
+    { id: "local-1", src: marcusID, label: "(A): Ha Vee" },
+    { id: "local-2", src: marcusGallery3, label: "(A): Tì Khi" },
+    { id: "local-3", src: marcusGallery2, label: "(A): Thy An" },
+    { id: "local-4", src: marcusGallery1, label: "(A): Cẩm Đíc Nhót" },
   ];
+  const marcusSoloGallery = useMemo(
+    () => [...localMarcusSoloGallery, ...supabaseMarcusGallery],
+    [supabaseMarcusGallery],
+  );
 
   const handleChapterJump = (anchor: string) => {
     const target = document.getElementById(anchor);
@@ -535,8 +580,8 @@ export default function MarcusBriefPage() {
                       : null;
 
                 return (
+                  <div key={section.id} className="marcus-section-group">
                   <section
-                    key={section.id}
                     id={section.anchor}
                     data-section-index={sectionIndex}
                     className={`marcus-chapter py-16 lg:py-24 ${isVisible ? "is-visible" : ""}`}
@@ -569,34 +614,54 @@ export default function MarcusBriefPage() {
                         <div
                           className="marcus-chapter-media marcus-reveal-item marcus-reveal-item--media"
                         >
-                          {/* PALETTE – match William's layout */}
+                          {/* PALETTE + AESTHETIC */}
                           {isPaletteSection && images.length === 1 && (
                             <div
                               data-marcus-basic-info-media
-                              className={`mt-10 marcus-basic-info-media ${isBasicInfoMediaVisible ? "is-media-visible" : ""}`}
+                              className={`mt-10 relative marcus-basic-info-media ${isBasicInfoMediaVisible ? "is-media-visible" : ""}`}
                             >
-                              <figure className="ref-image marcus-basic-info-media__item marcus-basic-info-media__item--palette bg-neutral-50 border border-neutral-200 overflow-hidden">
-                                <img
-                                  src={images[0]}
-                                  alt="Marcus colour palette"
-                                  className="w-full h-auto object-contain block"
-                                />
-                              </figure>
+                              <button
+                                type="button"
+                                onClick={() => scrollStrip(basicInfoStripRef.current, "left")}
+                                className="scroll-arrow-btn scroll-arrow-btn--left scroll-arrow-btn--gutter"
+                              >
+                                ‹
+                              </button>
 
-                              <figure className="ref-image marcus-basic-info-media__item marcus-basic-info-media__item--aesthetic bg-neutral-50 border border-neutral-200 overflow-hidden">
-                                <img
-                                  src={marcusAesthetic}
-                                  alt="Marcus aesthetic reference"
-                                  className="w-full h-auto object-contain block"
-                                />
-                              </figure>
+                              <div
+                                ref={basicInfoStripRef}
+                                className="no-scrollbar marcus-scroll-strip marcus-scroll-strip--basic-info strip-with-gutter"
+                              >
+                                <div className="marcus-scroll-item marcus-scroll-item--basic-info">
+                                  <figure className="ref-image marcus-basic-info-media__item marcus-basic-info-media__item--palette bg-neutral-50 border border-neutral-200 overflow-hidden">
+                                    <img
+                                      src={images[0]}
+                                      alt="Marcus colour palette"
+                                      loading="lazy"
+                                      decoding="async"
+                                    />
+                                  </figure>
+                                </div>
 
-                              <div className="marcus-basic-info-media__playlist marcus-basic-info-media__playlist--stagger">
-                                <FloatingSoundtrackBar
-                                  title="Marcus's soundtrack"
-                                  embedUrl={marcusPlaylistEmbedUrl}
-                                />
+                                <div className="marcus-scroll-item marcus-scroll-item--basic-info">
+                                  <figure className="ref-image marcus-basic-info-media__item marcus-basic-info-media__item--aesthetic bg-neutral-50 border border-neutral-200 overflow-hidden">
+                                    <img
+                                      src={marcusAesthetic}
+                                      alt="Marcus aesthetic reference"
+                                      loading="lazy"
+                                      decoding="async"
+                                    />
+                                  </figure>
+                                </div>
                               </div>
+
+                              <button
+                                type="button"
+                                onClick={() => scrollStrip(basicInfoStripRef.current, "right")}
+                                className="scroll-arrow-btn scroll-arrow-btn--right scroll-arrow-btn--gutter"
+                              >
+                                ›
+                              </button>
                             </div>
                           )}
 
@@ -689,6 +754,8 @@ export default function MarcusBriefPage() {
                                           src={marcusTattoo}
                                           alt={`${section.kicker} reference 1`}
                                           className="w-full h-full object-cover"
+                                          loading="lazy"
+                                          decoding="async"
                                         />
                                       </div>
                                     </figure>
@@ -752,6 +819,15 @@ export default function MarcusBriefPage() {
                       )}
                     </div>
                   </section>
+                  {isPaletteSection && (
+                    <div className={`marcus-section-soundtrack ${isBasicInfoMediaVisible ? "is-soundtrack-visible" : ""}`}>
+                      <FloatingSoundtrackBar
+                        title="Marcus's soundtrack"
+                        embedUrl={marcusPlaylistEmbedUrl}
+                      />
+                    </div>
+                  )}
+                  </div>
                 );
               })}
 
@@ -775,8 +851,8 @@ export default function MarcusBriefPage() {
                     ref={galleryStripRef}
                     className="gallery-strip strip-with-gutter no-scrollbar"
                   >
-                    {marcusSoloGallery.map((item, idx) => (
-                      <figure key={idx} className="gallery-card figure-zoom">
+                    {marcusSoloGallery.map((item) => (
+                      <figure key={item.id} className="gallery-card figure-zoom">
                         <button
                           type="button"
                           className="gallery-card-button"
@@ -793,6 +869,8 @@ export default function MarcusBriefPage() {
                             <img
                               src={item.src}
                               alt={`Marcus solo commission ${item.label}`}
+                              loading="lazy"
+                              decoding="async"
                               className="gallery-img"
                             />
                           </div>

@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import williamBriefPage from "../../assets/williamBriefPage.jpeg";
 import FloatingSoundtrackBar from "../components/FloatingSoundtrackBar";
 import HeroScrollPage from "../components/HeroScrollPage";
@@ -7,6 +7,7 @@ import GalleryLightbox, {
 } from "../components/GalleryLightbox";
 import PageCredit from "../components/PageCredit";
 import { useLanguage } from "../LanguageContext";
+import { getGalleryItems } from "../lib/galleryItems";
 import williamBrows from "../../assets/williamBrows.jpeg";
 import williamEyes from "../../assets/williamEyesAndMark.jpeg";
 import williamFreckles from "../../assets/williamFreckles.jpeg";
@@ -25,19 +26,19 @@ import williamSilhouette2 from "../../assets/williamSilhouette2.jpeg";
 import williamSihouette3 from "../../assets/williamSilhouette3.jpeg";
 import williamSilhouette4 from "../../assets/williamSilhouette4.jpeg";
 import williamTattoo1 from "../../assets/williamTattoo1.jpeg";
-import williamTattooPlacement1 from "../../assets/williamTattooPlacement1.jpeg";
+import williamTattooPlacement1 from "../../assets/optimized/williamTattooPlacement1.webp";
 import williamTattoo2 from "../../assets/williamTattoo2.jpeg";
 import williamTattooPlacement2 from "../../assets/williamTattooPlacement2.jpeg";
 import williamTattooPlacement21 from "../../assets/williamTattooPlacement21.jpeg";
-import williamGallery1 from "../../assets/williamGallery1.jpeg";
-import williamGallery2 from "../../assets/williamGallery2.jpeg";
+import williamGallery1 from "../../assets/optimized/williamGallery1.webp";
+import williamGallery2 from "../../assets/optimized/williamGallery2.webp";
 import williamGallery3 from "../../assets/williamGallery3.jpeg";
-import williamGallery4 from "../../assets/williamGallery4.jpeg";
+import williamGallery4 from "../../assets/optimized/williamGallery4.webp";
 import williamGallery5 from "../../assets/WilliamCartier.jpeg";
-import williamGallery6 from "../../assets/williamGallery6.jpeg"
-import williamGallery7 from "../../assets/williamGallery7.jpeg";
-import williamGallery8 from "../../assets/williamGallery8.jpeg";
-import williamAesthetic from "../../assets/williamAesthetic.jpeg";
+import williamGallery6 from "../../assets/optimized/williamGallery6.webp"
+import williamGallery7 from "../../assets/optimized/williamGallery7.webp";
+import williamGallery8 from "../../assets/optimized/williamGallery8.webp";
+import williamAesthetic from "../../assets/optimized/williamAesthetic.webp";
 
 type SectionBullet = string | { title: string; detail: string[] };
 
@@ -58,6 +59,9 @@ export default function WilliamBriefPage() {
   const [chapterOpen, setChapterOpen] = useState(false);
   const [selectedGalleryImage, setSelectedGalleryImage] =
     useState<GalleryLightboxImage | null>(null);
+  const [supabaseWilliamGallery, setSupabaseWilliamGallery] = useState<
+    { id: string; src: string; artist: string }[]
+  >([]);
 
   const accStripRef = useRef<HTMLDivElement | null>(null);
   const scrollAccessories = (direction: "left" | "right") => {
@@ -136,6 +140,41 @@ export default function WilliamBriefPage() {
     return () => {
       observer.disconnect();
       galleryObserver.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function fetchSupabaseWilliamGallery() {
+      try {
+        const rows = await getGalleryItems("william_gallery");
+        if (!isMounted) return;
+        setSupabaseWilliamGallery(
+          rows.map((row) => {
+            const artistBase = row.artistCredit.trim().length > 0
+              ? row.artistCredit.trim()
+              : "Unknown";
+            const artist = artistBase.startsWith("(A)")
+              ? artistBase
+              : `(A): ${artistBase}`;
+
+            return {
+              id: `supabase-${row.id}`,
+              src: row.src,
+              artist,
+            };
+          }),
+        );
+      } catch (error) {
+        console.error("Failed to load William gallery items from Supabase.", error);
+      }
+    }
+
+    fetchSupabaseWilliamGallery();
+
+    return () => {
+      isMounted = false;
     };
   }, []);
 
@@ -393,40 +432,52 @@ export default function WilliamBriefPage() {
     tattPlacement21: williamTattooPlacement21,
   };
 
-  const williamSoloGallery: { src: string; artist: string }[] = [
+  const localWilliamSoloGallery: { id: string; src: string; artist: string }[] = [
     {
+      id: "local-1",
       src: williamGallery5,
       artist: "(A): The Breadsident",
     },
     {
+      id: "local-2",
       src: williamGallery8,
       artist: "(A): Lê Ly",
     },
     {
+      id: "local-3",
       src: williamGallery7,
       artist: "(A): Tinh Tú",
     },
     {
+      id: "local-4",
       src: williamGallery3,
       artist: "(A): ihn.",
     },
     {
+      id: "local-5",
       src: williamGallery4,
       artist: "(A): Tô Nghi",
     },
     {
+      id: "local-6",
       src: williamGallery6,
       artist: "(A): Đẹptrai Giaiđoạncuối",
     },
     {
+      id: "local-7",
       src: williamGallery2,
       artist: "(A): Bảo Khánhh",
     },
     {
+      id: "local-8",
       src: williamGallery1,
       artist: "(A): ihn.",
     },
-  ]
+  ];
+  const williamSoloGallery = useMemo(
+    () => [...localWilliamSoloGallery, ...supabaseWilliamGallery],
+    [supabaseWilliamGallery],
+  );
 
 
   const handleChapterJump = (anchor: string) => {
@@ -798,8 +849,8 @@ export default function WilliamBriefPage() {
                   ref={galleryStripRef}
                   className="gallery-strip strip-with-gutter no-scrollbar"
                 >
-                  {williamSoloGallery.map((item, idx) => (
-                    <figure key={idx} className="gallery-card figure-zoom">
+                  {williamSoloGallery.map((item) => (
+                    <figure key={item.id} className="gallery-card figure-zoom">
                       <button
                         type="button"
                         className="gallery-card-button"
@@ -817,6 +868,8 @@ export default function WilliamBriefPage() {
                             src={item.src}
                             alt={`William solo commission by ${item.artist}`}
                             className="gallery-img"
+                            loading="lazy"
+                            decoding="async"
                           />
                         </div>
                       </button>

@@ -5,6 +5,7 @@ import PageCredit from "../components/PageCredit";
 import auBackgroundVideo from "../../assets/au1-background-small.m4v?url";
 
 import auSelector1 from "../../assets/auSelector1.jpeg";
+import auSelector2 from "../../assets/auSelector2.jpeg";
 
 import commissionBoard1 from "../../assets/loop3.jpeg";
 
@@ -62,7 +63,7 @@ const auEntries: AuEntry[] = [
     title: "The Quiet Husband",
     shortTitle: "Contract",
     indexImage: auSelector1,
-    premise: "p/s: it's just them being in love with extra legal complications.",
+    premise: "p/s: yêu nhau mẹ đi phiền quá",
     setting: "A quiet two-storey house in a\nsuburban neighbourhood just outside the city.",
     settingVi: "Một căn nhà hai tầng yên tĩnh ở\nkhu ngoại ô ngay bên ngoài thành phố.",
     background: [
@@ -74,6 +75,7 @@ const auEntries: AuEntry[] = [
       "\"Contract,\" he said.",
       "Then he started taking William to jazz bars because the blond mentioned liking jazz once.",
       "This AU is basically one big idiot who could not speak upon his feelings, and another idiot who convinced himself that the big idiot didn't like him while Vivian was the one who suffered the most as she wrote them.",
+      "Partly inspired by \"Đá đen sữa bò đậu đỏ\".",
     ],
     backgroundVi: [
       "Marcus chính thức \"chia tay\" sự nghiệp trong quân đội ở tuổi 37, dùng tiền anh tích cóp bấy lâu nay để mua một căn nhà yên tĩnh cho việc nghỉ hưu sớm. Ít nhất là anh tự nói vậy.",
@@ -84,10 +86,42 @@ const auEntries: AuEntry[] = [
       "\"Hợp đồng thôi,\" anh nói.",
       "Rồi anh bắt đầu dẫn William đi nghe nhạc jazz chỉ vì có lần em thuận miệng bảo mình thích jazz.",
       "Nói ngắn gọn thì AU này về cơ bản là câu chuyện của một gã khổng lồ không biết mở miệng nói thích người ta, và một cậu tóc vàng khác cũng ngốc không kém khi tự thuyết phục bản thân rằng tên khổng lồ kia chắc chắn không thích mình. Người chịu khổ nhiều nhất thì chỉ có Vivian thôi vì phải ngồi viết hai đứa ngốc này.",
+      "Mình có lấy một tí cảm hứng từ \"Đá đen sữa bò đậu đỏ\".",
     ],
     motifs: ["domestic slow burn", "suburban setting", "idiots being in love"],
     commissions: [
       { title: "Jazz Club", artist: "maxiine", image: commissionBoard1, orientation: "landscape", note: "First Official Date Night" },
+    ],
+  },
+
+  {
+    id: "au2",
+    code: "AU-002",
+    title: "Blind Shutter",
+    shortTitle: "Flash",
+    indexImage: auSelector2,
+    premise: "No names. One date. Two cameras.",
+    setting: "Downtown Manhattan, NYC",
+    settingVi: "Trung tâm Manhattan, thành phố NY",
+    background: [
+      "Marcus, 37, walked out of a bodega with milk in one hand, cat food in the other, still sweaty from the gym, when a stranger suddenly stopped him with a disposable camera and an offer for a blind date. Marcus immediately assumed this was either a cult recruitment tactic or the beginning of a true crime documentary. It was neither. Against his better judgement, he still said yes.",
+      "Across the city, William, 30, got approached with the same proposition while working at a café. He assumed the stranger was trying to flirt through some painfully creative social experiment. Mostly out of curiosity, he agreed too.",
+      "William arrived five minutes late. Marcus had been there since exactly 7PM. The moment Marcus saw a furious-looking blond walking through the restaurant in a halter top, low-rise jeans, and kitten heels, he somehow just knew that was his date. No photos exchanged beforehand. No information. Just instinct. He walked up. He was right.",
+      "The rest of the night unfolded too naturally for two strangers. Disposable cameras passed back and forth between dinner conversations, tequila shots, rooftop bars, mirror selfies, and increasingly dangerous levels of flirting. At some point, William declared he wanted to come back as a seal in his next life. Marcus immediately agreed to become the tusked one beside him.",
+      "By the end of the night, they were sharing a greasy sandwich outside another bodega while Marcus carried William’s kitten heels in one hand and William wore Marcus’ jacket. Then somebody walked past with a boombox because New York refuses to behave normally, and William dared Marcus to catch up before the song ended.",
+      "So they ran.",
+      "They went home together on the late train that night. Only one disposable camera got returned the next day. There are now two names on one lease.",
+    ],
+    backgroundVi: [
+      "AU này cũng ngắn thui, như one shot. Ngắn gọn là 2 ảnh được 1 gã set up cho một buổi blind date.",
+      "Marcus 37 tuổi, William 30 tuổi. Hai người là người lạ hoàn toàn, xong được gã Tiktoker nào đó tiếp cận ở 2 thời điểm khác nhau vời offer là họ sẽ đi date cùng nhau (không dc biết danh tính trước), xong mỗi ng sẽ cầm 1 cái máy chụp một lần do gã kia đưa, rùi họ phải chụp ảnh buổi date ctct.",
+      "Cả 2 cha ban đầu cũng hơi ngần ngại xong vẫn ok. Tới khúc mí ảnh đi thật thì mí ảnh thấy vui. Kiểu chemistry sparked ngay từ ban đầu, chủ yếu vì W nó giỏi khơi chuyện và thg M cũng thoải mái trả lời. Sau bữa ăn tối ở nhà hàng dc cha Tiktoker đặt bàn trước cho họ thì cả hai đi tăng 2 lun ở quán bar cuối phố. Cả đêm họ i chơi chụp ảnh cùng nhau, W nó còn say xong nó lải nhải bảo kiếp sau nó muốn làm con hải cẩu và thg M cũng đồng ý sẽ làm hải cẩu cùng nó, mà còn là rất nghiêm túc đồng ý ヽ║ ˘ _ ˘ ║ノ",
+      "Kết thúc buổi date là cả hai ngồi ở lề đường hốc chiếc sandwich ở tiệm tạp hóa bên góc đường =))))) Xong vì cno trẩu and this is NYC, có cha kia say xỉn đi ngang với quả nhạc phát to đùng trên loa xong e W thách thg M đuổi kịp nó tới trạm subway (im suck at translating so pls read the english ver if this confuses u)",
+      "Hôm sau thì chỉ có 1 camera được trả lại cho gã Tiktoker kia thui. Nhưng mà, thay vào đó thì cta có 2 cái tên mới toanh đứng cùng 1 hợp đồng thuê nhà 1 năm sau đó (´～｀ヾ)",
+    ],
+    motifs: ["fast AU", "blurry memories", "strangers to something"],
+    commissions: [
+      { title: "Commission pending", orientation: "landscape" },
     ],
   },
 
@@ -384,10 +418,10 @@ export default function AuArchive() {
                   <p className="au-card__label">{t.commissionLabel}</p>
                   <div
                     className={`au-photoboard ${activeAuEntry.commissions.length <= 1
-                        ? "is-single"
-                        : activeAuEntry.commissions.length === 2
-                          ? "is-duo"
-                          : "is-multi"
+                      ? "is-single"
+                      : activeAuEntry.commissions.length === 2
+                        ? "is-duo"
+                        : "is-multi"
                       }`}
                   >
                     {activeAuEntry.commissions.map((commission, commissionIndex) => {

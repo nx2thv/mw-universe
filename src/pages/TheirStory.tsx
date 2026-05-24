@@ -2,30 +2,31 @@ import "./about-them.css";
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { useLanguage } from "../LanguageContext";
 import PageCredit from "../components/PageCredit";
+import { getGalleryItems } from "../lib/galleryItems";
 import heroImg from "../../assets/themStory1.jpeg";
-import timelineImg1 from "../../assets/timelineImg1.jpeg";
-import timelineImg2 from "../../assets/timelineImg2.jpeg";
-import timelineImg3 from "../../assets/timelineImg3.jpeeg.png";
+import timelineImg1 from "../../assets/optimized/timelineImg1.webp";
+import timelineImg2 from "../../assets/optimized/timelineImg2.webp";
+import timelineImg3 from "../../assets/optimized/timelineImg3.webp";
 import timelineImg4 from "../../assets/littleMomentImage2.jpeg";
-import timelineImg5 from "../../assets/timelineImg4.jpeg";
-import timelineImg6 from "../../assets/timelineImage5.jpeg";
+import timelineImg5 from "../../assets/optimized/timelineImg4.webp";
+import timelineImg6 from "../../assets/optimized/timelineImage5.webp";
 
-import dividerCamera from "../../assets/camera.png";
+import dividerCamera from "../../assets/optimized/camera.webp";
 import dividerDogtag from "../../assets/dogtag.png";
-import dividerKissmark from "../../assets/kissmark.png";
+import dividerKissmark from "../../assets/optimized/kissmark.webp";
 import dividerReceipt from "../../assets/receipt.png";
 import dividerAnimal from "../../assets/dogprint.png";
 
-import littleMomentImage1 from "../../assets/littleMomentImage1.jpeg";
-import littleMomentImage2 from "../../assets/littleMomentImage3.jpeg";
-import littleMomentImage3 from "../../assets/littleMomentImage4.jpeg";
-import littleMomentImage4 from "../../assets/littleMomentImage5.jpeg";
-import littleMomentImage5 from "../../assets/littleMomentImage6.jpeg";
-import littleMomentImage6 from "../../assets/littleMomentImage7.jpeg";
-import littleMomentImage7 from "../../assets/littleMomentImage8.jpeg";
-import littleMomentImage8 from "../../assets/littleMomentImage9.jpeg";
-import littleMomentImage9 from "../../assets/themStory2.jpeg";
-import littleMomentImage10 from "../../assets/littleMomentImage10.jpeg";
+import littleMomentImage1 from "../../assets/optimized/littleMomentImage1.webp";
+import littleMomentImage2 from "../../assets/optimized/littleMomentImage3.webp";
+import littleMomentImage3 from "../../assets/optimized/littleMomentImage4.webp";
+import littleMomentImage4 from "../../assets/optimized/littleMomentImage5.webp";
+import littleMomentImage5 from "../../assets/optimized/littleMomentImage6.webp";
+import littleMomentImage6 from "../../assets/optimized/littleMomentImage7.webp";
+import littleMomentImage7 from "../../assets/optimized/littleMomentImage8.webp";
+import littleMomentImage8 from "../../assets/optimized/littleMomentImage9.webp";
+import littleMomentImage9 from "../../assets/optimized/themStory2.webp";
+import littleMomentImage10 from "../../assets/optimized/littleMomentImage10.webp";
 
 import nycStamp from "../../assets/nycstamp.jpeg";
 
@@ -57,7 +58,6 @@ type LoreFragment = {
   is_nsfw?: boolean;
   tag_direction?: "left" | "right";
   polaroid_orientation?: PolaroidOrientation;
-  wall_slots?: number;
 };
 
 type StoryBeat = {
@@ -264,9 +264,9 @@ const storyLettersVi = [
 const loreFragments: LoreFragment[] = [
   {
     id: "frag-01",
-    excerpt: "william stole his husband's shirt",
-    excerptVi: "ẻm bận áo cũ của ảnh",
-    ageRange: "26-33",
+    excerpt: "william stole his bf's shirt",
+    excerptVi: "ẻm bận áo của ảnh",
+    ageRange: "22-29",
     image: littleMomentImages[0],
     artist: "Ha Vee",
     tag_direction: "left",
@@ -275,8 +275,8 @@ const loreFragments: LoreFragment[] = [
   {
     id: "frag-02",
     excerpt: "#nhatrang\n\nthat one time they went on a honeymoon in VN, and it took them a whole year after the wedding to finally go",
-    excerptVi: "#nhatrang\n\ncái nì i tuần trăng mật ở VN, cưới dc 1 năm ùi mới đi",
-    ageRange: "27-34",
+    excerptVi: "#nhatrang\n\ncái nì i tuần trăng mật ở VN, cưới dc hơn 1 năm ùi mới đi",
+    ageRange: "27-35",
     image: littleMomentImages[1],
     artist: "Tinh Tú",
     tag_direction: "left",
@@ -353,9 +353,9 @@ const loreFragments: LoreFragment[] = [
   },
   {
     id: "frag-10",
-    excerpt: "gift from arttrade and cms <丶｀∀´>",
-    excerptVi: "vk iu Tinh Tú tặng tui!! <丶｀∀´>",
-    ageRange: "30-37",
+    excerpt: "gift from arttrade and cms\n\n<丶｀∀´>",
+    excerptVi: "vk iu Tinh Tú tặng tui!!\n\n<丶｀∀´>",
+    ageRange: "???",
     image: littleMomentImages[9],
     artist: "Tinh Tú",
     tag_direction: "left",
@@ -393,10 +393,6 @@ function getFragmentOrientation(fragment: LoreFragment): PolaroidOrientation {
 }
 
 function getFragmentWallSlots(fragment: LoreFragment) {
-  if (typeof fragment.wall_slots === "number" && Number.isFinite(fragment.wall_slots)) {
-    const clamped = Math.max(1, Math.min(WALL_SLOT_CAPACITY, Math.round(fragment.wall_slots)));
-    return clamped;
-  }
   return ORIENTATION_SLOT_WEIGHT[getFragmentOrientation(fragment)];
 }
 
@@ -470,7 +466,8 @@ const translations = {
           "They only started dating after Marcus spent far too long overthinking and wrestling with his own moral codes, while William tried with everything he had to prove that, young as he was, he fully understood what he was choosing.",
         bodyFull:
           "After William graduated high school and Marcus graduated from the New York Police Academy, they decided to move into New York City together. Both families offered to help with rent, because everyone knew exactly how brutal NYC housing could be, but they refused. Apparently pride and love had combined into one shared delusional illness. (´～｀ヾ)\n\n" + "Truthfully, they had no money, no furniture worth mentioning, and no real plan beyond surviving the next bill. But they had each other.\n\n" +
-          "Marcus worked day and night at the precinct while William split himself between school, flights, cities, and runway shows. Around then, the darker side of the spotlight began to swallow him whole. Addiction, disordered eating, stalkers following too closely — they became almost ordinary to him, or maybe William was simply too exhausted to care anymore.\n\n" + "When one stalker encounter sent William to the hospital, Marcus finally understood how much his boyfriend had been carrying alone. The man went to prison. William came home to rest. And their life together had to become softer, not just stronger.",
+          "Marcus worked day and night at the precinct while William split himself between school, flights, cities, and runway shows. Around then, the darker side of the spotlight began to swallow him whole. Addiction, disordered eating, stalkers following too closely — they became almost ordinary to him, or maybe William was simply too exhausted to care anymore.\n\n" + "When one stalker encounter sent William to the hospital, Marcus finally understood how much his boyfriend had been carrying alone. The man went to prison. William came home to rest. And their life together had to become softer, not just stronger.\n\n" +
+          "With those long working hours, they finally saved enough to rent a more decent apartment. A new chapter started from there",
         mediaIndex: 1,
       },
       {
@@ -589,8 +586,9 @@ const translations = {
           "Sau khi William tốt nghiệp cấp 3 và Marcus tốt nghiệp Học Viện Cảnh Sát New York (NYPD), họ quyết định chuyển đến thành phố New York sống cùng nhau. Dẫu cho gia đình cả hai đã ngỏ lời giúp đỡ với tiền thuê nhà (vì ai cũng biết giá nhà ở NYC khốc liệt cỡ nào), nhưng họ từ chối. Chắc lòng tự trọng và tình yêu đã làm họ mắc căn bệnh hoang tưởng (´～｀ヾ)\n\n" +
           "Căn hộ họ thuê ở Brooklyn khi đó vừa nhỏ, vừa ồn ào, lại còn thiếu tiện nghi. Phòng ngủ thì chỉ đủ to để lót tấm nệm, còn chẳng vừa nổi nửa cái khung giường, mà nếu phòng có to hơn thì họ cũng chẳng có đủ tiền để mua nó. Trong nhà còn có một con chuột đuổi mãi không đi, nên William đã đặt tên cho nó là 'Gucci.' Cách âm thì rõ là quá xa xỉ, nên ai cãi nhau ở nhà nào họ đều hóng được hết, thôi thì cũng coi như trong họa có phúc. Thật sự thì lúc này họ chẳng có tiền, cũng chẳng có đồ đạc gì thực sự, nhưng họ có nhau.\n\n" +
           "Marcus làm việc ngày đêm ở sở cảnh sát, trong khi đó William thì vừa học, vừa bay qua lại giữa các thành phố để diễn show. Mặt tối của ánh hào quang cũng nhanh chóng nuốt chửng lấy cậu vào khoảng thời gian này. Nghiện ngập, rối loạn ăn uống, những kẻ quái gỡ theo đuôi là chuyện thường đối với cậu, hoặc có lẽ William đã quá mệt mỏi để quan tâm.\n\n" +
-          "Chuyện gì đến cũng đến, William phải nhập viện vì một trong những kẻ quái gỡ đó. Marcus lúc này mới nhận ra bạn trai mình đã trải qua những gì trong khoảng thời gian cả hai quá bận rộn với công việc và quên đi mất cách quan tâm nhau. Kẻ theo đuôi kia bị Marcus tống vào tù. Còn William cuối cùng cũng chấp nhận rằng bản thân mình đã kiệt quệ và quyết định dành thời gian tịnh dưỡng ở nhà. Từ ấy, họ dần học cách cân bằng giữa công việc và đời tư.",
-        mediaIndex: 1,
+          "Chuyện gì đến cũng đến, William phải nhập viện vì một trong những kẻ quái gỡ đó. Marcus lúc này mới nhận ra bạn trai mình đã trải qua những gì trong khoảng thời gian cả hai quá bận rộn với công việc và quên đi mất cách quan tâm nhau. Kẻ theo đuôi kia bị Marcus tống vào tù. Còn William cuối cùng cũng chịu chấp nhận rằng bản thân mình đã kiệt quệ và quyết định dành thời gian tịnh dưỡng ở nhà.\n\n" +
+          "Cuối cùng, sau từng ấy năm làm việc quên ăn quên ngủ thì họ cũng đã giành dụm đủ tiền, nên ngay sau đó họ đã thuê một căn hộ mới tiện nghi hơn. Và có lẽ đây cũng là cách họ đóng lại quá khứ để mở ra tương lai.",
+          mediaIndex: 1,
       },
       {
         id: "story-beat-brooklyn",
@@ -628,7 +626,7 @@ const translations = {
         title: "Hiện Tại Thì Sao?",
         bodyPreview:
           "Ở tuổi 34, Marcus đứng giữa hai lựa chọn. Một là vị trí cao hơn trong NYPD mà đi cùng với đó là những buổi họp báo, những buổi từ thiện, những cái bắt tay lịch sự và rời xa súng đạn. Hai là lá thư mời gia nhập Delta, lực lượng tinh nhuệ nhất của quân đội Mỹ, kéo anh trở lại với công việc mà anh đã quen thuộc suốt bao năm qua.\n\n" +
-          "Marcus đã đắn đo rất lâu, nhưng cuối cùng anh đã chọn Delta với sự ủng hộ của cả William, bố mẹ anh và bố mẹ chồng. Cùng khoảng thời gian đó, ngôi nhà của họ cũng ngày càng ồn ào hơn: họ nhận nuôi Leo, cậu nhóc với quá khứ không mấy tốt đẹp. Rồi đến Cloud, chú chó Samoyed béo ú ngốc nghếch. Và bỗng chốc, họ đã trở thành một hộ gia đình thực thụ.",
+          "Marcus đã đắn đo rất lâu, nhưng cuối cùng anh đã chọn Delta với sự ủng hộ của cả William, bố mẹ anh và bố mẹ chồng. Từ đó, ngôi nhà của họ cũng ngày càng ồn ào hơn: họ nhận nuôi Leo, cậu nhóc với quá khứ không mấy tốt đẹp. Rồi đến Cloud, chú chó Samoyed béo ú ngốc nghếch. Và bỗng chốc, họ đã trở thành một hộ gia đình thực thụ.",
         bodyFull:
           "Marcus giờ đây là một lính đặc nhiệm Delta. William thì vẫn làm việc tại Chanel, đồng thời cũng dạy học tại Parsons. Ngôi nhà của họ thì luôn ồn áo, náo nhiệt, nhưng vẫn vận hành trơn tru một cách đáng kinh ngạc khiến ai cũng khó hiểu.\n\n" +
           "Việc Marcus phải đi làm nhiệm vụ xa nhà là điều khó khăn với cả hai. Nhưng William chưa bao giờ phàn nàn về điều đó. Cậu vẫn bình tĩnh quán xuyến mọi thứ như bình thường: đưa đón Leo đi học, giúp cậu bé làm bài tập về nhà, đi làm, soạn bài giảng, chăm sóc thú cưng, đi chợ, chuẩn bị cơm trưa, lo chuyện đi ngủ và tất tần tật những công việc không tên khác.\n\n" +
@@ -654,6 +652,7 @@ export default function TheirStory() {
   const [chapterOpen, setChapterOpen] = useState(false);
   const [nsfwPromptId, setNsfwPromptId] = useState<string | null>(null);
   const [revealedNsfwIds, setRevealedNsfwIds] = useState<string[]>([]);
+  const [supabaseLoreFragments, setSupabaseLoreFragments] = useState<LoreFragment[]>([]);
   const t = translations[language] || translations.en;
   const timelineEntries = t.timeline;
   const storyChapterItems = useMemo(
@@ -683,6 +682,50 @@ export default function TheirStory() {
   );
   const activeChapterLabel =
     storyChapterItems.find((item) => item.id === activeChapterId)?.label ?? storyChapterItems[0]?.label ?? "Chapter";
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function fetchSupabaseStoryMoments() {
+      try {
+        const rows = await getGalleryItems("story_moments");
+        if (!isMounted) return;
+
+        const mapped = rows.flatMap((row) => {
+          try {
+            const excerpt = row.excerpt?.trim() || "Moment";
+            const ageRange = row.ageRange?.trim() || "--";
+            const artist = row.artistCredit?.trim() || "Unknown";
+
+            return [{
+              id: `supabase-${row.id}`,
+              excerpt,
+              excerptVi: row.excerptVi?.trim() || undefined,
+              ageRange,
+              image: row.src,
+              artist,
+              is_nsfw: row.isNsfw,
+              tag_direction: row.tagDirection ?? undefined,
+              polaroid_orientation: row.polaroidOrientation ?? undefined,
+            } satisfies LoreFragment];
+          } catch (rowError) {
+            console.error("Skipping malformed story_moments row.", row.id, rowError);
+            return [];
+          }
+        });
+
+        setSupabaseLoreFragments(mapped);
+      } catch (error) {
+        console.error("Failed to load story moments from Supabase.", error);
+      }
+    }
+
+    fetchSupabaseStoryMoments();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const toggleTimelineEntry = (entryId: string) => {
     setOpenTimelineIds((current) =>
@@ -796,7 +839,7 @@ export default function TheirStory() {
     return () => {
       observer.disconnect();
     };
-  }, [timelineEntries, wallPage, t.letters]);
+  }, [timelineEntries, wallPage, t.letters, supabaseLoreFragments.length]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -840,16 +883,21 @@ export default function TheirStory() {
     setActiveChapterId(chapterId);
   };
 
+  const allLoreFragments = useMemo(
+    () => [...loreFragments, ...supabaseLoreFragments],
+    [supabaseLoreFragments]
+  );
+
   const orderedFragments = useMemo(
     () =>
-      [...loreFragments].sort((a, b) => {
+      [...allLoreFragments].sort((a, b) => {
         const [aWilliamAge, aMarcusAge] = parseAgeRange(a.ageRange);
         const [bWilliamAge, bMarcusAge] = parseAgeRange(b.ageRange);
         if (aWilliamAge !== bWilliamAge) return aWilliamAge - bWilliamAge;
         if (aMarcusAge !== bMarcusAge) return aMarcusAge - bMarcusAge;
         return a.id.localeCompare(b.id);
       }),
-    []
+    [allLoreFragments]
   );
 
   const wallGroups = useMemo(() => {
@@ -1053,7 +1101,12 @@ export default function TheirStory() {
               </h1>
             </div>
             <figure className="about-story__hero-figure">
-              <img src={heroImg} alt="Close crop of Marcus and William's eyes" />
+              <img
+                src={heroImg}
+                alt="Close crop of Marcus and William's eyes"
+                decoding="async"
+                fetchPriority="high"
+              />
               <figcaption className="about-story__hero-credit">Artwork: Lee Phanh</figcaption>
             </figure>
             <dl className="about-story__hero-meta">
@@ -1153,6 +1206,8 @@ export default function TheirStory() {
                             className={media.tone === "black-white" ? "is-black-white" : undefined}
                             src={media.image}
                             alt={`${entry.title} visual`}
+                            loading="lazy"
+                            decoding="async"
                           />
                         </figure>
                         <p className="about-story__timeline-credit">{media.credit}</p>
@@ -1179,26 +1234,36 @@ export default function TheirStory() {
                   className="about-story__archive-object about-story__archive-object--camera"
                   src={dividerCamera}
                   alt=""
+                  loading="lazy"
+                  decoding="async"
                 />
                 <img
                   className="about-story__archive-object about-story__archive-object--kiss"
                   src={dividerKissmark}
                   alt=""
+                  loading="lazy"
+                  decoding="async"
                 />
                 <img
                   className="about-story__archive-object about-story__archive-object--dogtag"
                   src={dividerDogtag}
                   alt=""
+                  loading="lazy"
+                  decoding="async"
                 />
                 <img
                   className="about-story__archive-object about-story__archive-object--receipt"
                   src={dividerReceipt}
                   alt=""
+                  loading="lazy"
+                  decoding="async"
                 />
                 <img
                   className="about-story__archive-object about-story__archive-object--animal"
                   src={dividerAnimal}
                   alt=""
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
               <div className="about-story__archive-tear-copy">
@@ -1240,7 +1305,12 @@ export default function TheirStory() {
           >
             <div className="about-story__cover-figure about-story__news-spread">
               <figure className="about-story__news-hero-image">
-                <img src={timelineImg5} alt="Marcus and William editorial portrait" />
+                <img
+                  src={timelineImg5}
+                  alt="Marcus and William editorial portrait"
+                  loading="lazy"
+                  decoding="async"
+                />
               </figure>
 
               <div className="about-story__news-title-block">
@@ -1324,7 +1394,12 @@ export default function TheirStory() {
                             <figure
                               className={`about-story__moment-photo about-story__moment-photo--${getFragmentOrientation(fragment)} ${fragment.is_nsfw ? "is-nsfw" : ""} ${fragment.is_nsfw && revealedNsfwIds.includes(fragment.id) ? "is-revealed" : ""}`}
                             >
-                              <img src={fragment.image} alt={`${fragmentExcerpt} visual`} />
+                              <img
+                                src={fragment.image}
+                                alt={`${fragmentExcerpt} visual`}
+                                loading="lazy"
+                                decoding="async"
+                              />
                               {fragment.is_nsfw && !revealedNsfwIds.includes(fragment.id) && nsfwPromptId !== fragment.id ? (
                                 <button
                                   type="button"
