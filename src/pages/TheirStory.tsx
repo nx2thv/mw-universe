@@ -683,6 +683,40 @@ export default function TheirStory() {
   const activeChapterLabel =
     storyChapterItems.find((item) => item.id === activeChapterId)?.label ?? storyChapterItems[0]?.label ?? "Chapter";
 
+  function scrollStoryPaperTo(targetId: string) {
+    if (typeof window === "undefined") return;
+
+    const scrollRoot = document.querySelector<HTMLElement>(".about-story__paper");
+    const target = document.getElementById(targetId);
+    if (!scrollRoot || !target) return;
+
+    const getTargetTop = () => {
+      const rootRect = scrollRoot.getBoundingClientRect();
+      const targetRect = target.getBoundingClientRect();
+      return Math.max(0, targetRect.top - rootRect.top + scrollRoot.scrollTop);
+    };
+
+    scrollRoot.scrollTo({
+      top: getTargetTop(),
+      behavior: "smooth",
+    });
+
+    const correctAfterLayoutSettles = () => {
+      const rootRect = scrollRoot.getBoundingClientRect();
+      const targetRect = target.getBoundingClientRect();
+      const delta = targetRect.top - rootRect.top;
+      if (Math.abs(delta) < 2) return;
+      scrollRoot.scrollTo({
+        top: Math.max(0, scrollRoot.scrollTop + delta),
+        behavior: "auto",
+      });
+    };
+
+    window.setTimeout(correctAfterLayoutSettles, 450);
+    window.setTimeout(correctAfterLayoutSettles, 900);
+    window.setTimeout(correctAfterLayoutSettles, 1400);
+  }
+
   useEffect(() => {
     let isMounted = true;
 
@@ -877,9 +911,7 @@ export default function TheirStory() {
   }, [storyChapterItems]);
 
   const handleChapterJump = (chapterId: string) => {
-    const target = document.getElementById(chapterId);
-    if (!target) return;
-    target.scrollIntoView({ behavior: "smooth", block: "start" });
+    scrollStoryPaperTo(chapterId);
     setActiveChapterId(chapterId);
   };
 
@@ -936,10 +968,7 @@ export default function TheirStory() {
     const isMobileViewport = window.matchMedia("(max-width: 767px)").matches;
     if (!isMobileViewport) return;
     requestAnimationFrame(() => {
-      document.getElementById("story-moments")?.scrollIntoView({
-        block: "start",
-        behavior: "smooth",
-      });
+      scrollStoryPaperTo("story-moments");
     });
   };
 
