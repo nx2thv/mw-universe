@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
 import { Link } from "react-router-dom";
 import Lottie from "lottie-react";
 import { useLanguage } from "../LanguageContext";
@@ -93,19 +93,30 @@ function isSectionKey(value: string | null): value is SectionKey {
   return SECTION_ORDER.includes(value as SectionKey);
 }
 
-function getStoredSection() {
-  if (typeof window === "undefined") return "welcome";
-  if (window.location.hash === "#briefs" || window.location.search.includes("idea=")) {
-    return "briefs";
-  }
-  const storedSection = window.sessionStorage.getItem(HOME_SECTION_STORAGE_KEY);
-  return isSectionKey(storedSection) ? storedSection : "welcome";
+function getSharedIdeaIdFromUrl(url: URL) {
+  const hashQuery = url.hash.includes("?") ? url.hash.slice(url.hash.indexOf("?")) : "";
+  const ideaId = (url.searchParams.get("idea") || new URLSearchParams(hashQuery).get("idea"))?.trim();
+  return ideaId ? ideaId.toUpperCase() : null;
 }
 
 function getSharedIdeaId() {
   if (typeof window === "undefined") return null;
-  const ideaId = new URLSearchParams(window.location.search).get("idea")?.trim();
-  return ideaId ? ideaId.toUpperCase() : null;
+  return getSharedIdeaIdFromUrl(new URL(window.location.href));
+}
+
+function getSectionFromUrl(url: URL): SectionKey | null {
+  if (getSharedIdeaIdFromUrl(url)) return "briefs";
+
+  const hashSection = url.hash.replace(/^#/, "").split("?")[0];
+  return isSectionKey(hashSection) ? hashSection : null;
+}
+
+function getStoredSection() {
+  if (typeof window === "undefined") return "welcome";
+  const linkedSection = getSectionFromUrl(new URL(window.location.href));
+  if (linkedSection) return linkedSection;
+  const storedSection = window.sessionStorage.getItem(HOME_SECTION_STORAGE_KEY);
+  return isSectionKey(storedSection) ? storedSection : "welcome";
 }
 
 function getIdeaCardElementId(ideaId: string) {
@@ -419,6 +430,27 @@ export default function Home() {
   }, [activeSection]);
 
   useEffect(() => {
+    const syncUrlState = () => {
+      const url = new URL(window.location.href);
+      const nextSharedIdeaId = getSharedIdeaIdFromUrl(url);
+      const nextSection = getSectionFromUrl(url);
+
+      setSharedIdeaId(nextSharedIdeaId);
+      if (nextSection) {
+        didRestoreStoredSectionRef.current = false;
+        setActiveSection(nextSection);
+      }
+    };
+
+    window.addEventListener("popstate", syncUrlState);
+    window.addEventListener("hashchange", syncUrlState);
+    return () => {
+      window.removeEventListener("popstate", syncUrlState);
+      window.removeEventListener("hashchange", syncUrlState);
+    };
+  }, []);
+
+  useLayoutEffect(() => {
     if (!isCompactViewport) return;
     if (didRestoreStoredSectionRef.current) return;
     const root = mainRef.current;
