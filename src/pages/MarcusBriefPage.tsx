@@ -84,19 +84,45 @@ export default function MarcusBriefPage() {
   };
 
   useEffect(() => {
+    let activeFrame = 0;
+
+    const updateActiveChapter = () => {
+      activeFrame = 0;
+      const targets = Array.from(
+        document.querySelectorAll<HTMLElement>("[data-section-index], #gallery")
+      );
+      if (!targets.length) return;
+
+      const readLine = window.innerHeight * 0.38;
+      const isNearPageEnd =
+        window.scrollY + window.innerHeight >=
+        document.documentElement.scrollHeight - 16;
+
+      if (isNearPageEnd) {
+        setActiveAnchor("gallery");
+        return;
+      }
+
+      const current = targets.reduce((active, target) => {
+        const rect = target.getBoundingClientRect();
+        if (rect.top <= readLine && rect.bottom > 0) {
+          return target;
+        }
+        return active;
+      }, targets[0]);
+
+      if (current.id) {
+        setActiveAnchor(current.id);
+      }
+    };
+
+    const queueActiveChapterUpdate = () => {
+      if (activeFrame) return;
+      activeFrame = window.requestAnimationFrame(updateActiveChapter);
+    };
+
     const observer = new IntersectionObserver(
       (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-
-        if (visible) {
-          const nextAnchor = (visible.target as HTMLElement).id;
-          if (nextAnchor) {
-            setActiveAnchor(nextAnchor);
-          }
-        }
-
         entries.forEach((entry) => {
           const indexAttr = entry.target.getAttribute("data-section-index");
           const index = indexAttr ? Number(indexAttr) : NaN;
@@ -114,16 +140,9 @@ export default function MarcusBriefPage() {
     const sectionEls = document.querySelectorAll("[data-section-index]");
     sectionEls.forEach((el) => observer.observe(el));
 
-    const galleryObserver = new IntersectionObserver(
-      ([entry]) => {
-        if (entry?.isIntersecting) {
-          setActiveAnchor("gallery");
-        }
-      },
-      { threshold: 0.28, rootMargin: "-8% 0px -55% 0px" },
-    );
-    const galleryEl = document.getElementById("gallery");
-    if (galleryEl) galleryObserver.observe(galleryEl);
+    queueActiveChapterUpdate();
+    window.addEventListener("scroll", queueActiveChapterUpdate, { passive: true });
+    window.addEventListener("resize", queueActiveChapterUpdate);
 
     const mediaObserver = new IntersectionObserver(
       ([entry]) => {
@@ -141,9 +160,13 @@ export default function MarcusBriefPage() {
     }
 
     return () => {
+      if (activeFrame) {
+        window.cancelAnimationFrame(activeFrame);
+      }
+      window.removeEventListener("scroll", queueActiveChapterUpdate);
+      window.removeEventListener("resize", queueActiveChapterUpdate);
       observer.disconnect();
       mediaObserver.disconnect();
-      galleryObserver.disconnect();
     };
   }, []);
 
@@ -207,7 +230,7 @@ export default function MarcusBriefPage() {
             "Occupation:\nFormer NYPD cop (ESU Captain).\nNow an elite operator in U.S. military.",
             "Vibe:\nStoic, deliberate, masculine in the most unpretentious way.\n" +
             "The kind of man whose presence alone tells you nothing will touch you.",
-            "Bonus quirk:\n Always has to read a physics book before sleep.\n",
+            "Bonus quirk:\n Always has to read a physics book before sleep. To the point that he couldn't even sleep without reading first.",
           ],
         },
         {
@@ -274,19 +297,17 @@ export default function MarcusBriefPage() {
             "Cân nặng: khoảng 90-95kg",
             "Màu da:\n #b98267\n Nâu đồng rám nắng do lao động ngoài trời.",
             "Nghề nghiệp:\n Từng làm cho NYPD (Đội trưởng của ESU).\n Giờ là lính đặc nhiệm trong quân đội Mỹ.",
-            "Ấn tượng đầu tiên:\n Điềm tĩnh, chủ động, nam tính kiểu bụi bặm (rugged).\n" +
-            "Nhìn như mối đe dọa — hành động như tấm chắn bảo vệ.\n" +
-            "Là nguời khi đứng cạnh thì không bố con thằng nào dám động đến bạn.",
-            "Thói quen kỳ lạ:\n đêm nào cũng phải đọc sách về khái niệm vật lý trước khi ngủ.\n Cơ học lượng tử, bảo toàn năng lượng, hố đen vũ trụ, bất kì cái gì liên quan tới vật lý — hỏi là trả lời được hết.",
+            "Ấn tượng đầu tiên:\n Điềm tĩnh, chủ động, nam tính kiểu bụi bặm (rugged). Ít nói, không tán tỉnh văn vở dc, là kiểu người nói ít làm nhiều.",
+            "Thói quen kỳ lạ:\n đêm nào cũng phải đọc sách về khái niệm vật lý mới ngủ. Kiểu nếu không đọc sẽ bứt rứt không ngủ được luôn í.",
           ],
         },
         {
           id: "face",
           kicker: "B. Đặc điểm khuôn mặt",
           bullets: [
-            "Chân mày & mắt:\n Lông mày rậm, không tỉa gọn. Đầu lông mày hay nhăn lại.\n Mí mắt hạ xuống (heavy-lidded), nhíu lại như đang suy nghĩ (hoặc đang ngầm đánh giá bạn).",
+            "Chân mày & mắt:\n Lông mày rậm, không tỉa gọn. Đầu lông mày hay nhăn lại.\n Mí mắt hạ xuống (heavy-lidded), hơi nhíu lại.",
             "Màu mắt:\n #5B6b74\nXanh xám lạnh, nhạt màu, không quá sáng.",
-            "Mũi & hàm:\n Mũi thẳng, hơi gồ nhẹ trên sống mũi do lúc trước dánh nhau gãy mũi.\n Quai hàm góc cạnh, hơi rộng, nam tính.",
+            "Mũi & hàm:\n Mũi thẳng, hơi gồ nhẹ trên sống mũi do lúc trước đánh nhau gãy mũi.\n Quai hàm góc cạnh, hơi rộng, nam tính.",
             "Sẹo:\n một cái ở cuối đuôi lông mày bên phải.\n một cái ở bên phải của môi trên.\n một cái chạy dọc lên từ quai hàm bên trái, hơi mờ.",
           ],
         },
@@ -294,7 +315,7 @@ export default function MarcusBriefPage() {
           id: "hair and stuffs",
           kicker: "C. Tóc, râu, phụ kiện",
           bullets: [
-            "Tóc:\n màu đen.\ncắt gọn hai bên, phần trên đỉnh dài vừa đủ để vuốt gel/vuốt về phía sau.",
+            "Tóc:\nMàu đen. Cắt gọn hai bên, phần trên đỉnh dài vừa đủ để vuốt gel/vuốt về phía sau.\n\nNói chung phần tóc cha này cũng cảm tính tùy tâm, mỗi comm tùy context mà vẽ 1 kiểu nên artist xem ảnh tham khảo th. Nhưng idea chung là lúc bth sẽ vuốt gọn về sau, có hoặc không vài cọng lòa xòa. Còn lúc ở nhà sẽ bớt chải chuốt hơn.",
             "Râu:\n Italian beard style (xem ảnh tham khảo).",
             "Phụ kiện:\nnhẫn cưới màu vàng bên tay trái.\n hai thẻ dogtag trên cổ (khắc tên 'Marcus Hayes' — font: Helvetica).",
           ],
@@ -305,8 +326,8 @@ export default function MarcusBriefPage() {
           bullets: [
             "Tay:\nTo. thô ráp. chai sạn. gân guốc.",
             "Bắp tay:\n Rất đồ sộ. Dày và nặng.",
-            "Lưng:\n Rộng đủ để che luôn ánh nắng.\n Nhiều sẹo, ngang dọc có đủ.\n Ref vẽ vài đường cho mọi người hình dung chung chung thui.",
-            "Tóm tắt:\n nên được vẽ để nổi bật khí chất của người đàn ông được rèn dũa trong khuôn phép từ nhỏ, và chỉ càng ngày càng cứng cỏi hơn.\n",
+            "Lưng:\n Rộng, kiểu cũng là vai u thịt bắp đó (hết cách tả r).\n Nhiều sẹo, ngang dọc có đủ.\n Ref vẽ vài đường cho mọi người hình dung chung chung thui.",
+            "Tóm tắt:\nthể hình của người hay làm việc nặng, đem lại cảm giác to lớn vững chải an toàn í.\n",
           ],
         },
         {
@@ -340,7 +361,7 @@ export default function MarcusBriefPage() {
     vi: {
       "basic info": "Tổng quan",
       face: "Gương mặt",
-      "hair and stuffs": "Tóc & phụ kiện",
+      "hair and stuffs": "Tạo hình",
       "dilf coded": "Dáng người",
       tatts: "Hình xăm",
     },
@@ -353,7 +374,7 @@ export default function MarcusBriefPage() {
     })),
     {
       anchor: "gallery",
-      label: "F Gallery",
+      label: "Gallery",
     },
   ];
   const activeChapterLabel =
@@ -435,7 +456,7 @@ export default function MarcusBriefPage() {
       hair1: "Có thể để phần tóc mái gọn nnay",
       hair2: "Hoặc cho vài cọng lòa xòa nnay",
       hair3: "Tóc (lúc rối, k chải chuốt)",
-      beard: "Râu",
+      beard: "Râu, này cũng có thể\nlà tóc k chải chuốt nè",
       weddingRing: "Nhẫn cưới",
       dogtags: "Dây chuyền",
 

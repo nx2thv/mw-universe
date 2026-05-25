@@ -11,6 +11,20 @@ body,
   text-align: left;
   min-height: 100vh;
   overflow-x: hidden;
+  background: #090808;
+  color-scheme: dark only;
+}
+
+html:has(.home-journey-page),
+body:has(.home-journey-page),
+body:has(.home-journey-page) #root {
+  background:
+    radial-gradient(circle at 50% 36%, rgba(128, 106, 80, 0.12), transparent 34%),
+    radial-gradient(circle at 50% 60%, rgba(0, 0, 0, 0.38), transparent 62%),
+    radial-gradient(circle at center, transparent 0%, rgba(8, 7, 7, 0.14) 42%, rgba(3, 3, 3, 0.5) 100%),
+    linear-gradient(180deg, #090808 0%, #0d0b0b 52%, #080707 100%);
+  background-color: #090808;
+  background-attachment: fixed;
 }
 
 h1 {
@@ -319,7 +333,12 @@ body {
   height: 100vh;
   height: 100svh;
   overflow: hidden;
-  background: #090808;
+  background:
+    radial-gradient(circle at 50% 36%, rgba(128, 106, 80, 0.12), transparent 34%),
+    radial-gradient(circle at 50% 60%, rgba(0, 0, 0, 0.38), transparent 62%),
+    radial-gradient(circle at center, transparent 0%, rgba(8, 7, 7, 0.14) 42%, rgba(3, 3, 3, 0.5) 100%),
+    linear-gradient(180deg, #090808 0%, #0d0b0b 52%, #080707 100%);
+  background-color: #090808;
   color: #f4f7ff;
 }
 
@@ -1916,6 +1935,50 @@ body {
 
   .home-journey-section--briefs .home-journey-ideas-filter {
     min-width: 0;
+  }
+}
+
+@media (min-width: 901px) and (max-width: 1100px) and (hover: none) and (pointer: coarse) {
+  .home-journey-page {
+    --journey-rail-safe: clamp(14rem, 22vw, 17rem);
+    --journey-content-right: clamp(2rem, 5vw, 3.5rem);
+  }
+
+  .home-journey-section--briefs {
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: clamp(20rem, 22svh, 18rem);
+  }
+
+  .home-journey-section--briefs .home-journey-text.home-journey-text--briefs {
+    width: min(74rem, max(24rem, calc(100vw - var(--journey-rail-safe) - var(--journey-content-right))));
+    margin-left: auto;
+    margin-right: var(--journey-content-right);
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .home-journey-text--briefs::before {
+    display: block;
+    left: max(-1.8rem, calc(var(--journey-rail-safe) * -0.16));
+  }
+
+  .home-journey-section--briefs .home-journey-ideas-board {
+    width: min(56rem, max(22rem, calc(100vw - var(--journey-rail-safe) - var(--journey-content-right))));
+    margin-left: auto;
+    margin-right: 0;
+  }
+
+  .home-journey-section--briefs .home-journey-ideas-filters {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .home-journey-section--briefs .home-journey-ideas-filter {
+    flex: 1 1 0;
+    min-width: 10.8rem;
   }
 }
 
@@ -3915,6 +3978,7 @@ section[data-section-index] {
     radial-gradient(72% 56% at 80% 18%, rgba(154, 107, 99, 0.2), transparent 74%),
     radial-gradient(64% 52% at 14% 84%, rgba(184, 138, 122, 0.16), transparent 72%),
     linear-gradient(180deg, #161110 0%, #1b1412 48%, #161110 100%);
+  background-color: #161110;
   color: #E7D8CA;
   font-family: 'Alegreya', serif;
   position: relative;
@@ -4279,6 +4343,26 @@ section[data-section-index] {
   }
 }
 
+@media (min-width: 768px) and (max-width: 900px) and (min-height: 900px) {
+  .brief-portal-content {
+    margin-top: clamp(15rem, 26svh, 20rem);
+  }
+}
+
+@media (min-width: 901px) and (max-width: 1366px) and (min-height: 700px) and (hover: none) and (pointer: coarse) {
+  .brief-portal-page .home-journey-text--briefs {
+    width: min(94vw, 48rem);
+  }
+
+  .brief-portal-content {
+    margin-top: clamp(15rem, 26svh, 20rem);
+  }
+
+  .brief-portal-card {
+    min-height: clamp(8.4rem, 12svh, 9.8rem);
+  }
+}
+
 .brief-portal-page .home-journey-text--briefs::before {
   display: none;
 }
@@ -4590,7 +4674,8 @@ section[data-section-index] {
   }
 
   .brief-portal-card:not(:first-child) .brief-portal-card-title {
-    transform: translateY(var(--brief-portal-lower-title-offset));
+    margin-top: var(--brief-portal-lower-title-offset);
+    transform: none;
   }
 
   .brief-portal-card-comment {
@@ -4975,5 +5060,157 @@ section[data-section-index] {
     top: 20px;
     left: 620px;
     transform: none;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1366px) and (hover: none) and (pointer: coarse) {
+  .marcus-brief-page .brief-chapter-rail {
+    display: none;
+  }
+
+  .marcus-brief-page .brief-chapter-main {
+    padding-right: 0;
+  }
+
+  .marcus-brief-page .brief-chapter-mobile-jump-wrap,
+  .marcus-brief-page .brief-chapter-bottom {
+    display: flex;
+  }
+
+  .marcus-chapter-shell {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .marcus-chapter-shell--media-left .marcus-chapter-media,
+  .marcus-chapter-shell--media-left .marcus-chapter-text {
+    order: initial;
+  }
+
+  .marcus-chapter-text {
+    width: min(100%, 34rem);
+    margin-inline: auto;
+    padding: clamp(1rem, 4vw, 1.4rem);
+    text-align: center !important;
+  }
+
+  .marcus-body-text {
+    box-sizing: border-box;
+    max-width: 100%;
+    padding-inline: 0.35rem;
+    letter-spacing: 0.08em !important;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .marcus-chapter-media {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .marcus-scroll-strip {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  .marcus-scroll-item,
+  .marcus-scroll-strip--tattoo .marcus-scroll-item,
+  .marcus-scroll-item--tattoo {
+    flex: 0 0 78vw;
+    max-width: 78vw;
+  }
+
+  .marcus-scroll-strip--face .marcus-scroll-item,
+  .marcus-scroll-item--face {
+    flex: 0 0 74vw;
+    max-width: 74vw;
+  }
+
+  .marcus-scroll-card,
+  .marcus-scroll-strip--tattoo .marcus-scroll-card {
+    width: auto;
+    max-width: 100%;
+    flex: 0 0 78vw;
+    aspect-ratio: 3/4;
+  }
+
+  .marcus-scroll-strip--face .marcus-scroll-card {
+    width: auto;
+    max-width: 100%;
+    flex: 0 0 74vw;
+  }
+
+  .marcus-scroll-caption {
+    max-width: 100%;
+  }
+
+  .marcus-basic-info-media {
+    width: 100%;
+    max-width: 100%;
+    --marcus-basic-ref-height: clamp(420px, 62vh, 640px);
+  }
+
+  .marcus-basic-info-media__item,
+  .marcus-scroll-item--basic-info {
+    width: auto;
+    max-width: none;
+    flex-basis: auto;
+  }
+
+  .marcus-basic-info-media__item img {
+    height: min(var(--marcus-basic-ref-height), 78vw);
+  }
+
+  .tattoo-collage {
+    position: static;
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    max-width: 100%;
+    overflow-x: hidden;
+    padding-inline: 0.15rem;
+    --tattoo1-x: 0%;
+    --tattoo1-y: 0%;
+    --tattoo2-x: 0%;
+    --tattoo2-y: 0%;
+    --tattoo3-x: 0%;
+    --tattoo3-y: 0%;
+  }
+
+  .tattoo-item {
+    position: relative;
+    width: 100%;
+    margin-top: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .tattoo-item--tattoo,
+  .tattoo-item--tattoo2,
+  .tattoo-item--tattoo3 {
+    top: auto;
+    left: auto;
+  }
+
+  .tattoo-item--tattoo {
+    transform: translate(var(--tattoo1-x), var(--tattoo1-y));
+  }
+
+  .tattoo-item--tattoo2 {
+    transform: translate(var(--tattoo2-x), var(--tattoo2-y));
+  }
+
+  .tattoo-item--tattoo3 {
+    transform: translate(var(--tattoo3-x), var(--tattoo3-y));
+  }
+
+  .tattoo-item--tattoo .tattoo-img,
+  .tattoo-item--tattoo2 .tattoo-img,
+  .tattoo-item--tattoo3 .tattoo-img {
+    max-width: min(92vw, 520px);
   }
 }

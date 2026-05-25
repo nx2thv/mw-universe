@@ -4230,9 +4230,10 @@ body:has(.au-archive) {
   }
 
   .about-story__memory-heading-title {
-    font-size: clamp(8.4rem, 17vw, 8.8rem);
+    font-size: clamp(7.4rem, 16vw, 7.8rem);
     margin-top: 0.4em;
     line-height: 0.72;
+    padding-left: 0.1em;
     transform: none;
   }
 

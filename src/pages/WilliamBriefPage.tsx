@@ -96,19 +96,45 @@ export default function WilliamBriefPage() {
 
   // Intersection observer for section animations
   useEffect(() => {
+    let activeFrame = 0;
+
+    const updateActiveChapter = () => {
+      activeFrame = 0;
+      const targets = Array.from(
+        document.querySelectorAll<HTMLElement>("[data-section-index], #gallery")
+      );
+      if (!targets.length) return;
+
+      const readLine = window.innerHeight * 0.38;
+      const isNearPageEnd =
+        window.scrollY + window.innerHeight >=
+        document.documentElement.scrollHeight - 16;
+
+      if (isNearPageEnd) {
+        setActiveAnchor("gallery");
+        return;
+      }
+
+      const current = targets.reduce((active, target) => {
+        const rect = target.getBoundingClientRect();
+        if (rect.top <= readLine && rect.bottom > 0) {
+          return target;
+        }
+        return active;
+      }, targets[0]);
+
+      if (current.id) {
+        setActiveAnchor(current.id);
+      }
+    };
+
+    const queueActiveChapterUpdate = () => {
+      if (activeFrame) return;
+      activeFrame = window.requestAnimationFrame(updateActiveChapter);
+    };
+
     const observer = new IntersectionObserver(
       (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-
-        if (visible) {
-          const nextAnchor = (visible.target as HTMLElement).id;
-          if (nextAnchor) {
-            setActiveAnchor(nextAnchor);
-          }
-        }
-
         entries.forEach((entry) => {
           const indexAttr = entry.target.getAttribute("data-section-index");
           const index = indexAttr ? Number(indexAttr) : NaN;
@@ -126,20 +152,17 @@ export default function WilliamBriefPage() {
     const sectionEls = document.querySelectorAll("[data-section-index]");
     sectionEls.forEach((el) => observer.observe(el));
 
-    const galleryObserver = new IntersectionObserver(
-      ([entry]) => {
-        if (entry?.isIntersecting) {
-          setActiveAnchor("gallery");
-        }
-      },
-      { threshold: 0.28, rootMargin: "-8% 0px -55% 0px" },
-    );
-    const galleryEl = document.getElementById("gallery");
-    if (galleryEl) galleryObserver.observe(galleryEl);
+    queueActiveChapterUpdate();
+    window.addEventListener("scroll", queueActiveChapterUpdate, { passive: true });
+    window.addEventListener("resize", queueActiveChapterUpdate);
 
     return () => {
+      if (activeFrame) {
+        window.cancelAnimationFrame(activeFrame);
+      }
+      window.removeEventListener("scroll", queueActiveChapterUpdate);
+      window.removeEventListener("resize", queueActiveChapterUpdate);
       observer.disconnect();
-      galleryObserver.disconnect();
     };
   }, []);
 
@@ -237,13 +260,13 @@ export default function WilliamBriefPage() {
             "#FFF3CC\n" +
             "#F6E8B1",
             "How to draw it:\n" +
-            "William's hair is essentially a refined, modern mullet.\n" +
+            "William's hair is essentially a refined, modern wolfcut.\n" +
             "The back is longer and softly curled at the nape of his neck.\n" +
             "While the front has styled bangs that frame his face.",
             "He switches between two looks:",
             "First style: Soft front bang with a loose, effortless knot at the back.\n" +
             "(See the first row of reference images.)",
-            "Second style: Same cut, but without the knot. The mullet flows naturally.\n" +
+            "Second style: Same cut, but without the knot. The wolfcut flows naturally.\n" +
             "Sleek, expensive, slightly tousled in a deliberate way.\n" +
             "(See the second row of reference images.)",
             "Accessories:\nhas nipples piercings.\n the rest is shown in the row beneath the hair reference images.\n" +
@@ -307,11 +330,11 @@ export default function WilliamBriefPage() {
           bullets: [
             "Màu tóc:\n #F1D27A",
             "Highlight:\n #FFF3cc\n #f6e8b1",
-            "Cách vẽ:\n tóc hơi hướng theo kiểu mullet.\n tóc dài đến tầm gáy, lọn tóc mềm, hơi rối ôm sát lại da.\n có mái ở phía trước tạo khung cho khuôn mặt.",
+            "Cách vẽ:\n tóc hơi hướng theo kiểu wolfcut.\n tóc dài đến tầm gáy, lọn tóc mềm, hơi rối ôm sát lại gáy.\n có mái ở phía trước tạo khung cho khuôn mặt.",
             "Có 2 kiểu tóc:",
             "Kiểu 1: tóc buộc hờ phía sau\n (xem 2 ảnh ở dòng đầu tiên)",
-            "Kiểu 2: tóc khi không buộc\n (xem 2 ảnh ở dòng thứ hai)",
-            "Phụ kiện:\ncó khuyên ngực.\n còn lại xem dòng cuối.\n(bạn có thể lướt trái phải trên touchpad hoặc nhấn nút.)"
+            "Kiểu 2: tóc khi không buộc\nnên để cho tóc ôm sát lại gáy hơn\n (xem 2 ảnh ở dòng thứ hai)",
+            "Phụ kiện:\ncó khuyên ngực.\n còn lại xem dòng cuối.\n"
           ],
         },
         {
@@ -320,8 +343,8 @@ export default function WilliamBriefPage() {
           bullets: [
             "Tay:\n ngón tay dài và mảnh — dáng tay của người ít khi làm việc nặng.\n gân nổi nhẹ, khớp xương mảnh mai.",
             "Vai:\n gầy, tinh tế nhưng vẫn hơi vuông để không quá nữ tính.\n xương quai xanh lộ rõ, nằm nông duới da.\n có tàn nhang trên xương quai xanh.",
-            "Eo và hông:\n Eo bé, tầm 23 inches/58-59cm.\n Vẽ to hay bé hơn là Marcus đánh bạn.\nHông hẹp và gọn.",
-            "Chân:\n dài, thon, đùi to vừa đủ và săn chắc.\n bắp chân có cơ vừa đủ để không quá yếu đuối.\n hãy nghĩ tới chân của Bella Hadid khi bạn vẽ tới đây.",
+            "Eo và hông:\n Eo bé, tầm 23 inches/58-59cm.\nHông hẹp và gọn.",
+            "Chân:\n dài, thon, đùi to vừa đủ và săn chắc.\n bắp chân hơi có cơ để không quá yếu đuối.\nKiểu như quả chân của Bella Hadid.",
             "Tư thế:\n sang trọng và uy nghi.\n sống lưng luôn thẳng, vai hơi đưa về sau.",
             "Tóm tắt:\n cơ thể mảnh khảnh, sang trọng.\n nên được vẽ để toát ra vibe của người trong ngành thời trang.",
           ],
@@ -357,7 +380,7 @@ export default function WilliamBriefPage() {
     vi: {
       "basic info": "Tổng quan",
       face: "Gương mặt",
-      "hair and stuffs": "Tóc & phụ kiện",
+      "hair and stuffs": "Tạo hình",
       silhouette: "Dáng người",
       tatts: "Hình xăm",
     },
@@ -370,7 +393,7 @@ export default function WilliamBriefPage() {
     })),
     {
       anchor: "gallery",
-      label: "F Gallery",
+      label: "Gallery",
     },
   ];
   const activeChapterLabel =

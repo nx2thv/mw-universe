@@ -52,6 +52,44 @@ const ROUTE_TRANSITION_PATHS = new Set([
     "/brief-opening",
 ]);
 
+const HOME_SHELL_BACKGROUND = [
+    "radial-gradient(circle at 50% 36%, rgba(128, 106, 80, 0.12), transparent 34%)",
+    "radial-gradient(circle at 50% 60%, rgba(0, 0, 0, 0.38), transparent 62%)",
+    "radial-gradient(circle at center, transparent 0%, rgba(8, 7, 7, 0.14) 42%, rgba(3, 3, 3, 0.5) 100%)",
+    "linear-gradient(180deg, #090808 0%, #0d0b0b 52%, #080707 100%)",
+].join(", ");
+
+type RouteShellTheme = {
+    color: string;
+    background: string;
+};
+
+function getRouteShellTheme(): RouteShellTheme {
+    return {
+        color: "#090808",
+        background: HOME_SHELL_BACKGROUND,
+    };
+}
+
+function applyDocumentShellTheme() {
+    const theme = getRouteShellTheme();
+    const html = document.documentElement;
+    const body = document.body;
+    const root = document.getElementById("root");
+    const shellTargets = [html, body, root].filter(Boolean) as HTMLElement[];
+
+    shellTargets.forEach((target) => {
+        target.style.background = theme.background;
+        target.style.backgroundColor = theme.color;
+        target.style.backgroundAttachment = "fixed";
+        target.style.colorScheme = "dark only";
+    });
+
+    document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]').forEach((meta) => {
+        meta.content = theme.color;
+    });
+}
+
 function normalizeTransitionPath(pathname: string) {
     return pathname.replace(/\/+$/, "") || "/";
 }
@@ -203,6 +241,10 @@ function AppLayout() {
         activeTransitionRef.current = activeTransition;
     }, [activeTransition]);
 
+    useLayoutEffect(() => {
+        applyDocumentShellTheme();
+    }, [pathname]);
+
     const setRouteTransition = useCallback((transition: ActiveRouteTransition | null) => {
         activeTransitionRef.current = transition;
         setActiveTransition(transition);
@@ -245,6 +287,7 @@ function AppLayout() {
             if (!to) return false;
 
             const targetUrl = new URL(to, window.location.origin);
+            applyDocumentShellTheme();
             const currentLocation = routeLocationRef.current;
             if (
                 targetUrl.pathname === currentLocation.pathname &&
