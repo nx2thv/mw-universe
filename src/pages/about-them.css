@@ -146,6 +146,7 @@ h1.portal-fade-up {
 }
 
 .au-archive {
+  --au-topbar-safe: calc(env(safe-area-inset-top, 0px) + clamp(4.4rem, 7vw, 5.2rem));
   --au-bg: #09090b;
   --au-bg-soft: #151417;
   --au-ink: #e5ddd1;
@@ -164,7 +165,7 @@ h1.portal-fade-up {
   height: 100vh;
   min-height: 100vh;
   overflow: hidden;
-  padding-top: clamp(4.4rem, 7vw, 5.2rem);
+  padding-top: var(--au-topbar-safe);
   background:
     radial-gradient(80% 72% at 18% 18%, rgba(84, 73, 104, 0.18), transparent 58%),
     radial-gradient(70% 62% at 88% 24%, rgba(142, 168, 188, 0.1), transparent 60%),
@@ -1187,7 +1188,7 @@ body:has(.au-archive) {
 
 @media (max-width: 900px) and (max-height: 760px) {
   .au-archive {
-    padding-top: clamp(3.7rem, 8vh, 4.8rem);
+    --au-topbar-safe: calc(env(safe-area-inset-top, 0px) + clamp(3.7rem, 8vh, 4.8rem));
   }
 
   .au-archive__shelf {
@@ -1248,7 +1249,7 @@ body:has(.au-archive) {
 
 @media (max-width: 540px) {
   .au-archive {
-    padding-top: clamp(4.4rem, 8.5vh, 5.4rem);
+    --au-topbar-safe: calc(env(safe-area-inset-top, 0px) + clamp(4.4rem, 8.5vh, 5.4rem));
   }
 
   .au-archive__welcome {

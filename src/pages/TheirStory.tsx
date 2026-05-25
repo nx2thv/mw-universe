@@ -1,5 +1,5 @@
 import "./about-them.css";
-import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { useLanguage } from "../LanguageContext";
 import PageCredit from "../components/PageCredit";
 import { getGalleryItems } from "../lib/galleryItems";
@@ -642,6 +642,7 @@ const translations = {
 
 export default function TheirStory() {
   const { language } = useLanguage();
+  const storyPaperRef = useRef<HTMLElement | null>(null);
   const [openLetterIndex, setOpenLetterIndex] = useState<number | null>(0);
   const [wallPage, setWallPage] = useState(0);
   const [timelineProgress, setTimelineProgress] = useState(0);
@@ -686,7 +687,7 @@ export default function TheirStory() {
   function scrollStoryPaperTo(targetId: string) {
     if (typeof window === "undefined") return;
 
-    const scrollRoot = document.querySelector<HTMLElement>(".about-story__paper");
+    const scrollRoot = storyPaperRef.current ?? document.querySelector<HTMLElement>(".about-story__paper");
     const target = document.getElementById(targetId);
     if (!scrollRoot || !target) return;
 
@@ -772,7 +773,7 @@ export default function TheirStory() {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    const scrollRoot = document.querySelector<HTMLElement>(".about-story__paper");
+    const scrollRoot = storyPaperRef.current ?? document.querySelector<HTMLElement>(".about-story__paper");
     const timelineList = document.querySelector<HTMLElement>(".about-story__timeline-list");
     if (!timelineList) return;
 
@@ -835,7 +836,7 @@ export default function TheirStory() {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    const scrollRoot = document.querySelector<HTMLElement>(".about-story__paper");
+    const scrollRoot = storyPaperRef.current ?? document.querySelector<HTMLElement>(".about-story__paper");
     if (!scrollRoot) return;
 
     const revealTargets = Array.from(
@@ -878,7 +879,7 @@ export default function TheirStory() {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    const scrollRoot = document.querySelector<HTMLElement>(".about-story__paper");
+    const scrollRoot = storyPaperRef.current ?? document.querySelector<HTMLElement>(".about-story__paper");
     if (!scrollRoot) return;
 
     const chapterTargets = storyChapterItems
@@ -909,6 +910,46 @@ export default function TheirStory() {
       window.removeEventListener("resize", updateActiveChapter);
     };
   }, [storyChapterItems]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const correctIntroResumeScroll = () => {
+      const scrollRoot = storyPaperRef.current;
+      if (!scrollRoot) return;
+      if (activeChapterId !== "story-hero") return;
+      if (scrollRoot.scrollTop <= 0 || scrollRoot.scrollTop > 180) return;
+
+      scrollRoot.scrollTo({
+        top: 0,
+        behavior: "auto",
+      });
+    };
+
+    const scheduleCorrection = () => {
+      window.requestAnimationFrame(() => {
+        correctIntroResumeScroll();
+        window.setTimeout(correctIntroResumeScroll, 120);
+        window.setTimeout(correctIntroResumeScroll, 360);
+      });
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        scheduleCorrection();
+      }
+    };
+
+    window.addEventListener("pageshow", scheduleCorrection);
+    window.addEventListener("resize", scheduleCorrection);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener("pageshow", scheduleCorrection);
+      window.removeEventListener("resize", scheduleCorrection);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [activeChapterId]);
 
   const handleChapterJump = (chapterId: string) => {
     scrollStoryPaperTo(chapterId);
@@ -1115,7 +1156,7 @@ export default function TheirStory() {
         </div>
       </div>
       <div className="about-story__layout">
-        <section className="about-story__paper">
+        <section className="about-story__paper" ref={storyPaperRef}>
           <section
             id="story-hero"
             className={`about-story__hero ${visibleStaggerIds.includes("hero-intro") ? "is-visible" : ""}`}

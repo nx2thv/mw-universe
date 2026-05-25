@@ -63,7 +63,7 @@ const auEntries: AuEntry[] = [
     title: "The Quiet Husband",
     shortTitle: "Contract",
     indexImage: auSelector1,
-    premise: "p/s: yêu nhau mẹ đi phiền quá",
+    premise: "p/s: basically just dumb & dumber",
     setting: "A quiet two-storey house in a\nsuburban neighbourhood just outside the city.",
     settingVi: "Một căn nhà hai tầng yên tĩnh ở\nkhu ngoại ô ngay bên ngoài thành phố.",
     background: [
@@ -174,6 +174,7 @@ function getGatedAuId() {
 
 export default function AuArchive() {
   const { language } = useLanguage();
+  const archiveRef = useRef<HTMLElement | null>(null);
   const [sharedAuId, setSharedAuId] = useState<string | null>(getSharedAuId);
   const [gatedAuId, setGatedAuId] = useState<string | null>(getGatedAuId);
   const [selectedAuId, setSelectedAuId] = useState<string | null>(null);
@@ -206,6 +207,42 @@ export default function AuArchive() {
       entryTransitionTimeoutsRef.current.forEach((timeoutId) => window.clearTimeout(timeoutId));
     };
   }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (showWelcome) return;
+
+    const correctAuResumeLayout = () => {
+      if (!archiveRef.current) return;
+      if (window.scrollY > 0 && window.scrollY < 180) {
+        window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      }
+    };
+
+    const scheduleCorrection = () => {
+      window.requestAnimationFrame(() => {
+        correctAuResumeLayout();
+        window.setTimeout(correctAuResumeLayout, 120);
+        window.setTimeout(correctAuResumeLayout, 360);
+      });
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        scheduleCorrection();
+      }
+    };
+
+    window.addEventListener("pageshow", scheduleCorrection);
+    window.addEventListener("resize", scheduleCorrection);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener("pageshow", scheduleCorrection);
+      window.removeEventListener("resize", scheduleCorrection);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [showWelcome, activeAuEntry?.id]);
 
   const getAuShareUrl = (entry: AuEntry) => {
     const url = new URL("/au", window.location.origin);
@@ -268,7 +305,7 @@ export default function AuArchive() {
   };
 
   return (
-    <main className={`au-archive ${showWelcome ? "au-archive--welcome" : ""} about-portal relative min-h-screen overflow-hidden text-[#f2ede2]`}>
+    <main ref={archiveRef} className={`au-archive ${showWelcome ? "au-archive--welcome" : ""} about-portal relative min-h-screen overflow-hidden text-[#f2ede2]`}>
       <div className="about-portal__vignette pointer-events-none fixed inset-0" aria-hidden="true" />
       <div className="about-portal__grain pointer-events-none fixed inset-0" aria-hidden="true" />
 
