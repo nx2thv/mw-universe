@@ -27,6 +27,18 @@ body:has(.home-journey-page) #root {
   background-attachment: fixed;
 }
 
+/* Keep the desktop compositor from repainting duplicate fixed gradients.
+   The journey stage already provides the visible layered background. */
+@media (min-width: 901px) {
+  html:has(.home-journey-page),
+  body:has(.home-journey-page),
+  body:has(.home-journey-page) #root,
+  .home-journey-page {
+    background: #090808;
+    background-attachment: scroll;
+  }
+}
+
 h1 {
   font-family: 'Playfair Display', cursive;
   font-size: 2rem;
