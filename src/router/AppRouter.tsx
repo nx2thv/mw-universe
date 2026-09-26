@@ -6,19 +6,19 @@ import {
     useLocation,
     useNavigate,
 } from "react-router";
-import { lazy, Suspense, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { LanguageProvider } from "../LanguageContext";
 import UniversalTopBar from "../components/UniversalTopBar";
 import Footer from "../components/Footer";
 import type { RouteTransitionTone } from "../lib/routeTransitions";
 
-const Home = lazy(() => import("../pages/Home"));
-const BriefPage = lazy(() => import("../pages/BriefPage"));
-const MyCurrentIdeasPage = lazy(() => import("../pages/MyCurrentIdeasPage"));
-const TheirStory = lazy(() => import("../pages/TheirStory"));
-const AuArchive = lazy(() => import("../pages/AuArchive"));
-const BriefLoadingPage = lazy(() => import("../pages/BriefLoadingPage"));
-const BriefOpeningPage = lazy(() => import("../pages/BriefOpeningPage"));
+import Home from "../pages/Home";
+import BriefPage from "../pages/BriefPage";
+import MyCurrentIdeasPage from "../pages/MyCurrentIdeasPage";
+import TheirStory from "../pages/TheirStory";
+import AuArchive from "../pages/AuArchive";
+import BriefLoadingPage from "../pages/BriefLoadingPage";
+import BriefOpeningPage from "../pages/BriefOpeningPage";
 
 function ScrollToTop() {
     const { pathname } = useLocation();
@@ -387,17 +387,15 @@ function AppLayout() {
         <>
         <ScrollToTop />
         {!isBriefFlowRoute && !isHomeRoute && <UniversalTopBar />}
-        <Suspense fallback={null}>
-            <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/ideas" element={<MyCurrentIdeasPage />} />
-                <Route path="/story" element={<TheirStory />} />
-                <Route path="/au" element={<AuArchive />} />
-                <Route path="/brief-loading" element={<BriefLoadingPage />} />
-                <Route path="/brief-opening" element={<BriefOpeningPage />} />
-                <Route path=":id" element={<BriefPage />} />
-            </Routes>
-        </Suspense>
+        <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/ideas" element={<MyCurrentIdeasPage />} />
+            <Route path="/story" element={<TheirStory />} />
+            <Route path="/au" element={<AuArchive />} />
+            <Route path="/brief-loading" element={<BriefLoadingPage />} />
+            <Route path="/brief-opening" element={<BriefOpeningPage />} />
+            <Route path=":id" element={<BriefPage />} />
+        </Routes>
         {!isBriefFlowRoute && !isFooterlessRoute && <Footer />}
         <RouteTransitionOverlay
             transition={activeTransition}
