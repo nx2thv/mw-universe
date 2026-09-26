@@ -1,3 +1,4 @@
+import { useBriefReveals } from "../lib/useBriefReveals";
 import { useEffect, useMemo, useRef, useState } from "react";
 import marcusBriefPage from "../../assets/marcus-pattern.jpeg";
 import FloatingSoundtrackBar from "../components/FloatingSoundtrackBar";
@@ -49,10 +50,10 @@ const marcusPlaylistEmbedUrl =
 
 export default function MarcusBriefPage() {
   const { language } = useLanguage();
-  const [visibleSections, setVisibleSections] = useState<Record<number, boolean>>({});
+  const scrollRootRef = useRef<HTMLDivElement | null>(null);
+  useBriefReveals(scrollRootRef, ".marcus-reveal-item, .marcus-basic-info-media__item, .marcus-section-soundtrack");
   const [activeAnchor, setActiveAnchor] = useState("basic-info");
   const [chapterOpen, setChapterOpen] = useState(false);
-  const [isBasicInfoMediaVisible, setIsBasicInfoMediaVisible] = useState(false);
   const [selectedGalleryImage, setSelectedGalleryImage] =
     useState<GalleryLightboxImage | null>(null);
   const [supabaseMarcusGallery, setSupabaseMarcusGallery] = useState<
@@ -84,19 +85,22 @@ export default function MarcusBriefPage() {
   };
 
   useEffect(() => {
+    const scrollRoot = scrollRootRef.current;
+    if (!scrollRoot) return;
     let activeFrame = 0;
 
     const updateActiveChapter = () => {
       activeFrame = 0;
       const targets = Array.from(
-        document.querySelectorAll<HTMLElement>("[data-section-index], #gallery")
+        scrollRoot.querySelectorAll<HTMLElement>("[data-section-index], #gallery")
       );
       if (!targets.length) return;
 
-      const readLine = window.innerHeight * 0.38;
+      const rootTop = scrollRoot.getBoundingClientRect().top;
+      const readLine = rootTop + scrollRoot.clientHeight * 0.38;
       const isNearPageEnd =
-        window.scrollY + window.innerHeight >=
-        document.documentElement.scrollHeight - 16;
+        scrollRoot.scrollTop + scrollRoot.clientHeight >=
+        scrollRoot.scrollHeight - 16;
 
       if (isNearPageEnd) {
         setActiveAnchor("gallery");
@@ -105,7 +109,7 @@ export default function MarcusBriefPage() {
 
       const current = targets.reduce((active, target) => {
         const rect = target.getBoundingClientRect();
-        if (rect.top <= readLine && rect.bottom > 0) {
+        if (rect.top <= readLine && rect.bottom > rootTop) {
           return target;
         }
         return active;
@@ -121,52 +125,16 @@ export default function MarcusBriefPage() {
       activeFrame = window.requestAnimationFrame(updateActiveChapter);
     };
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const indexAttr = entry.target.getAttribute("data-section-index");
-          const index = indexAttr ? Number(indexAttr) : NaN;
-          if (!Number.isFinite(index)) return;
-          if (entry.isIntersecting) {
-            setVisibleSections((prev) =>
-              prev[index] ? prev : { ...prev, [index]: true }
-            );
-          }
-        });
-      },
-      { threshold: 0.08, rootMargin: "-8% 0px -8% 0px" }
-    );
-
-    const sectionEls = document.querySelectorAll("[data-section-index]");
-    sectionEls.forEach((el) => observer.observe(el));
-
     queueActiveChapterUpdate();
-    window.addEventListener("scroll", queueActiveChapterUpdate, { passive: true });
+    scrollRoot.addEventListener("scroll", queueActiveChapterUpdate, { passive: true });
     window.addEventListener("resize", queueActiveChapterUpdate);
-
-    const mediaObserver = new IntersectionObserver(
-      ([entry]) => {
-        if (entry?.isIntersecting) {
-          setIsBasicInfoMediaVisible(true);
-          mediaObserver.disconnect();
-        }
-      },
-      { threshold: 0.06, rootMargin: "0px 0px -8% 0px" }
-    );
-
-    const basicInfoMedia = document.querySelector("[data-marcus-basic-info-media]");
-    if (basicInfoMedia) {
-      mediaObserver.observe(basicInfoMedia);
-    }
 
     return () => {
       if (activeFrame) {
         window.cancelAnimationFrame(activeFrame);
       }
-      window.removeEventListener("scroll", queueActiveChapterUpdate);
+      scrollRoot.removeEventListener("scroll", queueActiveChapterUpdate);
       window.removeEventListener("resize", queueActiveChapterUpdate);
-      observer.disconnect();
-      mediaObserver.disconnect();
     };
   }, []);
 
@@ -485,14 +453,23 @@ export default function MarcusBriefPage() {
   );
 
   const handleChapterJump = (anchor: string) => {
+    const scrollRoot = scrollRootRef.current;
     const target = document.getElementById(anchor);
-    if (target) {
-      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (scrollRoot && target) {
+      scrollRoot.scrollTo({
+        top: scrollRoot.scrollTop + target.getBoundingClientRect().top - scrollRoot.getBoundingClientRect().top,
+        behavior: "smooth",
+      });
       setActiveAnchor(anchor);
     }
   };
 
   return (
+    <div
+      ref={scrollRootRef}
+      className="marcus-scroll-viewport"
+      style={selectedGalleryImage ? { overflowY: "hidden" } : undefined}
+    >
     <HeroScrollPage
       backgroundImage={marcusBriefPage}
       kicker=""
@@ -568,7 +545,6 @@ export default function MarcusBriefPage() {
 
             <div className="space-y-28 md:space-y-36">
               {sectionAnchors.map((section, sectionIndex) => {
-                const isVisible = visibleSections[sectionIndex] ?? false;
 
                 const bodyText =
                   section.body ??
@@ -605,7 +581,7 @@ export default function MarcusBriefPage() {
                   <section
                     id={section.anchor}
                     data-section-index={sectionIndex}
-                    className={`marcus-chapter py-16 lg:py-24 ${isVisible ? "is-visible" : ""}`}
+                    className="marcus-chapter py-16 lg:py-24 is-visible"
                   >
                     <div
                       className={`marcus-chapter-shell ${sectionIndex % 2 === 0
@@ -633,13 +609,13 @@ export default function MarcusBriefPage() {
                       {/* IMAGE AREA */}
                       {images.length > 0 && (
                         <div
-                          className="marcus-chapter-media marcus-reveal-item marcus-reveal-item--media"
+                          className={`marcus-chapter-media ${isPaletteSection ? "" : "marcus-reveal-item marcus-reveal-item--media"}`}
                         >
                           {/* PALETTE + AESTHETIC */}
                           {isPaletteSection && images.length === 1 && (
                             <div
                               data-marcus-basic-info-media
-                              className={`mt-10 relative marcus-basic-info-media ${isBasicInfoMediaVisible ? "is-media-visible" : ""}`}
+                              className="mt-10 relative marcus-basic-info-media is-media-visible"
                             >
                               <button
                                 type="button"
@@ -841,7 +817,7 @@ export default function MarcusBriefPage() {
                     </div>
                   </section>
                   {isPaletteSection && (
-                    <div className={`marcus-section-soundtrack ${isBasicInfoMediaVisible ? "is-soundtrack-visible" : ""}`}>
+                    <div className="marcus-section-soundtrack is-soundtrack-visible">
                       <FloatingSoundtrackBar
                         title="Marcus's soundtrack"
                         embedUrl={marcusPlaylistEmbedUrl}
@@ -924,5 +900,6 @@ export default function MarcusBriefPage() {
         <PageCredit tone="on-dark" />
       </div>
     </HeroScrollPage>
+    </div>
   );
 }

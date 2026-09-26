@@ -1,3 +1,4 @@
+import { useBriefReveals } from "../lib/useBriefReveals";
 import { useEffect, useMemo, useRef, useState } from "react";
 import williamBriefPage from "../../assets/williamBriefPage.jpeg";
 import FloatingSoundtrackBar from "../components/FloatingSoundtrackBar";
@@ -54,7 +55,8 @@ const williamPlaylistEmbedUrl =
 
 export default function WilliamBriefPage() {
   const { language } = useLanguage();
-  const [visibleSections, setVisibleSections] = useState<Record<number, boolean>>({});
+  const scrollRootRef = useRef<HTMLDivElement | null>(null);
+  useBriefReveals(scrollRootRef, ".william-section-kicker, .william-body-text, .william-section > .mt-10:not(:has(.william-stagger-item)), .william-stagger-item");
   const [activeAnchor, setActiveAnchor] = useState("basic-info");
   const [chapterOpen, setChapterOpen] = useState(false);
   const [selectedGalleryImage, setSelectedGalleryImage] =
@@ -94,21 +96,24 @@ export default function WilliamBriefPage() {
     });
   };
 
-  // Intersection observer for section animations
+  // Track chapters within the contained vertical scroll panel.
   useEffect(() => {
+    const scrollRoot = scrollRootRef.current;
+    if (!scrollRoot) return;
     let activeFrame = 0;
 
     const updateActiveChapter = () => {
       activeFrame = 0;
       const targets = Array.from(
-        document.querySelectorAll<HTMLElement>("[data-section-index], #gallery")
+        scrollRoot.querySelectorAll<HTMLElement>("[data-section-index], #gallery")
       );
       if (!targets.length) return;
 
-      const readLine = window.innerHeight * 0.38;
+      const rootTop = scrollRoot.getBoundingClientRect().top;
+      const readLine = rootTop + scrollRoot.clientHeight * 0.38;
       const isNearPageEnd =
-        window.scrollY + window.innerHeight >=
-        document.documentElement.scrollHeight - 16;
+        scrollRoot.scrollTop + scrollRoot.clientHeight >=
+        scrollRoot.scrollHeight - 16;
 
       if (isNearPageEnd) {
         setActiveAnchor("gallery");
@@ -117,7 +122,7 @@ export default function WilliamBriefPage() {
 
       const current = targets.reduce((active, target) => {
         const rect = target.getBoundingClientRect();
-        if (rect.top <= readLine && rect.bottom > 0) {
+        if (rect.top <= readLine && rect.bottom > rootTop) {
           return target;
         }
         return active;
@@ -133,36 +138,16 @@ export default function WilliamBriefPage() {
       activeFrame = window.requestAnimationFrame(updateActiveChapter);
     };
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const indexAttr = entry.target.getAttribute("data-section-index");
-          const index = indexAttr ? Number(indexAttr) : NaN;
-          if (!Number.isFinite(index)) return;
-          if (entry.isIntersecting) {
-            setVisibleSections((prev) =>
-              prev[index] ? prev : { ...prev, [index]: true }
-            );
-          }
-        });
-      },
-      { threshold: 0.08, rootMargin: "-6% 0px -6% 0px" }
-    );
-
-    const sectionEls = document.querySelectorAll("[data-section-index]");
-    sectionEls.forEach((el) => observer.observe(el));
-
     queueActiveChapterUpdate();
-    window.addEventListener("scroll", queueActiveChapterUpdate, { passive: true });
+    scrollRoot.addEventListener("scroll", queueActiveChapterUpdate, { passive: true });
     window.addEventListener("resize", queueActiveChapterUpdate);
 
     return () => {
       if (activeFrame) {
         window.cancelAnimationFrame(activeFrame);
       }
-      window.removeEventListener("scroll", queueActiveChapterUpdate);
+      scrollRoot.removeEventListener("scroll", queueActiveChapterUpdate);
       window.removeEventListener("resize", queueActiveChapterUpdate);
-      observer.disconnect();
     };
   }, []);
 
@@ -504,14 +489,23 @@ export default function WilliamBriefPage() {
 
 
   const handleChapterJump = (anchor: string) => {
+    const scrollRoot = scrollRootRef.current;
     const target = document.getElementById(anchor);
-    if (target) {
-      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (scrollRoot && target) {
+      scrollRoot.scrollTo({
+        top: scrollRoot.scrollTop + target.getBoundingClientRect().top - scrollRoot.getBoundingClientRect().top,
+        behavior: "smooth",
+      });
       setActiveAnchor(anchor);
     }
   };
 
   return (
+    <div
+      ref={scrollRootRef}
+      className="william-scroll-viewport"
+      style={selectedGalleryImage ? { overflowY: "hidden" } : undefined}
+    >
     <HeroScrollPage
       backgroundImage={williamBriefPage}
       kicker=""
@@ -587,11 +581,6 @@ export default function WilliamBriefPage() {
             {/* sections */}
             <div className="space-y-28 md:space-y-36">
               {sectionAnchors.map((section, sectionIndex) => {
-                const isVisible = visibleSections[sectionIndex] ?? false;
-
-                const animationClass = isVisible
-                  ? "opacity-100 translate-y-0 scale-100"
-                  : "opacity-0 translate-y-8 scale-[0.96]";
                 const imageIds = sectionImageIds[section.id] || [];
                 const images = imageIds.map((id) => imageMap[id]).filter(Boolean);
 
@@ -615,15 +604,13 @@ export default function WilliamBriefPage() {
                     key={section.id}
                     id={section.anchor}
                     data-section-index={sectionIndex}
-                    className={`william-section py-16 lg:py-24 transition-all duration-[560ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${animationClass} ${isVisible ? "is-visible" : ""}`}
+                    className={`william-section py-16 lg:py-24  is-visible`}
                   >
                     {/* TEXT BLOCK */}
                     <div className="max-w-3xl mx-auto text-center space-y-4 leading-relaxed">
                       {/* kicker */}
                       <div
-                        className={`william-section-kicker text-[11px] md:text-xs uppercase tracking-[0.18em] text-neutral-600 transition-all duration-[560ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-4 scale-95"
-                          }`}
-                        style={{ transitionDelay: isVisible ? "80ms" : "0ms" }}
+                        className={`william-section-kicker text-[11px] md:text-xs uppercase tracking-[0.18em] text-neutral-600  `}
                       >
                         {section.kicker}
                       </div>
@@ -631,9 +618,7 @@ export default function WilliamBriefPage() {
                       {/* optional body paragraph */}
                       {bodyText && (
                         <p
-                          className={`william-body-text mt-4 whitespace-pre-line text-[12px] md:text-sm md:leading-[1.9] leading-[1.8] tracking-[0.16em] uppercase text-neutral-800 transition-all duration-[560ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-4 scale-95"
-                            }`}
-                          style={{ transitionDelay: isVisible ? "170ms" : "0ms" }}
+                          className={`william-body-text mt-4 whitespace-pre-line text-[12px] md:text-sm md:leading-[1.9] leading-[1.8] tracking-[0.16em] uppercase text-neutral-800  `}
                         >
                           {bodyText}
                         </p>
@@ -642,11 +627,10 @@ export default function WilliamBriefPage() {
 
                     {/* IMAGE BLOCK */}
                     <div
-                      className={`mt-10 flex transition-all duration-[560ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-5 scale-95"} ${isFaceSection || isSilhouetteSection || isTattooSection
+                      className={`mt-10 flex   ${isFaceSection || isSilhouetteSection || isTattooSection
                         ? "justify-start"
                         : "justify-center"
                         }`}
-                      style={{ transitionDelay: isVisible ? "260ms" : "0ms" }}
                     >
                       {images.length > 0 ? (
                         // A. PALETTE – single image
@@ -924,5 +908,6 @@ export default function WilliamBriefPage() {
         <PageCredit tone="on-dark" />
       </div>
     </HeroScrollPage>
+    </div>
   );
 }

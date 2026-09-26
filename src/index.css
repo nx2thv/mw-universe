@@ -3443,33 +3443,62 @@ section[data-section-index] {
   position: relative;
 }
 
+/* Keep brief pages in contained vertical scroll panels, like Story. */
+.marcus-scroll-viewport,
+.william-scroll-viewport {
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
+}
+
+/* Shared Story-style reveals; each target animates once, without parent fades. */
+:is(.marcus-scroll-viewport, .william-scroll-viewport) [data-brief-reveal] {
+  opacity: 0 !important;
+  transform: translate3d(var(--marcus-a-shift-x, 0px), 18px, 0) !important;
+  filter: none !important;
+  transition: opacity 520ms ease, transform 700ms cubic-bezier(0.18, 0.82, 0.3, 1) !important;
+  transition-delay: var(--brief-reveal-delay, 60ms) !important;
+  will-change: auto !important;
+}
+
+:is(.marcus-scroll-viewport, .william-scroll-viewport) [data-brief-reveal="visible"] {
+  opacity: 1 !important;
+  transform: translate3d(var(--marcus-a-shift-x, 0px), 0, 0) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :is(.marcus-scroll-viewport, .william-scroll-viewport) [data-brief-reveal] {
+    opacity: 1 !important;
+    transform: translateX(var(--marcus-a-shift-x, 0px)) !important;
+    transition: none !important;
+  }
+}
+
+/* Match Story moment cards: fade and slide, with 72ms stagger steps. */
 .marcus-reveal-item {
   opacity: 0;
-  transform: translateY(18px) scale(0.97);
-  filter: blur(4px);
+  transform: translate3d(0, 18px, 0);
   transition:
-    opacity 620ms cubic-bezier(0.16, 1, 0.3, 1),
-    transform 620ms cubic-bezier(0.16, 1, 0.3, 1),
-    filter 560ms ease;
-  will-change: transform, opacity, filter;
+    opacity 520ms ease,
+    transform 700ms cubic-bezier(0.18, 0.82, 0.3, 1);
 }
 
 .marcus-chapter.is-visible .marcus-reveal-item {
   opacity: 1;
-  transform: translateY(0) scale(1);
-  filter: blur(0);
+  transform: translate3d(0, 0, 0);
 }
 
 .marcus-reveal-item--kicker {
-  transition-delay: 70ms;
+  transition-delay: 60ms;
 }
 
 .marcus-reveal-item--body {
-  transition-delay: 170ms;
+  transition-delay: 132ms;
 }
 
 .marcus-reveal-item--media {
-  transition-delay: 280ms;
+  transition-delay: 204ms;
 }
 
 .marcus-scroll-strip {
@@ -3610,32 +3639,28 @@ section[data-section-index] {
 .marcus-basic-info-media__playlist--stagger {
   opacity: 0;
   --marcus-a-shift-x: 0px;
-  transform: translateX(var(--marcus-a-shift-x)) translateY(18px) scale(0.98);
-  filter: blur(4px);
+  transform: translateX(var(--marcus-a-shift-x)) translate3d(0, 18px, 0);
   transition:
-    opacity 620ms cubic-bezier(0.16, 1, 0.3, 1),
-    transform 620ms cubic-bezier(0.16, 1, 0.3, 1),
-    filter 560ms ease;
-  will-change: transform, opacity, filter;
+    opacity 520ms ease,
+    transform 700ms cubic-bezier(0.18, 0.82, 0.3, 1);
 }
 
 .marcus-basic-info-media.is-media-visible .marcus-basic-info-media__item,
 .marcus-basic-info-media.is-media-visible .marcus-basic-info-media__playlist--stagger {
   opacity: 1;
-  transform: translateX(var(--marcus-a-shift-x)) translateY(0) scale(1);
-  filter: blur(0);
+  transform: translateX(var(--marcus-a-shift-x)) translate3d(0, 0, 0);
 }
 
 .marcus-basic-info-media.is-media-visible .marcus-basic-info-media__item--palette {
-  transition-delay: 340ms;
+  transition-delay: 60ms;
 }
 
 .marcus-basic-info-media.is-media-visible .marcus-basic-info-media__item--aesthetic {
-  transition-delay: 460ms;
+  transition-delay: 132ms;
 }
 
 .marcus-basic-info-media.is-media-visible .marcus-basic-info-media__playlist--stagger {
-  transition-delay: 580ms;
+  transition-delay: 204ms;
 }
 
 .marcus-section-soundtrack {
@@ -3644,20 +3669,16 @@ section[data-section-index] {
   justify-content: center;
   margin: -2.5rem auto 0;
   opacity: 0;
-  transform: translateY(18px) scale(0.98);
-  filter: blur(4px);
+  transform: translate3d(0, 18px, 0);
   transition:
-    opacity 620ms cubic-bezier(0.16, 1, 0.3, 1),
-    transform 620ms cubic-bezier(0.16, 1, 0.3, 1),
-    filter 560ms ease;
-  transition-delay: 160ms;
-  will-change: transform, opacity, filter;
+    opacity 520ms ease,
+    transform 700ms cubic-bezier(0.18, 0.82, 0.3, 1);
+  transition-delay: 204ms;
 }
 
 .marcus-section-soundtrack.is-soundtrack-visible {
   opacity: 1;
-  transform: translateY(0) scale(1);
-  filter: blur(0);
+  transform: translate3d(0, 0, 0);
 }
 
 .marcus-scroll-strip--basic-info {
