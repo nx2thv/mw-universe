@@ -8,7 +8,7 @@ import GalleryLightbox, {
 } from "../components/GalleryLightbox";
 import PageCredit from "../components/PageCredit";
 import { useLanguage } from "../LanguageContext";
-import { getGalleryItems } from "../lib/galleryItems";
+import { getGalleryItems, orderCharacterGallery } from "../lib/galleryItems";
 
 import marcusBeard from "../../assets/marcusBeard.jpeg";
 import marcusThighs from "../../assets/marcusThighs.jpeg";
@@ -57,7 +57,7 @@ export default function MarcusBriefPage() {
   const [selectedGalleryImage, setSelectedGalleryImage] =
     useState<GalleryLightboxImage | null>(null);
   const [supabaseMarcusGallery, setSupabaseMarcusGallery] = useState<
-    { id: string; src: string; label: string }[]
+    { id: string; src: string; label: string; position: number | null }[]
   >([]);
 
   // STRIP REFS FOR HORIZONTAL SCROLL
@@ -156,6 +156,7 @@ export default function MarcusBriefPage() {
 
             return {
               id: `supabase-${row.id}`,
+              position: row.position,
               src: row.src,
               label,
             };
@@ -448,7 +449,7 @@ export default function MarcusBriefPage() {
     { id: "local-4", src: marcusGallery1, label: "(A): Cẩm Đíc Nhót" },
   ];
   const marcusSoloGallery = useMemo(
-    () => [...localMarcusSoloGallery, ...supabaseMarcusGallery],
+    () => orderCharacterGallery(localMarcusSoloGallery, supabaseMarcusGallery),
     [supabaseMarcusGallery],
   );
 
@@ -830,9 +831,6 @@ export default function MarcusBriefPage() {
 
               {/* SIMPLE GALLERY – rows, no scroll */}
               <section id="gallery" className="commission-gallery marcus-gallery-section mt-20">
-                <h3 className="commission-gallery-title text-slate-100">
-                  Gallery
-                </h3>
                 <div className="mt-8 relative">
                   {/* LEFT ARROW */}
                   <button
@@ -843,8 +841,9 @@ export default function MarcusBriefPage() {
                     ‹
                   </button>
 
-                  {/* STRIP */}
+                  {/* Reset the snap position when a Supabase upload becomes the first card. */}
                   <div
+                    key={marcusSoloGallery[0]?.id}
                     ref={galleryStripRef}
                     className="gallery-strip strip-with-gutter no-scrollbar"
                   >

@@ -8,7 +8,7 @@ import GalleryLightbox, {
 } from "../components/GalleryLightbox";
 import PageCredit from "../components/PageCredit";
 import { useLanguage } from "../LanguageContext";
-import { getGalleryItems } from "../lib/galleryItems";
+import { getGalleryItems, orderCharacterGallery } from "../lib/galleryItems";
 import williamBrows from "../../assets/williamBrows.jpeg";
 import williamEyes from "../../assets/williamEyesAndMark.jpeg";
 import williamFreckles from "../../assets/williamFreckles.jpeg";
@@ -62,7 +62,7 @@ export default function WilliamBriefPage() {
   const [selectedGalleryImage, setSelectedGalleryImage] =
     useState<GalleryLightboxImage | null>(null);
   const [supabaseWilliamGallery, setSupabaseWilliamGallery] = useState<
-    { id: string; src: string; artist: string }[]
+    { id: string; src: string; artist: string; position: number | null }[]
   >([]);
 
   const accStripRef = useRef<HTMLDivElement | null>(null);
@@ -169,6 +169,7 @@ export default function WilliamBriefPage() {
 
             return {
               id: `supabase-${row.id}`,
+              position: row.position,
               src: row.src,
               artist,
             };
@@ -483,7 +484,7 @@ export default function WilliamBriefPage() {
     },
   ];
   const williamSoloGallery = useMemo(
-    () => [...localWilliamSoloGallery, ...supabaseWilliamGallery],
+    () => orderCharacterGallery(localWilliamSoloGallery, supabaseWilliamGallery),
     [supabaseWilliamGallery],
   );
 
@@ -837,9 +838,6 @@ export default function WilliamBriefPage() {
             </div>
             {/* WILLIAM SOLO COMMISSIONS GALLERY */}
             <section id="gallery" className="commission-gallery william-gallery-section mt-20">
-              <h3 className="commission-gallery-title text-slate-100">
-                Gallery
-              </h3>
 
               <div className="mt-8 relative">
                 {/* LEFT ARROW */}
@@ -853,6 +851,7 @@ export default function WilliamBriefPage() {
 
                 {/* STRIP */}
                 <div
+                  key={williamSoloGallery[0]?.id}
                   ref={galleryStripRef}
                   className="gallery-strip strip-with-gutter no-scrollbar"
                 >

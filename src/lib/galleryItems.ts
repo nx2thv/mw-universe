@@ -9,6 +9,7 @@ export type GallerySection =
 
 type GalleryItemRow = {
   id: string;
+  position: number | null;
   section: GallerySection;
   image_path: string;
   artist_credit: string;
@@ -22,6 +23,7 @@ type GalleryItemRow = {
 
 export type SupabaseGalleryItem = {
   id: string;
+  position: number | null;
   section: GallerySection;
   imagePath: string;
   src: string;
@@ -84,14 +86,19 @@ function getPublicImageUrl(imagePath: string) {
 export async function getGalleryItems(
   section: GallerySection,
 ): Promise<SupabaseGalleryItem[]> {
-  const { data, error } = await supabase
+  let query = supabase
     .from("gallery_items")
     .select(
-      "id, section, image_path, artist_credit, age_range, excerpt, excerpt_vi, polaroid_orientation, tag_direction, is_nsfw",
+      "id, section, image_path, artist_credit, age_range, excerpt, excerpt_vi, polaroid_orientation, tag_direction, is_nsfw, position",
     )
     .eq("section", section)
-    .eq("is_published", true)
-    .order("id", { ascending: true });
+    .eq("is_published", true);
+
+  if (section !== "story_moments") {
+    query = query.order("created_at", { ascending: true, nullsFirst: false });
+  }
+
+  const { data, error } = await query.order("id", { ascending: true });
 
   if (error) {
     throw new Error(error.message || "Failed to fetch gallery items.");
@@ -101,6 +108,7 @@ export async function getGalleryItems(
 
   return rows.map((row) => ({
     id: row.id,
+    position: row.position,
     section: row.section,
     imagePath: row.image_path,
     src: getPublicImageUrl(row.image_path),
@@ -112,4 +120,27 @@ export async function getGalleryItems(
     tagDirection: row.tag_direction,
     isNsfw: row.is_nsfw,
   }));
+}
+
+export function orderCharacterGallery<T>(
+  existing: T[],
+  uploads: (T & { position: number | null })[],
+): T[] {
+  const gallery = [...existing];
+
+  const positioned = uploads
+    .filter((image) => image.position !== null)
+    .sort((a, b) => a.position! - b.position!);
+
+  let nextIndex = 0;
+  for (const image of positioned) {
+    const index = Math.min(
+      Math.max(image.position! - 1, nextIndex),
+      gallery.length,
+    );
+    gallery.splice(index, 0, image);
+    nextIndex = index + 1;
+  }
+
+  return [...gallery, ...uploads.filter((image) => image.position === null)];
 }
