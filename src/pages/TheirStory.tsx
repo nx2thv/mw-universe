@@ -364,6 +364,7 @@ const loreFragments: LoreFragment[] = [
 ];
 
 const WALL_SLOT_CAPACITY = 4;
+const WALL_PAGE_SET_SIZE = 3;
 const ORIENTATION_SLOT_WEIGHT: Record<PolaroidOrientation, number> = {
   portrait: 1,
   landscape: 2,
@@ -645,6 +646,8 @@ export default function TheirStory() {
   const storyPaperRef = useRef<HTMLElement | null>(null);
   const [openLetterIndex, setOpenLetterIndex] = useState<number | null>(0);
   const [wallPage, setWallPage] = useState(0);
+  const [wallPageSet, setWallPageSet] = useState(0);
+  const firstWallPageButtonRef = useRef<HTMLButtonElement>(null);
   const [timelineProgress, setTimelineProgress] = useState(0);
   const [visibleTimelineIds, setVisibleTimelineIds] = useState<string[]>([]);
   const [openTimelineIds, setOpenTimelineIds] = useState<string[]>([]);
@@ -999,6 +1002,15 @@ export default function TheirStory() {
   const wallCount = wallGroups.length;
   const activeWallPage = wallCount === 0 ? 0 : Math.min(wallPage, wallCount - 1);
   const wallFragments = wallGroups[activeWallPage] ?? [];
+  const lastWallPageSet = Math.max(0, Math.ceil(wallCount / WALL_PAGE_SET_SIZE) - 1);
+  const activeWallPageSet = Math.min(wallPageSet, lastWallPageSet);
+  const firstPageInSet = activeWallPageSet * WALL_PAGE_SET_SIZE;
+  const pagesInSet = Math.min(WALL_PAGE_SET_SIZE, wallCount - firstPageInSet);
+
+  const handleWallPageSetChange = (pageSet: number) => {
+    setWallPageSet(pageSet);
+    requestAnimationFrame(() => firstWallPageButtonRef.current?.focus({ preventScroll: true }));
+  };
 
   const handleWallPageChange = (pageIndex: number) => {
     if (pageIndex === activeWallPage) return;
@@ -1516,20 +1528,48 @@ export default function TheirStory() {
                     </div>
 
                     {wallCount > 1 ? (
-                      <ol className="about-story__wall-pagination" aria-label="Little moments wall pages">
-                        {Array.from({ length: wallCount }, (_, pageIndex) => (
-                          <li key={`wall-page-${pageIndex}`}>
-                            <button
-                              type="button"
-                              className={`about-story__wall-page ${activeWallPage === pageIndex ? "is-active" : ""}`}
-                              onClick={() => handleWallPageChange(pageIndex)}
-                              aria-current={activeWallPage === pageIndex ? "page" : undefined}
-                            >
-                              {pageIndex + 1}
-                            </button>
-                          </li>
-                        ))}
-                      </ol>
+                        <ul className="about-story__wall-pagination">
+                          {activeWallPageSet > 0 && (
+                            <li>
+                              <button
+                                type="button"
+                                className="about-story__wall-page"
+                                onClick={() => handleWallPageSetChange(activeWallPageSet - 1)}
+                                aria-label={language === "vi" ? "Hiện nhóm trang trước" : "Show previous page numbers"}
+                              >
+                                ‹
+                              </button>
+                            </li>
+                          )}
+                          {Array.from({ length: pagesInSet }, (_, offset) => {
+                            const pageIndex = firstPageInSet + offset;
+                            return (
+                              <li key={`wall-page-${pageIndex}`}>
+                                <button
+                                  ref={offset === 0 ? firstWallPageButtonRef : undefined}
+                                  type="button"
+                                  className={`about-story__wall-page ${activeWallPage === pageIndex ? "is-active" : ""}`}
+                                  onClick={() => handleWallPageChange(pageIndex)}
+                                  aria-current={activeWallPage === pageIndex ? "page" : undefined}
+                                >
+                                  {pageIndex + 1}
+                                </button>
+                              </li>
+                            );
+                          })}
+                          {activeWallPageSet < lastWallPageSet && (
+                            <li>
+                              <button
+                                type="button"
+                                className="about-story__wall-page"
+                                onClick={() => handleWallPageSetChange(activeWallPageSet + 1)}
+                                aria-label={language === "vi" ? "Hiện nhóm trang tiếp theo" : "Show next page numbers"}
+                              >
+                                ›
+                              </button>
+                            </li>
+                          )}
+                        </ul>
                     ) : null}
                   </>
                 ) : null}
