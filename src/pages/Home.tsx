@@ -6,6 +6,8 @@ import TosModal from "../components/TosModal";
 import UniversalTopBar from "../components/UniversalTopBar";
 import { normalizeCharacter, type CharacterType, type CommissionIdea, type NsfwType, type StatusType } from "../data/commissionIdeas";
 import { openBriefDocument } from "../lib/briefLinks";
+import { getBriefFocusHub } from "../lib/briefFocus";
+import { runRouteTransition } from "../lib/routeTransitions";
 import { supabase } from "../lib/supabaseClients";
 import loop1 from "../../assets/loop1-carousel.jpg";
 import loop2 from "../../assets/loop2-carousel.jpg";
@@ -125,6 +127,7 @@ function getIdeaCardElementId(ideaId: string) {
 
 export default function Home() {
   const mainRef = useRef<HTMLElement | null>(null);
+  const exitFocusDialogRef = useRef<HTMLDialogElement>(null);
   const didRestoreStoredSectionRef = useRef(false);
   const isRestoringSectionRef = useRef(false);
   const [showTos, setShowTos] = useState(false);
@@ -134,6 +137,7 @@ export default function Home() {
   const [ideas, setIdeas] = useState<CommissionIdea[]>([]);
   const [ideasLoading, setIdeasLoading] = useState(true);
   const [sharedIdeaId, setSharedIdeaId] = useState<string | null>(getSharedIdeaId);
+  const isBriefFocusMode = sharedIdeaId !== null;
   const [openIdeaMenuId, setOpenIdeaMenuId] = useState<string | null>(null);
   const [copiedIdeaId, setCopiedIdeaId] = useState<string | null>(null);
   const [characterFilter, setCharacterFilter] = useState<CharacterType | "all">("all");
@@ -241,6 +245,15 @@ export default function Home() {
           loading: "Loading briefs...",
           sharedView: "Showing linked idea",
           clearSharedView: "Show all ideas",
+          focusMode: "Focus Mode",
+          exitFocusTitle: "Show all ideas?",
+          viewingBrief: "You're currently viewing",
+          sharedByVivian: ", the brief Vivian shared with you.",
+          showingAllIdeas: "Choosing to show all ideas will",
+          exitFocusMode: "exit Focus Mode",
+          displayOtherBriefs: "and display other briefs that are",
+          outsideCommission: "not part of this commission",
+          stayOnBrief: "Stay on this brief",
           copyLink: "Copy card link",
           copied: "Copied",
           filters: {
@@ -294,6 +307,15 @@ export default function Home() {
           loading: "Đang tải briefs...",
           sharedView: "Đang xem ý tưởng được gửi",
           clearSharedView: "Xem tất cả ý tưởng",
+          focusMode: "Chế độ tập trung",
+          exitFocusTitle: "Xem tất cả ý tưởng?",
+          viewingBrief: "Bạn hiện đang xem",
+          sharedByVivian: ", brief Vivian đã chia sẻ với bạn.",
+          showingAllIdeas: "Chọn xem tất cả ý tưởng sẽ",
+          exitFocusMode: "thoát chế độ tập trung",
+          displayOtherBriefs: "và hiển thị các brief khác",
+          outsideCommission: "không thuộc commission này",
+          stayOnBrief: "Ở lại brief này",
           copyLink: "Sao chép link card",
           copied: "Đã sao chép",
           filters: {
@@ -329,6 +351,7 @@ export default function Home() {
     if (!sharedIdeaId) return filteredIdeas;
     return ideas.filter((idea) => idea.id.toUpperCase() === sharedIdeaId.toUpperCase());
   }, [filteredIdeas, ideas, sharedIdeaId]);
+  const sharedIdeaTitle = isBriefFocusMode ? visibleIdeas[0]?.title : undefined;
 
   const getCharacterLabel = (character?: CharacterType | null) => {
     if (character === "william") return t.sections.briefs.filters.william;
@@ -346,6 +369,11 @@ export default function Home() {
   };
 
   const handleOpenBrief = async (idea: CommissionIdea) => {
+    if (isBriefFocusMode) {
+      runRouteTransition(getBriefFocusHub(idea.id));
+      return;
+    }
+
     try {
       await openBriefDocument(idea.briefPath, {
         ideaId: idea.id,
@@ -383,6 +411,7 @@ export default function Home() {
     url.searchParams.delete("idea");
     url.hash = "";
     window.history.replaceState(null, "", `${url.pathname}${url.search}`);
+    didRestoreStoredSectionRef.current = false;
     setSharedIdeaId(null);
   };
 
@@ -395,6 +424,8 @@ export default function Home() {
   const activeSectionLabel = sectionLinks.find(({ key }) => key === activeSection)?.label ?? t.nav.welcome;
 
   const jumpToSection = (key: SectionKey) => {
+    if (isBriefFocusMode && key !== "briefs") return;
+
     if (isCompactViewport && mainRef.current) {
       const section = mainRef.current.querySelector<HTMLElement>(`#${key}`);
       if (section) {
@@ -418,6 +449,7 @@ export default function Home() {
   };
 
   const handleSwitcherKeyDown = (event: KeyboardEvent<HTMLElement>) => {
+    if (isBriefFocusMode) return;
     if (!["ArrowDown", "ArrowRight", "ArrowUp", "ArrowLeft"].includes(event.key)) return;
     event.preventDefault();
 
@@ -426,8 +458,10 @@ export default function Home() {
   };
 
   useEffect(() => {
-    window.sessionStorage.setItem(HOME_SECTION_STORAGE_KEY, activeSection);
-  }, [activeSection]);
+    if (!isBriefFocusMode) {
+      window.sessionStorage.setItem(HOME_SECTION_STORAGE_KEY, activeSection);
+    }
+  }, [activeSection, isBriefFocusMode]);
 
   useEffect(() => {
     const syncUrlState = () => {
@@ -451,6 +485,10 @@ export default function Home() {
   }, []);
 
   useLayoutEffect(() => {
+    if (isBriefFocusMode) {
+      mainRef.current?.scrollTo({ top: 0, behavior: "instant" });
+      return;
+    }
     if (!isCompactViewport) return;
     if (didRestoreStoredSectionRef.current) return;
     const root = mainRef.current;
@@ -469,10 +507,10 @@ export default function Home() {
     }, 250);
 
     return () => window.clearTimeout(timeoutId);
-  }, [activeSection, isCompactViewport]);
+  }, [activeSection, isCompactViewport, isBriefFocusMode]);
 
   useEffect(() => {
-    if (!isCompactViewport) return;
+    if (!isCompactViewport || isBriefFocusMode) return;
     const root = mainRef.current;
     if (!root) return;
 
@@ -502,12 +540,12 @@ export default function Home() {
 
     sectionElements.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
-  }, [isCompactViewport]);
+  }, [isCompactViewport, isBriefFocusMode]);
 
   return (
     <>
       {showTos && <TosModal onAccept={handleAcceptTos} />}
-      <main ref={mainRef} className="home-journey-page">
+      <main ref={mainRef} className={`home-journey-page${isBriefFocusMode ? " home-journey-page--brief-focus" : ""}`}>
         <div className="home-journey-ui">
           <UniversalTopBar
             embedded
@@ -535,6 +573,7 @@ export default function Home() {
                   type="button"
                   role="option"
                   aria-selected={activeSection === key}
+                  disabled={isBriefFocusMode && key !== "briefs"}
                   className={`home-journey-chapter-option ${activeSection === key ? "is-active" : ""}`}
                   onClick={() => {
                     jumpToSection(key);
@@ -569,6 +608,7 @@ export default function Home() {
                   className={className}
                   aria-current={isActive ? "step" : undefined}
                   aria-label={label}
+                  disabled={isBriefFocusMode && key !== "briefs"}
                   onClick={() => jumpToSection(key)}
                 >
                   <span className="home-journey-left-index" aria-hidden="true">
@@ -717,48 +757,50 @@ export default function Home() {
                 {sharedIdeaId ? (
                   <div className="home-journey-ideas-shared-bar">
                     <span>{t.sections.briefs.sharedView}</span>
-                    <button type="button" onClick={clearSharedIdea}>
+                    <button type="button" onClick={() => exitFocusDialogRef.current?.showModal()}>
                       {t.sections.briefs.clearSharedView}
                     </button>
                   </div>
                 ) : null}
 
-                <div className="home-journey-ideas-filters" role="group" aria-label="Ideas filters">
-                  <label className="home-journey-ideas-filter">
-                    <span>{t.sections.briefs.filters.character}</span>
-                    <select
-                      value={characterFilter}
-                      onChange={(event) => setCharacterFilter(event.target.value as CharacterType | "all")}
-                    >
-                      <option value="all">{t.sections.briefs.filters.all}</option>
-                      <option value="william">{t.sections.briefs.filters.william}</option>
-                      <option value="marcus">{t.sections.briefs.filters.marcus}</option>
-                      <option value="couple">{t.sections.briefs.filters.couple}</option>
-                    </select>
-                  </label>
+                {!isBriefFocusMode && (
+                  <div className="home-journey-ideas-filters" role="group" aria-label="Ideas filters">
+                    <label className="home-journey-ideas-filter">
+                      <span>{t.sections.briefs.filters.character}</span>
+                      <select
+                        value={characterFilter}
+                        onChange={(event) => setCharacterFilter(event.target.value as CharacterType | "all")}
+                      >
+                        <option value="all">{t.sections.briefs.filters.all}</option>
+                        <option value="william">{t.sections.briefs.filters.william}</option>
+                        <option value="marcus">{t.sections.briefs.filters.marcus}</option>
+                        <option value="couple">{t.sections.briefs.filters.couple}</option>
+                      </select>
+                    </label>
 
-                  <label className="home-journey-ideas-filter">
-                    <span>{t.sections.briefs.filters.status}</span>
-                    <select
-                      value={statusFilter}
-                      onChange={(event) => setStatusFilter(event.target.value as StatusType)}
-                    >
-                      <option value="not-started">{t.sections.briefs.filters.notStarted}</option>
-                      <option value="in-progress">{t.sections.briefs.filters.inProgress}</option>
-                    </select>
-                  </label>
+                    <label className="home-journey-ideas-filter">
+                      <span>{t.sections.briefs.filters.status}</span>
+                      <select
+                        value={statusFilter}
+                        onChange={(event) => setStatusFilter(event.target.value as StatusType)}
+                      >
+                        <option value="not-started">{t.sections.briefs.filters.notStarted}</option>
+                        <option value="in-progress">{t.sections.briefs.filters.inProgress}</option>
+                      </select>
+                    </label>
 
-                  <label className="home-journey-ideas-filter">
-                    <span>{t.sections.briefs.filters.content}</span>
-                    <select
-                      value={nsfwFilter}
-                      onChange={(event) => setNsfwFilter(event.target.value as NsfwType)}
-                    >
-                      <option value="sfw">{t.sections.briefs.filters.sfw}</option>
-                      <option value="nsfw">{t.sections.briefs.filters.nsfw}</option>
-                    </select>
-                  </label>
-                </div>
+                    <label className="home-journey-ideas-filter">
+                      <span>{t.sections.briefs.filters.content}</span>
+                      <select
+                        value={nsfwFilter}
+                        onChange={(event) => setNsfwFilter(event.target.value as NsfwType)}
+                      >
+                        <option value="sfw">{t.sections.briefs.filters.sfw}</option>
+                        <option value="nsfw">{t.sections.briefs.filters.nsfw}</option>
+                      </select>
+                    </label>
+                  </div>
+                )}
 
                 <div className="home-journey-ideas-grid">
                   {ideasLoading ? (
@@ -827,6 +869,43 @@ export default function Home() {
           </section>
         </div>
       </main>
+      {sharedIdeaId && (
+        <dialog
+          ref={exitFocusDialogRef}
+          className="home-journey-focus-dialog"
+          aria-labelledby="exit-focus-title"
+          aria-describedby="exit-focus-brief exit-focus-description"
+        >
+          <p className="home-journey-focus-dialog-meta">
+            {t.sections.briefs.focusMode} * {sharedIdeaId}
+          </p>
+          <h2 id="exit-focus-title">{t.sections.briefs.exitFocusTitle}</h2>
+          <p id="exit-focus-brief">
+            {t.sections.briefs.viewingBrief}{" "}
+            <strong>{sharedIdeaTitle ? `${sharedIdeaId} · ${sharedIdeaTitle}` : sharedIdeaId}</strong>
+            {t.sections.briefs.sharedByVivian}
+          </p>
+          <p id="exit-focus-description">
+            {t.sections.briefs.showingAllIdeas} <strong>{t.sections.briefs.exitFocusMode}</strong>{" "}
+            {t.sections.briefs.displayOtherBriefs} <strong>{t.sections.briefs.outsideCommission}</strong>.
+          </p>
+          <div className="home-journey-focus-dialog-actions">
+            <button type="button" onClick={() => exitFocusDialogRef.current?.close()}>
+              {t.sections.briefs.stayOnBrief}
+            </button>
+            <button
+              type="button"
+              className="home-journey-focus-dialog-confirm"
+              onClick={() => {
+                exitFocusDialogRef.current?.close();
+                clearSharedIdea();
+              }}
+            >
+              {t.sections.briefs.clearSharedView} <span aria-hidden="true">→</span>
+            </button>
+          </div>
+        </dialog>
+      )}
     </>
   );
 }

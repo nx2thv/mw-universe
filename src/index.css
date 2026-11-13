@@ -802,6 +802,17 @@ body {
   transform: translate3d(0, 0, 0) scale(1);
 }
 
+.home-journey-page--brief-focus .home-journey-section:not(.home-journey-section--briefs) {
+  display: none;
+}
+
+.home-journey-page--brief-focus :is(.home-journey-left-link, .home-journey-chapter-option):disabled {
+  filter: blur(0.65px);
+  opacity: 0.65;
+  pointer-events: none;
+  cursor: default;
+}
+
 .home-journey-section--welcome {
   background: transparent;
 }
@@ -1246,6 +1257,10 @@ body {
   color: rgba(222, 208, 190, 0.82);
 }
 
+.home-journey-page--brief-focus .home-journey-ideas-shared-bar + .home-journey-ideas-grid {
+  padding-top: 1rem;
+}
+
 .home-journey-ideas-shared-bar button {
   border: 0;
   background: transparent;
@@ -1254,6 +1269,77 @@ body {
   text-decoration: underline;
   cursor: pointer;
   padding: 0;
+}
+
+.home-journey-focus-dialog {
+  position: fixed;
+  inset: 0;
+  box-sizing: border-box;
+  width: min(28rem, calc(100% - 2rem));
+  max-height: calc(100% - 2rem);
+  margin: auto;
+  padding: clamp(1.25rem, 5vw, 2rem);
+  border: 1px solid #554a40;
+  background: #171310;
+  color: #e8dfd4;
+  box-shadow: 0 1.25rem 4rem #0009;
+  overflow: auto;
+}
+
+.home-journey-focus-dialog::backdrop {
+  background: #090808b3;
+  backdrop-filter: blur(6px);
+}
+
+.home-journey-focus-dialog h2 {
+  margin: 0.6rem 0 1rem;
+  font-family: "Cormorant Unicase", serif;
+  font-size: clamp(1.65rem, 5vw, 2.25rem);
+  text-transform: uppercase;
+}
+
+.home-journey-focus-dialog p {
+  margin: 0 0 0.8rem;
+  line-height: 1.55;
+}
+
+.home-journey-focus-dialog-meta,
+.home-journey-focus-dialog-actions button {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.home-journey-focus-dialog-meta {
+  color: #bbae9f;
+}
+
+.home-journey-focus-dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 1.4rem;
+}
+
+.home-journey-focus-dialog-actions button {
+  flex: 1 1 auto;
+  min-height: 2.75rem;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid #62564b;
+  background: #28211c;
+  color: inherit;
+  cursor: pointer;
+}
+
+.home-journey-focus-dialog-actions .home-journey-focus-dialog-confirm {
+  border-color: #a85c54;
+  background: #702f2a;
+}
+
+.home-journey-focus-dialog-actions button:focus-visible {
+  outline: 2px solid #e8dfd4;
+  outline-offset: 2px;
 }
 
 .home-journey-ideas-state {

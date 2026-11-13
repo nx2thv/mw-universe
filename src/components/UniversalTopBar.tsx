@@ -24,6 +24,7 @@ type Props = {
   title?: string;
   languageLabel?: string;
   linkToHome?: boolean;
+  titleDestination?: string;
 };
 
 export default function UniversalTopBar({
@@ -31,6 +32,7 @@ export default function UniversalTopBar({
   title,
   languageLabel,
   linkToHome = true,
+  titleDestination = "/",
 }: Props) {
   const { language, setLanguage } = useLanguage();
   const [langOpen, setLangOpen] = useState(false);
@@ -72,15 +74,15 @@ export default function UniversalTopBar({
 
       {linkToHome ? (
         <Link
-          to="/"
+          to={titleDestination}
           className="home-journey-heading site-topbar-title-link"
-          aria-label="Go to home"
+          aria-label={titleDestination === "/" ? "Go to home" : language === "vi" ? "Về trang tổng hợp brief" : "Return to brief hub"}
           onClick={(event) => {
             if (event.defaultPrevented) return;
             if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
 
             event.preventDefault();
-            runRouteTransition("/");
+            runRouteTransition(titleDestination);
           }}
         >
           <h1 className="home-journey-title">{resolvedTitle}</h1>

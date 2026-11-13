@@ -3,6 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import Lottie from "lottie-react";
 import catPlaying from "../../assets/lottie/Cat playing animation.json";
 import { resolveBriefUrl } from "../lib/briefLinks";
+import { getBriefFocusHub, withBriefFocus } from "../lib/briefFocus";
 
 const BRIEF_FUN_FACTS = [
   "Marcus used to have a buzzcut (it was ugly).",
@@ -42,6 +43,7 @@ function wait(ms: number) {
 
 export default function BriefOpeningPage() {
   const [searchParams] = useSearchParams();
+  const focusIdeaId = searchParams.get("focusIdea")?.trim() || null;
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [factIndex, setFactIndex] = useState(() => getRandomFactIndex());
   const [isFactVisible, setIsFactVisible] = useState(true);
@@ -71,7 +73,7 @@ export default function BriefOpeningPage() {
         }
 
         if (!cancelled) {
-          window.location.replace(destination);
+          window.location.replace(withBriefFocus(destination, focusIdeaId));
         }
       } catch (error) {
         if (!cancelled) {
@@ -86,7 +88,7 @@ export default function BriefOpeningPage() {
     return () => {
       cancelled = true;
     };
-  }, [searchParams]);
+  }, [focusIdeaId, searchParams]);
 
   useEffect(() => {
     if (errorMessage) {
@@ -148,10 +150,10 @@ export default function BriefOpeningPage() {
           <>
             <p className="brief-loading-copy mt-3">{errorMessage}</p>
             <Link
-              to="/ideas"
+              to={focusIdeaId ? getBriefFocusHub(focusIdeaId) : "/ideas"}
               className="brief-loading-link mt-6 inline-block underline underline-offset-4"
             >
-              Back to ideas
+              {focusIdeaId ? "Back to brief hub" : "Back to ideas"}
             </Link>
           </>
         ) : null}

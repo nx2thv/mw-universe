@@ -11,6 +11,7 @@ import { LanguageProvider } from "../LanguageContext";
 import UniversalTopBar from "../components/UniversalTopBar";
 import Footer from "../components/Footer";
 import type { RouteTransitionTone } from "../lib/routeTransitions";
+import { getBriefFocusHub } from "../lib/briefFocus";
 
 import Home from "../pages/Home";
 import BriefPage from "../pages/BriefPage";
@@ -50,6 +51,7 @@ const ROUTE_TRANSITION_PATHS = new Set([
     "/story",
     "/au",
     "/brief-loading",
+    "/combination",
     "/brief-opening",
 ]);
 
@@ -219,13 +221,17 @@ function AppLayout() {
     const activeTransitionRef = useRef<ActiveRouteTransition | null>(null);
     const routeLocationRef = useRef(location);
     const pendingTraversalPathnameRef = useRef<string | null>(null);
-    const isBriefLoadingRoute = pathname === "/brief-loading";
+    const isCombinationRoute = pathname === "/combination";
+    const isBriefLoadingRoute = pathname === "/brief-loading" || isCombinationRoute;
     const isBriefOpeningRoute = pathname === "/brief-opening";
     const isBriefFlowRoute = isBriefLoadingRoute || isBriefOpeningRoute;
     const normalizedPathname = pathname.replace(/\/+$/, "") || "/";
     const isHomeRoute = normalizedPathname === "/";
     const isStoryRoute = normalizedPathname === "/story";
     const isAuRoute = normalizedPathname === "/au";
+    const searchParams = new URLSearchParams(location.search);
+    const focusIdeaId = searchParams.get("focusIdea")?.trim();
+    const briefHub = focusIdeaId ? getBriefFocusHub(focusIdeaId) : undefined;
     const isFooterlessRoute =
         isHomeRoute ||
         normalizedPathname === "/ideas" ||
@@ -386,13 +392,19 @@ function AppLayout() {
     return (
         <>
         <ScrollToTop />
-        {!isBriefFlowRoute && !isHomeRoute && <UniversalTopBar />}
+        {(!isBriefFlowRoute || (isBriefOpeningRoute && briefHub)) && !isHomeRoute && (
+            <UniversalTopBar titleDestination={briefHub} />
+        )}
         <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/ideas" element={<MyCurrentIdeasPage />} />
             <Route path="/story" element={<TheirStory />} />
             <Route path="/au" element={<AuArchive />} />
             <Route path="/brief-loading" element={<BriefLoadingPage />} />
+            <Route
+                path="/combination"
+                element={<BriefLoadingPage key={searchParams.get("idea")} focusMode />}
+            />
             <Route path="/brief-opening" element={<BriefOpeningPage />} />
             <Route path=":id" element={<BriefPage />} />
         </Routes>

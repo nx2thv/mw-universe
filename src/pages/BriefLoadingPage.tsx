@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import UniversalTopBar from "../components/UniversalTopBar";
 import { useLanguage } from "../LanguageContext";
 import { resolveBriefUrl } from "../lib/briefLinks";
+import { withBriefFocus } from "../lib/briefFocus";
 import { runRouteTransition } from "../lib/routeTransitions";
 import { supabase } from "../lib/supabaseClients";
 import { normalizeCharacter } from "../data/commissionIdeas";
@@ -42,7 +43,7 @@ function normalizeOptionalText(value?: string | null) {
   return trimmed || null;
 }
 
-export default function BriefLoadingPage() {
+export default function BriefLoadingPage({ focusMode = false }: { focusMode?: boolean }) {
   const { language } = useLanguage();
   const [searchParams] = useSearchParams();
   const [openingCommissionHref, setOpeningCommissionHref] = useState<string | null>(null);
@@ -53,11 +54,14 @@ export default function BriefLoadingPage() {
   const [backgroundComment, setBackgroundComment] = useState<string | null>(null);
   const [commissionComment, setCommissionComment] = useState<string | null>(null);
 
-  const briefRef = searchParams.get("brief") || "";
+  const briefRef = focusMode ? "" : searchParams.get("brief") || "";
   const expiresIn = Number(searchParams.get("expiresIn") || "86400");
-  const ideaTitle = searchParams.get("ideaTitle");
-  const ideaId = searchParams.get("ideaId");
-  const character = searchParams.get("character");
+  const ideaId = focusMode ? searchParams.get("idea")?.trim() : searchParams.get("ideaId");
+  const focusIdeaId = focusMode ? ideaId || null : null;
+  const [focusIdeaTitle, setFocusIdeaTitle] = useState<string | null>(null);
+  const ideaTitle = focusMode ? focusIdeaTitle : searchParams.get("ideaTitle");
+  const [focusIdeaStatus, setFocusIdeaStatus] = useState(focusIdeaId ? "loading" : "unavailable");
+  const character = focusMode ? null : searchParams.get("character");
   const normalizedCharacter: CharacterParam | null =
     character === "william" || character === "marcus" || character === "couple"
       ? character
@@ -77,6 +81,8 @@ export default function BriefLoadingPage() {
       openingLabel: "Opening...",
       noBrief: "Missing brief reference.",
       openError: "Could not open this brief right now.",
+      loadingBrief: "Đang tải brief…",
+      unavailableBrief: "Không tìm thấy brief này.",
       william: "William →",
       marcus: "Marcus →",
       mainUniverse: "Vũ trụ chính →",
@@ -93,6 +99,8 @@ export default function BriefLoadingPage() {
       openingLabel: "Opening...",
       noBrief: "Missing brief reference.",
       openError: "Could not open this brief right now.",
+      loadingBrief: "Loading brief…",
+      unavailableBrief: "This brief is unavailable.",
       william: "William →",
       marcus: "Marcus →",
       mainUniverse: "Main universe →",
@@ -139,9 +147,10 @@ export default function BriefLoadingPage() {
 
       const { data, error } = await supabase
         .from("commission_ideas")
-        .select("brief_path, character, au_path, include_main_story, character_comment, background_comment, commission_comment")
+        .select("title, brief_path, character, au_path, include_main_story, character_comment, background_comment, commission_comment")
         .eq("id", ideaId)
         .maybeSingle<{
+          title: string;
           brief_path: string;
           character: string | null;
           au_path: string | null;
@@ -152,11 +161,15 @@ export default function BriefLoadingPage() {
         }>();
 
       if (cancelled) return;
+      if (focusMode) {
+        setFocusIdeaStatus(data && !error ? "ready" : "unavailable");
+      }
       if (error) {
         console.error("Could not fetch idea context links:", error.message);
         return;
       }
       if (!data) return;
+      if (focusMode) setFocusIdeaTitle(data.title);
 
       if (data.brief_path?.trim()) {
         setResolvedBriefRef(data.brief_path.trim());
@@ -177,7 +190,7 @@ export default function BriefLoadingPage() {
     return () => {
       cancelled = true;
     };
-  }, [ideaId]);
+  }, [focusMode, ideaId]);
 
   const fallbackCharacterLinks = useMemo<ResolvedContextLink[]>(() => {
     if (resolvedCharacter === "william") return [{ href: "/william", label: t.william }];
@@ -217,8 +230,9 @@ export default function BriefLoadingPage() {
     if (!href.trim()) return;
     setErrorMessage(null);
 
-    if (isInternalPath(href)) {
-      runRouteTransition(href);
+    const destination = withBriefFocus(href, focusIdeaId);
+    if (isInternalPath(href) || destination !== href) {
+      runRouteTransition(destination);
       return;
     }
 
@@ -248,6 +262,9 @@ export default function BriefLoadingPage() {
     const openingUrl = new URL("/brief-opening", window.location.origin);
     openingUrl.searchParams.set("brief", href);
     openingUrl.searchParams.set("expiresIn", String(expiresIn));
+    if (focusIdeaId) {
+      openingUrl.searchParams.set("focusIdea", focusIdeaId);
+    }
 
     const popup = window.open(openingUrl.toString(), "_blank");
     if (popup) {
@@ -262,7 +279,7 @@ export default function BriefLoadingPage() {
   return (
     <main className="home-journey-page brief-portal-page">
       <div className="home-journey-ui">
-        <UniversalTopBar embedded languageLabel={t.language} />
+        <UniversalTopBar embedded languageLabel={t.language} linkToHome={!focusMode} />
       </div>
 
       <div className="home-journey-stage">
@@ -303,77 +320,83 @@ export default function BriefLoadingPage() {
             </h2>
             <p className="home-journey-copy">{t.subheading}</p>
 
-            <div className={`brief-portal-grid ${shouldShowBackgroundCard ? "is-couple" : "is-solo"}`}>
-              <article className="brief-portal-card brief-portal-card--character" style={{ animationDelay: "70ms" }}>
-                <p className="brief-portal-card-kicker">01</p>
-                <h3 className="brief-portal-card-title">{t.cardCharacter}</h3>
-                {characterComment ? (
-                  <p className="brief-portal-card-comment">{characterComment}</p>
-                ) : null}
-                <div className={`brief-portal-link-row ${characterLinks.length > 1 ? "is-couple" : ""}`}>
-                  {characterLinks.map((link) => (
-                    <button
-                      key={`${link.href}-${link.label ?? ""}`}
-                      type="button"
-                      className="brief-portal-link brief-portal-link-static"
-                      onClick={() => {
-                        void openContextLink(link.href);
-                      }}
-                    >
-                      {link.label}
-                    </button>
-                  ))}
-                </div>
-              </article>
-
-              {shouldShowBackgroundCard ? (
-                <article className="brief-portal-card brief-portal-card--background" style={{ animationDelay: "170ms" }}>
-                  <p className="brief-portal-card-kicker">02</p>
-                  <h3 className="brief-portal-card-title">{t.cardBackground}</h3>
-                  {backgroundComment ? (
-                    <p className="brief-portal-card-comment">{backgroundComment}</p>
+            {focusMode && focusIdeaStatus !== "ready" ? (
+              <p className="brief-portal-error" role="status">
+                {focusIdeaStatus === "loading" ? t.loadingBrief : t.unavailableBrief}
+              </p>
+            ) : (
+              <div className={`brief-portal-grid ${shouldShowBackgroundCard ? "is-couple" : "is-solo"}`}>
+                <article className="brief-portal-card brief-portal-card--character" style={{ animationDelay: "70ms" }}>
+                  <p className="brief-portal-card-kicker">01</p>
+                  <h3 className="brief-portal-card-title">{t.cardCharacter}</h3>
+                  {characterComment ? (
+                    <p className="brief-portal-card-comment">{characterComment}</p>
                   ) : null}
-                  <div className="brief-portal-link-row">
-                    {backgroundLinks.map((link, index) => (
+                  <div className={`brief-portal-link-row ${characterLinks.length > 1 ? "is-couple" : ""}`}>
+                    {characterLinks.map((link) => (
                       <button
-                        key={`${link.href}-${index}`}
+                        key={`${link.href}-${link.label ?? ""}`}
                         type="button"
                         className="brief-portal-link brief-portal-link-static"
-                      onClick={() => {
-                        void openContextLink(link.href);
-                      }}
-                    >
+                        onClick={() => {
+                          void openContextLink(link.href);
+                        }}
+                      >
                         {link.label}
                       </button>
                     ))}
                   </div>
                 </article>
-              ) : null}
 
-              <article className="brief-portal-card brief-portal-card--commission" style={{ animationDelay: commissionAnimationDelay }}>
-                <p className="brief-portal-card-kicker">{commissionCardNumber}</p>
-                <h3 className="brief-portal-card-title">{t.cardCommission}</h3>
-                {commissionComment ? (
-                  <p className="brief-portal-card-comment">{commissionComment}</p>
+                {shouldShowBackgroundCard ? (
+                  <article className="brief-portal-card brief-portal-card--background" style={{ animationDelay: "170ms" }}>
+                    <p className="brief-portal-card-kicker">02</p>
+                    <h3 className="brief-portal-card-title">{t.cardBackground}</h3>
+                    {backgroundComment ? (
+                      <p className="brief-portal-card-comment">{backgroundComment}</p>
+                    ) : null}
+                    <div className="brief-portal-link-row">
+                      {backgroundLinks.map((link, index) => (
+                        <button
+                          key={`${link.href}-${index}`}
+                          type="button"
+                          className="brief-portal-link brief-portal-link-static"
+                        onClick={() => {
+                          void openContextLink(link.href);
+                        }}
+                      >
+                          {link.label}
+                        </button>
+                      ))}
+                    </div>
+                  </article>
                 ) : null}
-                <div className="brief-portal-link-row">
-                  {displayedCommissionLinks.map((link, index) => (
-                    <button
-                      key={`${link.href}-${index}`}
-                      type="button"
-                      className="brief-portal-link brief-portal-link-button brief-portal-link-action"
-                      disabled={Boolean(openingCommissionHref) || !hasCommissionLinks}
-                      onClick={() => {
-                        void handleOpenCommission(link.href);
-                      }}
-                    >
-                      {openingCommissionHref === link.href ? t.openingLabel : link.label}
-                    </button>
-                  ))}
-                </div>
-              </article>
 
-            </div>
+                <article className="brief-portal-card brief-portal-card--commission" style={{ animationDelay: commissionAnimationDelay }}>
+                  <p className="brief-portal-card-kicker">{commissionCardNumber}</p>
+                  <h3 className="brief-portal-card-title">{t.cardCommission}</h3>
+                  {commissionComment ? (
+                    <p className="brief-portal-card-comment">{commissionComment}</p>
+                  ) : null}
+                  <div className="brief-portal-link-row">
+                    {displayedCommissionLinks.map((link, index) => (
+                      <button
+                        key={`${link.href}-${index}`}
+                        type="button"
+                        className="brief-portal-link brief-portal-link-button brief-portal-link-action"
+                        disabled={Boolean(openingCommissionHref) || !hasCommissionLinks}
+                        onClick={() => {
+                          void handleOpenCommission(link.href);
+                        }}
+                      >
+                        {openingCommissionHref === link.href ? t.openingLabel : link.label}
+                      </button>
+                    ))}
+                  </div>
+                </article>
+
+              </div>
+            )}
 
             {errorMessage ? (
               <p className="brief-portal-error" role="status">{errorMessage}</p>
