@@ -1275,14 +1275,13 @@ body {
   position: fixed;
   inset: 0;
   box-sizing: border-box;
-  width: min(28rem, calc(100% - 2rem));
+  width: min(46rem, calc(100% - 2rem));
   max-height: calc(100% - 2rem);
   margin: auto;
-  padding: clamp(1.25rem, 5vw, 2rem);
-  border: 1px solid #554a40;
-  background: #171310;
+  padding: 0 clamp(1.1rem, 5vw, 3.25rem);
+  border: 0;
+  background: linear-gradient(90deg, transparent, #15110f 12%, #15110f 88%, transparent);
   color: #e8dfd4;
-  box-shadow: 0 1.25rem 4rem #0009;
   overflow: auto;
 }
 
@@ -1292,18 +1291,18 @@ body {
 }
 
 .home-journey-focus-dialog h2 {
-  margin: 0.6rem 0 1rem;
+  margin: 1.15rem 0 0.65rem;
   font-family: "Cormorant Unicase", serif;
   font-size: clamp(1.65rem, 5vw, 2.25rem);
   text-transform: uppercase;
 }
 
 .home-journey-focus-dialog p {
-  margin: 0 0 0.8rem;
-  line-height: 1.55;
+  margin: 0 0 0.65rem;
+  font: 1.06rem / 1.4 "Alegreya", serif;
 }
 
-.home-journey-focus-dialog-meta,
+.home-journey-focus-dialog .home-journey-focus-dialog-meta,
 .home-journey-focus-dialog-actions button {
   font-family: "IBM Plex Mono", monospace;
   font-size: 0.68rem;
@@ -1312,34 +1311,39 @@ body {
 }
 
 .home-journey-focus-dialog-meta {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #e8dfd438;
   color: #bbae9f;
+  text-align: center;
 }
 
 .home-journey-focus-dialog-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.65rem;
-  margin-top: 1.4rem;
+  justify-content: space-between;
+  gap: 0 1rem;
+  margin-top: 0.75rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid #e8dfd438;
 }
 
 .home-journey-focus-dialog-actions button {
-  flex: 1 1 auto;
   min-height: 2.75rem;
-  padding: 0.65rem 0.8rem;
-  border: 1px solid #62564b;
-  background: #28211c;
+  padding: 0.4rem 0;
+  border: 0;
+  background: transparent;
   color: inherit;
   cursor: pointer;
 }
 
 .home-journey-focus-dialog-actions .home-journey-focus-dialog-confirm {
-  border-color: #a85c54;
-  background: #702f2a;
+  color: #dba296;
 }
 
+.home-journey-focus-dialog-actions button:hover,
 .home-journey-focus-dialog-actions button:focus-visible {
-  outline: 2px solid #e8dfd4;
-  outline-offset: 2px;
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
 }
 
 .home-journey-ideas-state {
@@ -2077,6 +2081,27 @@ body {
   .home-journey-section--briefs .home-journey-ideas-filter {
     flex: 1 1 0;
     min-width: 10.8rem;
+  }
+}
+
+@media (900px < width <= 1100px) {
+  .home-journey-stage > #briefs {
+    /* Reserve the 17.5rem rail, its 1rem inset, and a 1rem gap. */
+    padding-left: calc(env(safe-area-inset-left, 0px) + 19.5rem);
+    padding-right: var(--journey-content-right);
+  }
+
+  .home-journey-stage > #briefs .home-journey-text--briefs {
+    width: 100%;
+    margin-inline: 0;
+  }
+
+  .home-journey-stage > #briefs .home-journey-text--briefs::before {
+    left: -0.5rem;
+  }
+
+  .home-journey-stage > #briefs .home-journey-ideas-board {
+    max-width: 100%;
   }
 }
 
@@ -4441,7 +4466,10 @@ section[data-section-index] {
 }
 
 .brief-portal-page .home-journey-section {
-  overflow-y: auto;
+  position: absolute;
+  align-items: stretch;
+  overflow: hidden;
+  padding-bottom: max(2rem, calc(env(safe-area-inset-bottom, 0px) + 1.5rem));
 }
 
 .brief-portal-page .home-journey-text--briefs {
@@ -4451,9 +4479,12 @@ section[data-section-index] {
 }
 
 .brief-portal-content {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
   width: 100%;
   margin-top: clamp(1.5rem, 4vh, 3rem);
-  padding-bottom: 3.5rem;
+  padding-bottom: 0;
 }
 
 @media (max-width: 1280px) and (min-width: 901px) {
@@ -4506,12 +4537,15 @@ section[data-section-index] {
 }
 
 .brief-portal-grid {
+  min-height: 0;
   margin-top: 1.15rem;
   display: grid;
   grid-template-columns: repeat(1, minmax(0, 1fr));
   gap: 0.72rem;
   align-items: start;
   align-content: start;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
 }
 
 .brief-portal-card {
@@ -4650,6 +4684,42 @@ section[data-section-index] {
   border-bottom-color: rgba(248, 214, 164, 0.9);
 }
 
+.home-journey-top-row--with-exit {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: baseline;
+  gap: 0.4rem;
+}
+
+.home-journey-top-row--with-exit .home-journey-heading {
+  position: static;
+  width: auto;
+  transform: none;
+}
+
+.home-journey-top-row--with-exit .home-journey-language-wrap {
+  justify-self: start;
+}
+
+.home-journey-top-row--with-exit .home-journey-language-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 0;
+}
+
+.home-journey-exit-trigger {
+  justify-self: end;
+  pointer-events: auto;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .home-journey-top-row--with-exit .home-journey-title {
+    font-size: clamp(0.9rem, 4.2vw, 1.45rem);
+  }
+}
+
 .brief-portal-error {
   margin: 0.85rem 0 0;
   font-family: "IBM Plex Mono", monospace;
@@ -4713,24 +4783,13 @@ section[data-section-index] {
   }
 
   .brief-portal-page .home-journey-section {
-    height: 100%;
-    min-height: 100%;
-    overflow: hidden;
-    padding: clamp(3.6rem, 9svh, 4.5rem) clamp(0.35rem, 1.6vw, 0.7rem) calc(0.72rem + env(safe-area-inset-bottom));
-  }
-
-  .brief-portal-page .home-journey-text--briefs {
-    height: 100%;
     min-height: 0;
+    padding-top: clamp(3.6rem, 9svh, 4.5rem);
+    padding-inline: clamp(0.35rem, 1.6vw, 0.7rem);
   }
 
   .brief-portal-content {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    min-height: 0;
     margin-top: 0;
-    padding-bottom: 0;
   }
 
   .brief-portal-idea-meta {
@@ -4755,24 +4814,14 @@ section[data-section-index] {
     --brief-portal-card-height: clamp(10.4rem, 20svh, 12.6rem);
     --brief-portal-grid-offset: 0.9rem;
     --brief-portal-lower-title-offset: clamp(0.9rem, 2.2svh, 1.25rem);
-    flex: 0 0 auto;
-    height: auto;
-    min-height: 0;
     margin-top: calc(clamp(0.7rem, 1.8svh, 1rem) + var(--brief-portal-grid-offset));
-    grid-template-rows: repeat(3, var(--brief-portal-card-height));
+    grid-auto-rows: minmax(var(--brief-portal-card-height), auto);
     gap: clamp(0.42rem, 1.2svh, 0.72rem);
     align-items: stretch;
-    align-content: stretch;
-  }
-
-  .brief-portal-grid.is-solo {
-    grid-template-rows: repeat(2, var(--brief-portal-card-height));
   }
 
   .brief-portal-card {
-    height: 100%;
     min-height: 0;
-    overflow: hidden;
     padding: clamp(1.05rem, 2.9svh, 1.45rem) clamp(0.88rem, 4vw, 1.2rem) clamp(0.78rem, 2.2svh, 1.05rem);
     gap: clamp(0.42rem, 1.2svh, 0.64rem);
   }

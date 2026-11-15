@@ -1,3 +1,5 @@
+export const HOME_SECTION_STORAGE_KEY = "mwHomeLastSection";
+
 export function getBriefFocusHub(ideaId: string) {
   return `/combination?${new URLSearchParams({ idea: ideaId })}`;
 }

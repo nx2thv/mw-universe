@@ -3,10 +3,11 @@ import { Link } from "react-router-dom";
 import Lottie from "lottie-react";
 import { useLanguage } from "../LanguageContext";
 import TosModal from "../components/TosModal";
+import FocusExitNotice from "../components/FocusExitNotice";
 import UniversalTopBar from "../components/UniversalTopBar";
 import { normalizeCharacter, type CharacterType, type CommissionIdea, type NsfwType, type StatusType } from "../data/commissionIdeas";
 import { openBriefDocument } from "../lib/briefLinks";
-import { getBriefFocusHub } from "../lib/briefFocus";
+import { getBriefFocusHub, HOME_SECTION_STORAGE_KEY } from "../lib/briefFocus";
 import { runRouteTransition } from "../lib/routeTransitions";
 import { supabase } from "../lib/supabaseClients";
 import loop1 from "../../assets/loop1-carousel.jpg";
@@ -36,7 +37,6 @@ type CommissionIdeaRow = {
 };
 
 const SECTION_ORDER: SectionKey[] = ["welcome", "them", "universe", "briefs"];
-const HOME_SECTION_STORAGE_KEY = "mwHomeLastSection";
 const welcomeLoopImages = [
   { src: loop1, alt: "Portrait loop image one" },
   { src: loop2, alt: "Portrait loop image two" },
@@ -245,15 +245,6 @@ export default function Home() {
           loading: "Loading briefs...",
           sharedView: "Showing linked idea",
           clearSharedView: "Show all ideas",
-          focusMode: "Focus Mode",
-          exitFocusTitle: "Show all ideas?",
-          viewingBrief: "You're currently viewing",
-          sharedByVivian: ", the brief Vivian shared with you.",
-          showingAllIdeas: "Choosing to show all ideas will",
-          exitFocusMode: "exit Focus Mode",
-          displayOtherBriefs: "and display other briefs that are",
-          outsideCommission: "not part of this commission",
-          stayOnBrief: "Stay on this brief",
           copyLink: "Copy card link",
           copied: "Copied",
           filters: {
@@ -307,15 +298,6 @@ export default function Home() {
           loading: "Đang tải briefs...",
           sharedView: "Đang xem ý tưởng được gửi",
           clearSharedView: "Xem tất cả ý tưởng",
-          focusMode: "Chế độ tập trung",
-          exitFocusTitle: "Xem tất cả ý tưởng?",
-          viewingBrief: "Bạn hiện đang xem",
-          sharedByVivian: ", brief Vivian đã chia sẻ với bạn.",
-          showingAllIdeas: "Chọn xem tất cả ý tưởng sẽ",
-          exitFocusMode: "thoát chế độ tập trung",
-          displayOtherBriefs: "và hiển thị các brief khác",
-          outsideCommission: "không thuộc commission này",
-          stayOnBrief: "Ở lại brief này",
           copyLink: "Sao chép link card",
           copied: "Đã sao chép",
           filters: {
@@ -870,41 +852,12 @@ export default function Home() {
         </div>
       </main>
       {sharedIdeaId && (
-        <dialog
-          ref={exitFocusDialogRef}
-          className="home-journey-focus-dialog"
-          aria-labelledby="exit-focus-title"
-          aria-describedby="exit-focus-brief exit-focus-description"
-        >
-          <p className="home-journey-focus-dialog-meta">
-            {t.sections.briefs.focusMode} * {sharedIdeaId}
-          </p>
-          <h2 id="exit-focus-title">{t.sections.briefs.exitFocusTitle}</h2>
-          <p id="exit-focus-brief">
-            {t.sections.briefs.viewingBrief}{" "}
-            <strong>{sharedIdeaTitle ? `${sharedIdeaId} · ${sharedIdeaTitle}` : sharedIdeaId}</strong>
-            {t.sections.briefs.sharedByVivian}
-          </p>
-          <p id="exit-focus-description">
-            {t.sections.briefs.showingAllIdeas} <strong>{t.sections.briefs.exitFocusMode}</strong>{" "}
-            {t.sections.briefs.displayOtherBriefs} <strong>{t.sections.briefs.outsideCommission}</strong>.
-          </p>
-          <div className="home-journey-focus-dialog-actions">
-            <button type="button" onClick={() => exitFocusDialogRef.current?.close()}>
-              {t.sections.briefs.stayOnBrief}
-            </button>
-            <button
-              type="button"
-              className="home-journey-focus-dialog-confirm"
-              onClick={() => {
-                exitFocusDialogRef.current?.close();
-                clearSharedIdea();
-              }}
-            >
-              {t.sections.briefs.clearSharedView} <span aria-hidden="true">→</span>
-            </button>
-          </div>
-        </dialog>
+        <FocusExitNotice
+          dialogRef={exitFocusDialogRef}
+          ideaId={sharedIdeaId}
+          ideaTitle={sharedIdeaTitle}
+          onConfirm={clearSharedIdea}
+        />
       )}
     </>
   );

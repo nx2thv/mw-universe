@@ -25,6 +25,7 @@ type Props = {
   languageLabel?: string;
   linkToHome?: boolean;
   titleDestination?: string;
+  exitAction?: { label: string; onClick: () => void };
 };
 
 export default function UniversalTopBar({
@@ -33,6 +34,7 @@ export default function UniversalTopBar({
   languageLabel,
   linkToHome = true,
   titleDestination = "/",
+  exitAction,
 }: Props) {
   const { language, setLanguage } = useLanguage();
   const [langOpen, setLangOpen] = useState(false);
@@ -41,7 +43,7 @@ export default function UniversalTopBar({
   const resolvedLanguageLabel = languageLabel ?? t.language;
 
   const topRow = (
-    <div className="home-journey-top-row">
+    <div className={`home-journey-top-row${exitAction ? " home-journey-top-row--with-exit" : ""}`}>
       <div className="home-journey-language-wrap" onMouseLeave={() => setLangOpen(false)}>
         <button
           type="button"
@@ -91,6 +93,16 @@ export default function UniversalTopBar({
         <header className="home-journey-heading">
           <h1 className="home-journey-title">{resolvedTitle}</h1>
         </header>
+      )}
+      {exitAction && (
+        <button
+          type="button"
+          className="home-journey-language-trigger home-journey-exit-trigger"
+          aria-haspopup="dialog"
+          onClick={exitAction.onClick}
+        >
+          {exitAction.label} <span aria-hidden="true">→</span>
+        </button>
       )}
     </div>
   );

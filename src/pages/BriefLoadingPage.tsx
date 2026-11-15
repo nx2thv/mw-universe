@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import UniversalTopBar from "../components/UniversalTopBar";
+import FocusExitNotice from "../components/FocusExitNotice";
 import { useLanguage } from "../LanguageContext";
 import { resolveBriefUrl } from "../lib/briefLinks";
-import { withBriefFocus } from "../lib/briefFocus";
+import { HOME_SECTION_STORAGE_KEY, withBriefFocus } from "../lib/briefFocus";
 import { runRouteTransition } from "../lib/routeTransitions";
 import { supabase } from "../lib/supabaseClients";
 import { normalizeCharacter } from "../data/commissionIdeas";
@@ -46,6 +47,7 @@ function normalizeOptionalText(value?: string | null) {
 export default function BriefLoadingPage({ focusMode = false }: { focusMode?: boolean }) {
   const { language } = useLanguage();
   const [searchParams] = useSearchParams();
+  const exitFocusDialogRef = useRef<HTMLDialogElement>(null);
   const [openingCommissionHref, setOpeningCommissionHref] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [auPath, setAuPath] = useState<string | null>(null);
@@ -83,6 +85,7 @@ export default function BriefLoadingPage({ focusMode = false }: { focusMode?: bo
       openError: "Could not open this brief right now.",
       loadingBrief: "Đang tải brief…",
       unavailableBrief: "Không tìm thấy brief này.",
+      exit: "Thoát",
       william: "William →",
       marcus: "Marcus →",
       mainUniverse: "Vũ trụ chính →",
@@ -101,6 +104,7 @@ export default function BriefLoadingPage({ focusMode = false }: { focusMode?: bo
       openError: "Could not open this brief right now.",
       loadingBrief: "Loading brief…",
       unavailableBrief: "This brief is unavailable.",
+      exit: "Exit",
       william: "William →",
       marcus: "Marcus →",
       mainUniverse: "Main universe →",
@@ -279,7 +283,15 @@ export default function BriefLoadingPage({ focusMode = false }: { focusMode?: bo
   return (
     <main className="home-journey-page brief-portal-page">
       <div className="home-journey-ui">
-        <UniversalTopBar embedded languageLabel={t.language} linkToHome={!focusMode} />
+        <UniversalTopBar
+          embedded
+          languageLabel={t.language}
+          linkToHome={!focusMode}
+          exitAction={focusIdeaId ? {
+            label: t.exit,
+            onClick: () => exitFocusDialogRef.current?.showModal(),
+          } : undefined}
+        />
       </div>
 
       <div className="home-journey-stage">
@@ -405,6 +417,18 @@ export default function BriefLoadingPage({ focusMode = false }: { focusMode?: bo
         </section>
       </div>
       <PageCredit tone="on-dark" className="brief-portal-page-credit page-credit--bottom" />
+      {focusIdeaId && (
+        <FocusExitNotice
+          dialogRef={exitFocusDialogRef}
+          ideaId={focusIdeaId}
+          ideaTitle={ideaTitle}
+          destination="archive"
+          onConfirm={() => {
+            window.sessionStorage.removeItem(HOME_SECTION_STORAGE_KEY);
+            runRouteTransition("/");
+          }}
+        />
+      )}
     </main>
   );
 }
