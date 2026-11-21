@@ -588,6 +588,26 @@ body:has(.au-archive) {
   padding-top: 0;
 }
 
+.au-archive__load-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 0 1rem;
+  color: var(--au-muted);
+  font: 0.72rem / 1.4 "IBM Plex Mono", monospace;
+}
+
+.au-archive__load-state button {
+  border: 0;
+  padding: 0.5rem;
+  background: transparent;
+  color: var(--au-ink);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .au-archive__welcome .au-archive__index::-webkit-scrollbar {
   display: none;
 }
@@ -1381,6 +1401,146 @@ body:has(.au-archive) {
 
   .au-polaroid figcaption span {
     font-size: 0.82rem;
+  }
+}
+
+/* Individual AU pages use document flow below a content-sized hero. */
+html:has(.au-archive--entry),
+body:has(.au-archive--entry) {
+  overflow-y: auto;
+}
+
+.au-archive.au-archive--entry {
+  height: auto;
+  min-height: 100svh;
+  overflow: hidden;
+  padding-top: var(--au-topbar-safe);
+}
+
+.au-archive--entry .au-archive__shelf {
+  display: block;
+  width: min(70rem, calc(100% - 3rem));
+  height: auto;
+  margin-inline: auto;
+  transform: none;
+}
+
+.au-archive--entry .au-card {
+  display: block;
+  height: auto;
+}
+
+.au-entry-hero {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1rem, 2.5vw, 1.75rem);
+  min-height: clamp(22rem, 58svh, 40rem);
+  padding: clamp(3rem, 7vw, 6rem) 0;
+  border-bottom: 1px solid var(--au-line);
+  text-align: center;
+}
+
+.au-entry-hero__code {
+  margin: 0;
+  color: var(--au-dim);
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+}
+
+.au-entry-hero__title {
+  width: 100%;
+  max-width: 15ch;
+  margin: 0;
+  color: var(--au-ink);
+  font-family: "Playfair Display", serif;
+  font-size: clamp(2.7rem, 7.5vw, 6.75rem);
+  font-weight: 500;
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+
+.au-entry-hero__subtitle {
+  max-width: 36ch;
+  margin: 0;
+  color: var(--au-muted);
+  font-family: "Oooh Baby", cursive;
+  font-size: clamp(1.25rem, 2.6vw, 2.25rem);
+  line-height: 1.4;
+  text-wrap: balance;
+}
+
+.au-entry-hero__tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.65rem 1.5rem;
+  max-width: 45rem;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--au-dim);
+  font-family: "Rokkitt", serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+}
+
+.au-archive--entry .au-card__body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: auto;
+  gap: 3rem;
+  padding: 3rem 0;
+}
+
+.au-archive--entry .au-card__body::before {
+  display: none;
+}
+
+.au-archive--entry .au-card__text {
+  width: min(100%, 40rem);
+  height: auto;
+  max-height: none;
+  overflow: visible;
+  padding-right: 0;
+}
+
+.au-archive--entry .au-card__board-wrap {
+  width: min(100%, 45rem);
+}
+
+.au-archive.au-archive--entry > .au-archive__index {
+  position: relative;
+  left: auto;
+  bottom: auto;
+  height: auto;
+  min-height: 6.5rem;
+  margin-block: 1rem;
+  transform: none;
+}
+
+.au-archive.au-archive--entry .au-archive__credit {
+  position: relative;
+  left: auto;
+  bottom: auto;
+  padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+  transform: none;
+}
+
+@media (max-width: 540px) {
+  .au-archive--entry .au-archive__shelf {
+    width: calc(100% - 2rem);
+  }
+
+  .au-entry-hero {
+    min-height: 21rem;
+    padding-block: 2.5rem;
   }
 }
 

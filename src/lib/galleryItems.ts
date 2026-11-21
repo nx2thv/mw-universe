@@ -71,7 +71,7 @@ function toStoragePath(imagePath: string) {
   return trimmed;
 }
 
-function getPublicImageUrl(imagePath: string) {
+export function getPublicImageUrl(imagePath: string) {
   if (isAbsoluteUrl(imagePath)) {
     return imagePath;
   }

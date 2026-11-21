@@ -1,13 +1,10 @@
 import "./about-them.css";
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { useLanguage } from "../LanguageContext";
 import PageCredit from "../components/PageCredit";
 import auBackgroundVideo from "../../assets/au1-background-small.m4v?url";
 
-import auSelector1 from "../../assets/auSelector1.jpeg";
-import auSelector2 from "../../assets/auSelector2.jpeg";
-
-import commissionBoard1 from "../../assets/loop3.jpeg";
+import { getAuEntries, localizeAuEntry, matchesAu, type AuEntry, type AuRow } from "../lib/auEntries";
 
 type DustSpec = {
   left: string;
@@ -17,29 +14,6 @@ type DustSpec = {
   delay: string;
   driftX: string;
   driftY: string;
-};
-
-type CommissionSlot = {
-  title: string;
-  artist?: string;
-  image?: string;
-  note?: string;
-  orientation?: "portrait" | "landscape" | "square";
-};
-
-type AuEntry = {
-  id: string;
-  code: string;
-  title: string;
-  shortTitle: string;
-  indexImage?: string;
-  premise: string;
-  setting: string;
-  settingVi?: string;
-  background: string[];
-  backgroundVi?: string[];
-  motifs: string[];
-  commissions: CommissionSlot[];
 };
 
 const dustSpecs: DustSpec[] = [
@@ -56,77 +30,6 @@ const AU_ENTRY_TRANSITION_NAV_DELAY_MS = 920;
 const AU_ENTRY_TRANSITION_TOTAL_MS = 1880;
 type AuEntryTransitionPhase = "leaving" | "arriving";
 
-const auEntries: AuEntry[] = [
-  {
-    id: "au1",
-    code: "AU-001",
-    title: "The Quiet Husband",
-    shortTitle: "Contract",
-    indexImage: auSelector1,
-    premise: "p/s: basically just dumb & dumber",
-    setting: "A quiet two-storey house in a\nsuburban neighbourhood just outside the city.",
-    settingVi: "Một căn nhà hai tầng yên tĩnh ở\nkhu ngoại ô ngay bên ngoài thành phố.",
-    background: [
-      "Marcus officially divorced the army at 37 and bought a quiet house to retire in. Allegedly.",
-      "The day he returned home, his mother threw a welcome-back party and hired a local bakery for dessert service. William worked there with Chef Remy. He was 27. Marcus got hooked immediately and kept coming back for desserts despite barely liking sweets.",
-      "One night, William accidentally fell asleep with the oven still on. The bakery caught fire. Marcus arrived just in time to run inside and drag him out.",
-      "The store burned to the ground. William drowned in guilt over it, insisting he would repay Chef Remy somehow. Marcus, already halfway in love and catastrophically stupid, offered a contract marriage instead.",
-      "William would help around the house. Marcus would pay the debt.",
-      "\"Contract,\" he said.",
-      "Then he started taking William to jazz bars because the blond mentioned liking jazz once.",
-      "This AU is basically one big idiot who could not speak upon his feelings, and another idiot who convinced himself that the big idiot didn't like him while Vivian was the one who suffered the most as she wrote them.",
-      "Partly inspired by \"Đá đen sữa bò đậu đỏ\".",
-    ],
-    backgroundVi: [
-      "Marcus chính thức \"chia tay\" sự nghiệp trong quân đội ở tuổi 37, dùng tiền anh tích cóp bấy lâu nay để mua một căn nhà yên tĩnh cho việc nghỉ hưu sớm. Ít nhất là anh tự nói vậy.",
-      "Ngày anh về nhà, mẹ anh tổ chức tiệc mừng và thuê một tiệm bánh địa phương để phụ trách phần tráng miệng. William làm ở đó cùng bếp trưởng Remy. Lúc ấy em 27 tuổi. Marcus để ý em ngay từ lần gặp đầu mặt, rồi cứ quay lại mua bánh liên tục dù bản thân anh vốn chẳng mê đồ ngọt.",
-      "Trong một lần làm việc, William lỡ ngủ quên khi lò nướng còn bật. Tiệm bánh bốc cháy. Marcus tới đúng lúc, lao vào kéo em ra ngoài.",
-      "Cửa tiệm cháy rụi hoàn toàn. William ngập chìm trong cảm giác tội lỗi, một mực khăng khăng sẽ kiếm đủ tiền để trả cho bếp trưởng Remy xây tiệm mới dù ông đã nói rằng em không cần phải làm thế. Marcus, khi đó vừa yêu dở sống dở chết vừa ngốc, liền đề nghị một cuộc hôn nhân hợp đồng.",
-      "William sẽ giúp việc trong nhà. Marcus sẽ trả món nợ đó.",
-      "\"Hợp đồng thôi,\" anh nói.",
-      "Rồi anh bắt đầu dẫn William đi nghe nhạc jazz chỉ vì có lần em thuận miệng bảo mình thích jazz.",
-      "Nói ngắn gọn thì AU này về cơ bản là câu chuyện của một gã khổng lồ không biết mở miệng nói thích người ta, và một cậu tóc vàng khác cũng ngốc không kém khi tự thuyết phục bản thân rằng tên khổng lồ kia chắc chắn không thích mình. Người chịu khổ nhiều nhất thì chỉ có Vivian thôi vì phải ngồi viết hai đứa ngốc này.",
-      "Mình có lấy một tí cảm hứng từ \"Đá đen sữa bò đậu đỏ\".",
-    ],
-    motifs: ["domestic slow burn", "suburban setting", "idiots being in love"],
-    commissions: [
-      { title: "Jazz Club", artist: "maxiine", image: commissionBoard1, orientation: "landscape", note: "First Official Date Night" },
-    ],
-  },
-
-  {
-    id: "au2",
-    code: "AU-002",
-    title: "Blind Shutter",
-    shortTitle: "Flash",
-    indexImage: auSelector2,
-    premise: "No names. One date. Two cameras.",
-    setting: "Downtown Manhattan, NYC",
-    settingVi: "Trung tâm Manhattan, thành phố NY",
-    background: [
-      "Marcus, 37, walked out of a bodega with milk in one hand, cat food in the other, still sweaty from the gym, when a stranger suddenly stopped him with a disposable camera and an offer for a blind date. Marcus immediately assumed this was either a cult recruitment tactic or the beginning of a true crime documentary. It was neither. Against his better judgement, he still said yes.",
-      "Across the city, William, 30, got approached with the same proposition while working at a café. He assumed the stranger was trying to flirt through some painfully creative social experiment. Mostly out of curiosity, he agreed too.",
-      "William arrived five minutes late. Marcus had been there since exactly 7PM. The moment Marcus saw a furious-looking blond walking through the restaurant in a halter top, low-rise jeans, and kitten heels, he somehow just knew that was his date. No photos exchanged beforehand. No information. Just instinct. He walked up. He was right.",
-      "The rest of the night unfolded too naturally for two strangers. Disposable cameras passed back and forth between dinner conversations, tequila shots, rooftop bars, mirror selfies, and increasingly dangerous levels of flirting. At some point, William declared he wanted to come back as a seal in his next life. Marcus immediately agreed to become the tusked one beside him.",
-      "By the end of the night, they were sharing a greasy sandwich outside another bodega while Marcus carried William’s kitten heels in one hand and William wore Marcus’ jacket. Then somebody walked past with a boombox because New York refuses to behave normally, and William dared Marcus to catch up before the song ended.",
-      "So they ran.",
-      "They went home together on the late train that night. Only one disposable camera got returned the next day. There are now two names on one lease.",
-    ],
-    backgroundVi: [
-      "AU này cũng ngắn thui, như one shot. Ngắn gọn là 2 ảnh được 1 gã set up cho một buổi blind date.",
-      "Marcus 37 tuổi, William 30 tuổi. Hai người là người lạ hoàn toàn, xong được gã Tiktoker nào đó tiếp cận ở 2 thời điểm khác nhau vời offer là họ sẽ đi date cùng nhau (không dc biết danh tính trước), xong mỗi ng sẽ cầm 1 cái máy chụp một lần do gã kia đưa, rùi họ phải chụp ảnh buổi date ctct.",
-      "Cả 2 cha ban đầu cũng hơi ngần ngại xong vẫn ok. Tới khúc mí ảnh đi thật thì mí ảnh thấy vui. Kiểu chemistry sparked ngay từ ban đầu, chủ yếu vì W nó giỏi khơi chuyện và thg M cũng thoải mái trả lời. Sau bữa ăn tối ở nhà hàng dc cha Tiktoker đặt bàn trước cho họ thì cả hai đi tăng 2 lun ở quán bar cuối phố. Cả đêm họ i chơi chụp ảnh cùng nhau, W nó còn say xong nó lải nhải bảo kiếp sau nó muốn làm con hải cẩu và thg M cũng đồng ý sẽ làm hải cẩu cùng nó, mà còn là rất nghiêm túc đồng ý ヽ║ ˘ _ ˘ ║ノ",
-      "Kết thúc buổi date là cả hai ngồi ở lề đường hốc chiếc sandwich ở tiệm tạp hóa bên góc đường =))))) Xong vì cno trẩu and this is NYC, có cha kia say xỉn đi ngang với quả nhạc phát to đùng trên loa xong e W thách thg M đuổi kịp nó tới trạm subway (im suck at translating so pls read the english ver if this confuses u)",
-      "Hôm sau thì chỉ có 1 camera được trả lại cho gã Tiktoker kia thui. Nhưng mà, thay vào đó thì cta có 2 cái tên mới toanh đứng cùng 1 hợp đồng thuê nhà 1 năm sau đó (´～｀ヾ)",
-    ],
-    motifs: ["fast AU", "blurry memories", "strangers to something"],
-    commissions: [
-      { title: "Commission pending", orientation: "landscape" },
-    ],
-  },
-
-];
-
 const translations = {
   en: {
     titleLabel: "rorrim world",
@@ -134,8 +37,11 @@ const translations = {
       "\"...mirror symmetry implies that the masses and couplings of the particles in the mirror sector are exactly the same as the corresponding ones in the ordinary sector... it is an exact, unbroken symmetry of the theory.\"",
     citation: "R. Foot, 2004",
     jumpLabel: "Jump to an AU",
-    backgroundLabel: "Background",
-    settingLabel: "Setting",
+    loading: "Loading universes…",
+    loadError: "Could not load the AU archive.",
+    retry: "Try again",
+    noAus: "No AUs have been published yet.",
+    unavailable: "This AU is unavailable or has not been published.",
     empty: "not here yet...",
     sharedView: "Showing linked AU",
     clearSharedView: "Show all AUs",
@@ -149,8 +55,11 @@ const translations = {
       "\"...lý thuyết đối xứng gương cho rằng mọi hạt tồn tại trong thế giới phản chiếu đều mang cùng một khối lượng và bản chất như phiên bản của chúng ở thế giới thông thường... một sự đối xứng hoàn hảo không thể phá vỡ.\"",
     citation: "R. Foot, 2004",
     jumpLabel: "Đi tới AU",
-    backgroundLabel: "Bối cảnh",
-    settingLabel: "Không gian",
+    loading: "Đang tải các vũ trụ…",
+    loadError: "Không thể tải kho AU.",
+    retry: "Thử lại",
+    noAus: "Chưa có AU nào được xuất bản.",
+    unavailable: "AU này không khả dụng hoặc chưa được xuất bản.",
     empty: "not here yet...",
     sharedView: "Đang xem AU được gửi",
     clearSharedView: "Xem tất cả AU",
@@ -172,6 +81,11 @@ function getGatedAuId() {
 
 export default function AuArchive() {
   const { language } = useLanguage();
+  const [auRows, setAuRows] = useState<AuRow[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [loadAttempt, setLoadAttempt] = useState(0);
+  const auEntries = useMemo(() => auRows.map((row) => localizeAuEntry(row, language)), [auRows, language]);
   const archiveRef = useRef<HTMLElement | null>(null);
   const [sharedAuId, setSharedAuId] = useState<string | null>(getSharedAuId);
   const [gatedAuId, setGatedAuId] = useState<string | null>(getGatedAuId);
@@ -182,23 +96,37 @@ export default function AuArchive() {
   const entryTransitionTimeoutsRef = useRef<number[]>([]);
   const t = translations[language] || translations.en;
   const activeAuEntry = sharedAuId
-    ? auEntries.find((entry) => {
-      const sharedValue = sharedAuId.toLowerCase();
-      return entry.id.toLowerCase() === sharedValue || entry.code.toLowerCase() === sharedValue;
-    })
+    ? auEntries.find((entry) => matchesAu(entry, sharedAuId))
     : selectedAuId
       ? auEntries.find((entry) => entry.id === selectedAuId)
       : null;
-  const activeSetting = language === "vi" ? activeAuEntry?.settingVi ?? activeAuEntry?.setting : activeAuEntry?.setting;
-  const activeBackground = language === "vi" ? activeAuEntry?.backgroundVi ?? activeAuEntry?.background : activeAuEntry?.background;
   const gatedAuEntry = gatedAuId
-    ? auEntries.find((entry) => {
-      const gatedValue = gatedAuId.toLowerCase();
-      return entry.id.toLowerCase() === gatedValue || entry.code.toLowerCase() === gatedValue;
-    })
+    ? auEntries.find((entry) => matchesAu(entry, gatedAuId))
     : null;
   const welcomeEntries = gatedAuEntry ? [gatedAuEntry] : auEntries;
-  const showWelcome = !sharedAuId && !activeAuEntry;
+  const showWelcome = !activeAuEntry;
+  const requestedAuMissing = Boolean(
+    (sharedAuId && !activeAuEntry) || (gatedAuId && !gatedAuEntry)
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+    async function loadArchive() {
+      setIsLoading(true);
+      setLoadError(false);
+      try {
+        const rows = await getAuEntries();
+        if (!cancelled) setAuRows(rows);
+      } catch (error) {
+        console.error("Could not load AU archive:", error);
+        if (!cancelled) setLoadError(true);
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
+    }
+    void loadArchive();
+    return () => { cancelled = true; };
+  }, [loadAttempt]);
 
   useEffect(() => {
     return () => {
@@ -207,40 +135,8 @@ export default function AuArchive() {
   }, []);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (showWelcome) return;
-
-    const correctAuResumeLayout = () => {
-      if (!archiveRef.current) return;
-      if (window.scrollY > 0 && window.scrollY < 180) {
-        window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-      }
-    };
-
-    const scheduleCorrection = () => {
-      window.requestAnimationFrame(() => {
-        correctAuResumeLayout();
-        window.setTimeout(correctAuResumeLayout, 120);
-        window.setTimeout(correctAuResumeLayout, 360);
-      });
-    };
-
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === "visible") {
-        scheduleCorrection();
-      }
-    };
-
-    window.addEventListener("pageshow", scheduleCorrection);
-    window.addEventListener("resize", scheduleCorrection);
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-
-    return () => {
-      window.removeEventListener("pageshow", scheduleCorrection);
-      window.removeEventListener("resize", scheduleCorrection);
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
-  }, [showWelcome, activeAuEntry?.id]);
+    if (activeAuEntry) window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, [activeAuEntry?.id]);
 
   const getAuShareUrl = (entry: AuEntry) => {
     const url = new URL("/au", window.location.origin);
@@ -303,7 +199,7 @@ export default function AuArchive() {
   };
 
   return (
-    <main ref={archiveRef} className={`au-archive ${showWelcome ? "au-archive--welcome" : ""} about-portal relative min-h-screen overflow-hidden text-[#f2ede2]`}>
+    <main ref={archiveRef} className={`au-archive ${showWelcome ? "au-archive--welcome" : "au-archive--entry"} about-portal relative min-h-screen overflow-hidden text-[#f2ede2]`}>
       <div className="about-portal__vignette pointer-events-none fixed inset-0" aria-hidden="true" />
       <div className="about-portal__grain pointer-events-none fixed inset-0" aria-hidden="true" />
 
@@ -353,8 +249,20 @@ export default function AuArchive() {
 
           <nav className={`au-archive__index portal-fade-up portal-fade-up--choices ${gatedAuEntry ? "is-gated" : ""}`} aria-label={t.jumpLabel}>
             {gatedAuEntry ? <p className="au-archive__gate-prompt">{t.gatePrompt}</p> : null}
-            {welcomeEntries.map((entry) => {
-              const coverImage = entry.indexImage ?? entry.commissions.find((commission) => commission.image)?.image;
+            {(isLoading || loadError || requestedAuMissing || auEntries.length === 0) && (
+              <div className="au-archive__load-state" role={loadError ? "alert" : "status"}>
+                <span>
+                  {isLoading ? t.loading : loadError ? t.loadError : requestedAuMissing ? t.unavailable : t.noAus}
+                </span>
+                {loadError && (
+                  <button type="button" onClick={() => setLoadAttempt((attempt) => attempt + 1)}>
+                    {t.retry}
+                  </button>
+                )}
+              </div>
+            )}
+            {(!requestedAuMissing || isLoading) && welcomeEntries.map((entry) => {
+              const coverImage = entry.indexImage;
 
               return (
                 <button key={entry.id} type="button" className={`au-archive__index-link ${gatedAuEntry?.id === entry.id ? "is-active" : ""}`} onClick={() => openAuEntry(entry)}>
@@ -369,27 +277,7 @@ export default function AuArchive() {
         </section>
       ) : null}
 
-      {!showWelcome ? (
-        <nav className="au-archive__index portal-fade-up portal-fade-up--choices" aria-label={t.jumpLabel}>
-          {auEntries.map((entry) => {
-            const coverImage = entry.indexImage ?? entry.commissions.find((commission) => commission.image)?.image;
 
-            return (
-              <button
-                key={entry.id}
-                type="button"
-                className={`au-archive__index-link ${activeAuEntry?.id === entry.id ? "is-active" : ""}`}
-                onClick={() => openAuEntry(entry)}
-              >
-                <span className="au-archive__index-thumb" aria-hidden="true">
-                  {coverImage ? <img src={coverImage} alt="" loading="lazy" /> : <span>{entry.code}</span>}
-                </span>
-                <span className="au-archive__index-name">{entry.shortTitle}</span>
-              </button>
-            );
-          })}
-        </nav>
-      ) : null}
 
       {sharedAuId ? (
         <div className="au-archive__shared-bar" role="status" aria-live="polite">
@@ -419,34 +307,31 @@ export default function AuArchive() {
                   </div>
                 ) : null}
               </div>
-              <div className="au-card__header">
-                <p className="au-card__code">{activeAuEntry.code}</p>
-                <div className="au-card__heading-copy">
-                  <h2 className="au-card__title">{activeAuEntry.title}</h2>
-                  <p className="au-card__premise">{activeAuEntry.premise}</p>
-                </div>
-              </div>
+              <header className="au-entry-hero">
+                <p className="au-entry-hero__code">{activeAuEntry.code}</p>
+                <h1 className="au-entry-hero__title">{activeAuEntry.title}</h1>
+                {activeAuEntry.premise && (
+                  <p className="au-entry-hero__subtitle">{activeAuEntry.premise}</p>
+                )}
+                {activeAuEntry.motifs.length > 0 && (
+                  <ul className="au-entry-hero__tags" aria-label={language === "vi" ? "Chủ đề" : "Themes"}>
+                    {activeAuEntry.motifs.map((motif, index) => (
+                      <li key={index}>{motif}</li>
+                    ))}
+                  </ul>
+                )}
+              </header>
 
               <div className="au-card__body">
                 <div className="au-card__text">
-                  <div className="au-card__meta-block">
-                    <div className="au-card__meta-block">
-                      <div className="au-card__motifs">
-                        {activeAuEntry.motifs.map((motif) => (
-                          <span key={motif}>{motif}</span>
-                        ))}
-                      </div>
+                  {activeAuEntry.contextSections.map((section) => (
+                    <div key={section.id} className="au-card__meta-block">
+                      <p className="au-card__label">{section.label}</p>
+                      {section.paragraphs.map((paragraph, index) => (
+                        <p key={index} className="au-card__paragraph">{paragraph}</p>
+                      ))}
                     </div>
-                    <p className="au-card__label">{t.settingLabel}</p>
-                    <p className="au-card__setting">{activeSetting}</p>
-                  </div>
-
-                  <div className="au-card__meta-block">
-                    <p className="au-card__label">{t.backgroundLabel}</p>
-                    {activeBackground?.map((paragraph) => (
-                      <p key={paragraph} className="au-card__paragraph">{paragraph}</p>
-                    ))}
-                  </div>
+                  ))}
                 </div>
 
                 <div className="au-card__board-wrap">
@@ -458,14 +343,14 @@ export default function AuArchive() {
                         : "is-multi"
                       }`}
                   >
+                    {activeAuEntry.commissions.length === 0 && <p className="au-card__paragraph">{t.empty}</p>}
                     {activeAuEntry.commissions.map((commission, commissionIndex) => {
-                      const orientation = commission.orientation ?? "portrait";
                       const artistTagDirection = commissionIndex % 2 === 0 ? "is-right" : "is-left";
 
                       return (
                         <figure
-                          key={commission.title}
-                          className={`au-polaroid au-polaroid--${orientation} ${commission.image ? "" : "is-empty"}`}
+                          key={commission.id}
+                          className="au-polaroid au-polaroid--auto"
                           style={{
                             ["--pin-offset" as string]: `${(commissionIndex % 5) * 5 - 10}px`,
                           } as CSSProperties}
@@ -475,15 +360,11 @@ export default function AuArchive() {
                             <span className={`about-story__artist-tag ${artistTagDirection}`}>{`(A) ${commission.artist}`}</span>
                           ) : null}
                           <div className="au-polaroid__image">
-                            {commission.image ? (
-                              <img src={commission.image} alt={`${activeAuEntry.title}: ${commission.title}`} loading="lazy" />
-                            ) : (
-                              <span>{t.empty}</span>
-                            )}
+                            <img src={commission.image} alt={commission.alt} loading="lazy" />
                           </div>
                           <figcaption>
                             <span>{commission.title}</span>
-                            {commission.note ? <small>{commission.note}</small> : !commission.artist ? <small>{t.empty}</small> : null}
+                            {commission.note && <small>{commission.note}</small>}
                           </figcaption>
                         </figure>
                       );
@@ -497,6 +378,28 @@ export default function AuArchive() {
             </article>
           ) : null}
         </section>
+      ) : null}
+
+      {!showWelcome ? (
+        <nav className="au-archive__index portal-fade-up portal-fade-up--choices" aria-label={t.jumpLabel}>
+          {auEntries.map((entry) => {
+            const coverImage = entry.indexImage;
+
+            return (
+              <button
+                key={entry.id}
+                type="button"
+                className={`au-archive__index-link ${activeAuEntry?.id === entry.id ? "is-active" : ""}`}
+                onClick={() => openAuEntry(entry)}
+              >
+                <span className="au-archive__index-thumb" aria-hidden="true">
+                  {coverImage ? <img src={coverImage} alt="" loading="lazy" /> : <span>{entry.code}</span>}
+                </span>
+                <span className="au-archive__index-name">{entry.shortTitle}</span>
+              </button>
+            );
+          })}
+        </nav>
       ) : null}
 
       <div className="au-archive__credit">
