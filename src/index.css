@@ -1299,7 +1299,7 @@ body {
 
 .home-journey-focus-dialog p {
   margin: 0 0 0.65rem;
-  font: 1.06rem / 1.4 "Alegreya", serif;
+  font: 1.06rem / 1.4 "Cormorant Garamond", serif;
 }
 
 .home-journey-focus-dialog .home-journey-focus-dialog-meta,
@@ -2388,6 +2388,18 @@ section[data-section-index] {
   width: 100%;
   height: auto;
   object-fit: cover;
+}
+
+.face-image-stack .williamBriefImage--credited {
+  overflow: visible;
+  background: transparent;
+  box-shadow: none;
+}
+
+.williamBriefImage--credited .william-reference-frame {
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
 }
 
 .brief-freckles {
@@ -3709,6 +3721,18 @@ section[data-section-index] {
   background: rgba(245, 245, 245, 0.92);
 }
 
+.reference-artist-caption {
+  margin-top: 0.62rem;
+  font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  font-size: 0.64rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  text-align: center;
+  color: rgba(216, 221, 227, 0.9);
+  white-space: pre-line;
+  text-wrap: balance;
+}
+
 .marcus-scroll-caption {
   margin-top: 0.62rem;
   display: inline-flex;
@@ -4600,7 +4624,7 @@ section[data-section-index] {
 .brief-portal-card-comment {
   margin: -0.25rem 0 0;
   max-width: 28ch;
-  font-family: "Lora", serif;
+  font-family: "Cormorant Garamond", serif;
   font-size: 0.72rem;
   line-height: 1.55;
   color: rgba(225, 212, 196, 0.72);

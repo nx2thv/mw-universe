@@ -341,7 +341,7 @@ export default function WilliamBriefPage() {
           bullets: [
             "Có tổng cộng 2 hình xăm:",
             "Xương hông bên phải:\n 'veni, vidi, vici'\n font của hình xăm: Bickham Script (Regular)",
-            "Ở giữa hõm Apollo (tên gọi của hõm Venus trên người nam giới):\n 'HAYES'\n font của hình xăm: Cinzel Decorative Regular.",
+            "Ở giữa hõm Apollo (tên gọi của hõm Apollo trên người nam giới):\n 'HAYES'\n font của hình xăm: Cinzel Decorative Regular.",
           ],
         },
       ],
@@ -667,15 +667,17 @@ export default function WilliamBriefPage() {
                               return (
                                 <figure
                                   key={id}
-                                  className={`williamBriefImage brief-${id} overflow-hidden`}
+                                  className={`williamBriefImage brief-${id}${isSil3 ? " williamBriefImage--credited" : " overflow-hidden"}`}
                                 >
-                                  <img
-                                    src={src}
-                                    alt={`${section.kicker} reference ${idx + 1}`}
-                                    className="brief-img"
-                                  />
+                                  <div className="william-reference-frame">
+                                    <img
+                                      src={src}
+                                      alt={`${section.kicker} reference ${idx + 1}`}
+                                      className="brief-img"
+                                    />
+                                  </div>
                                   {isSil3 && (
-                                    <figcaption className="mt-2 lg:hidden text-[10px] md:text-xs uppercase tracking-[0.18em] text-neutral-500 text-center">
+                                    <figcaption className="reference-artist-caption lg:hidden">
                                       (A): TRẦN THỊ MINH ANH
                                     </figcaption>
                                   )}

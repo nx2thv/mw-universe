@@ -757,7 +757,7 @@ export default function MarcusBriefPage() {
                                         />
                                       </div>
                                     </figure>
-                                    <div className="marcus-scroll-caption tattoo-image-caption">
+                                    <div className="marcus-scroll-caption tattoo-image-caption reference-artist-caption">
                                       (A): MAR QYH
                                     </div>
                                   </div>
