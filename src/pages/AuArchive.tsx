@@ -136,7 +136,6 @@ const translations = {
     jumpLabel: "Jump to an AU",
     backgroundLabel: "Background",
     settingLabel: "Setting",
-    commissionLabel: "Commission Board",
     empty: "not here yet...",
     sharedView: "Showing linked AU",
     clearSharedView: "Show all AUs",
@@ -152,7 +151,6 @@ const translations = {
     jumpLabel: "Đi tới AU",
     backgroundLabel: "Bối cảnh",
     settingLabel: "Không gian",
-    commissionLabel: "Bảng Commission",
     empty: "not here yet...",
     sharedView: "Đang xem AU được gửi",
     clearSharedView: "Xem tất cả AU",
@@ -264,12 +262,12 @@ export default function AuArchive() {
   };
 
   const applyOpenAuEntry = (entry: AuEntry) => {
-    if (sharedAuId) {
-      window.history.replaceState(null, "", "/au");
+    if (sharedAuId || gatedAuId) {
+      const url = new URL(window.location.href);
+      url.searchParams.delete("au");
+      url.searchParams.delete("gate");
+      window.history.replaceState(window.history.state, "", url);
       setSharedAuId(null);
-    }
-    if (gatedAuId) {
-      window.history.replaceState(null, "", "/au");
       setGatedAuId(null);
     }
     setSelectedAuId(entry.id);
@@ -452,7 +450,6 @@ export default function AuArchive() {
                 </div>
 
                 <div className="au-card__board-wrap">
-                  <p className="au-card__label">{t.commissionLabel}</p>
                   <div
                     className={`au-photoboard ${activeAuEntry.commissions.length <= 1
                       ? "is-single"
